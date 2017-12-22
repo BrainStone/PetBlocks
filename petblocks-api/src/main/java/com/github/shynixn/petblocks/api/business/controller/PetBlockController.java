@@ -4,16 +4,16 @@ import com.github.shynixn.petblocks.api.business.entity.PetBlock;
 import com.github.shynixn.petblocks.api.persistence.controller.IController;
 import com.github.shynixn.petblocks.api.persistence.entity.PetMeta;
 
+import java.util.Optional;
+
 /**
- * Copyright 2017 Shynixn
+ * Registers petblocks to manage their action and behavior.
  * <p>
- * Do not remove this header!
- * <p>
- * Version 1.0
+ * Version 1.1
  * <p>
  * MIT License
  * <p>
- * Copyright (c) 2017
+ * Copyright (c) 2017 by Shynixn
  * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -36,7 +36,7 @@ import com.github.shynixn.petblocks.api.persistence.entity.PetMeta;
 public interface PetBlockController extends IController<PetBlock> {
 
     /**
-     * Creates a new petblock for the given player and meta
+     * Creates a new petblock for the given player and meta.
      *
      * @param player  player
      * @param petMeta meta
@@ -45,15 +45,24 @@ public interface PetBlockController extends IController<PetBlock> {
     PetBlock create(Object player, PetMeta petMeta);
 
     /**
-     * Returns the petblock of the given player
+     * Returns the petblock of the given player.
      *
      * @param player player
      * @return petblock
      */
+    @Deprecated
     PetBlock getByPlayer(Object player);
 
     /**
-     * Removes the petblock of the given player
+     * Returns the petblock of the given player.
+     *
+     * @param player player
+     * @return petblock
+     */
+    Optional<PetBlock> getFromPlayer(Object player);
+
+    /**
+     * Removes the petblock of the given player.
      *
      * @param player player
      */

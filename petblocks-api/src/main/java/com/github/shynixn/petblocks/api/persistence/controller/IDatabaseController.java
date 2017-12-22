@@ -1,15 +1,15 @@
 package com.github.shynixn.petblocks.api.persistence.controller;
 
+import java.util.Optional;
+
 /**
- * Copyright 2017 Shynixn
+ * Database Controller interface.
  * <p>
- * Do not remove this header!
- * <p>
- * Version 1.0
+ * Version 1.1
  * <p>
  * MIT License
  * <p>
- * Copyright (c) 2017
+ * Copyright (c) 2017 by Shynixn
  * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,10 +31,19 @@ package com.github.shynixn.petblocks.api.persistence.controller;
  */
 public interface IDatabaseController<T> extends IController<T> {
     /**
-     * Returns the item of the given id
+     * Returns the item of the given id.
      *
      * @param id id
      * @return item
      */
+    @Deprecated
     T getById(long id);
+
+    /**
+     * Returns the item of the given id.
+     *
+     * @param id id
+     * @return item
+     */
+    Optional<T> getFromId(long id);
 }
