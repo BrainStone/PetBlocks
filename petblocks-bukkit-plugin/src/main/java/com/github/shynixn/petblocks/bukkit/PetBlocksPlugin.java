@@ -6,7 +6,7 @@ import com.github.shynixn.petblocks.api.persistence.controller.PetMetaController
 import com.github.shynixn.petblocks.bukkit.nms.NMSRegistry;
 import com.github.shynixn.petblocks.bukkit.nms.VersionSupport;
 import com.github.shynixn.petblocks.bukkit.logic.business.PetBlockManager;
-import com.github.shynixn.petblocks.bukkit.logic.business.configuration.Config;
+import com.github.shynixn.petblocks.core.logic.persistence.configuration.PetBlocksConfig;
 import com.github.shynixn.petblocks.bukkit.lib.ReflectionUtils;
 import com.github.shynixn.petblocks.bukkit.lib.UpdateUtils;
 import org.bstats.bukkit.Metrics;
@@ -69,8 +69,8 @@ public final class PetBlocksPlugin extends JavaPlugin {
             Bukkit.getPluginManager().disablePlugin(this);
         } else {
             Bukkit.getServer().getConsoleSender().sendMessage(PREFIX_CONSOLE + ChatColor.GREEN + "Loading PetBlocks ...");
-            Config.getInstance().reload();
-            if (Config.getInstance().isMetricsEnabled()) {
+            PetBlocksConfig.getInstance().reload();
+            if (PetBlocksConfig.getInstance().isMetricsEnabled()) {
                 new Metrics(this);
             }
             this.getServer().getScheduler().runTaskAsynchronously(this, () -> {

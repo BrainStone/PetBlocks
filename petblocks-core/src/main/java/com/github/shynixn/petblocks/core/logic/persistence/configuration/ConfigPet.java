@@ -1,14 +1,6 @@
-package com.github.shynixn.petblocks.bukkit.logic.business.configuration;
-
-import com.github.shynixn.petblocks.api.persistence.entity.ParticleEffectMeta;
-import com.github.shynixn.petblocks.api.persistence.entity.SoundMeta;
-import com.github.shynixn.petblocks.bukkit.PetBlocksPlugin;
-import com.github.shynixn.petblocks.bukkit.logic.persistence.entity.ParticleEffectData;
-import com.github.shynixn.petblocks.bukkit.logic.persistence.entity.SoundBuilder;
-import org.bukkit.configuration.MemorySection;
+package com.github.shynixn.petblocks.core.logic.persistence.configuration;
 
 import java.util.List;
-import java.util.logging.Level;
 
 /**
  * Configuration access to the pet related settings.
@@ -37,39 +29,20 @@ import java.util.logging.Level;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public class ConfigPet extends SimpleConfig {
-    private static ConfigPet instance;
-
-    private ParticleEffectMeta feedingClickParticleCache;
-    private SoundMeta feedingClickSoundCache;
+public abstract class ConfigPet implements IConfig {
 
     /**
      * Initializes a new pet config
      */
-    private ConfigPet() {
+    public ConfigPet() {
         super();
     }
 
     /**
-     * Returns the config pet instance
-     *
-     * @return instance
-     */
-    public static ConfigPet getInstance() {
-        if (instance == null)
-            instance = new ConfigPet();
-        return instance;
-    }
-
-    /**
-     * Reloads the config.
+     * Reloads the content.
      */
     @Override
-    public void reload() {
-        super.reload();
-        this.feedingClickParticleCache = null;
-        this.feedingClickSoundCache = null;
-    }
+    public void reload() { }
 
     /**
      * Returns the forbidden pet names.
@@ -91,42 +64,11 @@ public class ConfigPet extends SimpleConfig {
 
     /**
      * Returns if feeding is enabled.
+     *
      * @return feeding
      */
     public boolean isFeedingEnabled() {
         return this.getData("pet.feeding.enabled");
-    }
-
-    /**
-     * Returns the feeding click sound.
-     *
-     * @return sound
-     */
-    public SoundMeta getFeedingClickSound() {
-        if (this.feedingClickSoundCache == null) {
-            try {
-                this.feedingClickSoundCache = new SoundBuilder(((MemorySection) this.getData("pet.feeding.click-sound")).getValues(false));
-            } catch (final Exception e) {
-                PetBlocksPlugin.logger().log(Level.WARNING, "Failed to load feeding click-sound.", e);
-            }
-        }
-        return this.feedingClickSoundCache;
-    }
-
-    /**
-     * Returns the feeding particleEffect.
-     *
-     * @return particleEffect
-     */
-    public ParticleEffectMeta getFeedingClickParticleEffect() {
-        if (this.feedingClickParticleCache == null) {
-            try {
-                this.feedingClickParticleCache = new ParticleEffectData(((MemorySection) this.getData("pet.feeding.click-particle")).getValues(false));
-            } catch (final Exception e) {
-                PetBlocksPlugin.logger().log(Level.WARNING, "Failed to load feeding click-sound.", e);
-            }
-        }
-        return this.feedingClickParticleCache;
     }
 
     public boolean isAfraidOfwater() {
@@ -184,7 +126,6 @@ public class ConfigPet extends SimpleConfig {
     public boolean isSoundForOtherPlayersHearable() {
         return (boolean) this.getData("pet.design.sounds-other-players");
     }
-
 
     /**
      * Returns if particles are visible for other players.

@@ -1,20 +1,13 @@
-package com.github.shynixn.petblocks.bukkit.logic.business.configuration;
-
-import com.github.shynixn.petblocks.bukkit.PetBlocksPlugin;
-import org.bukkit.ChatColor;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.java.JavaPlugin;
+package com.github.shynixn.petblocks.core;
 
 /**
- * Copyright 2017 Shynixn
+ * Created by Shynixn 2017.
  * <p>
- * Do not remove this header!
- * <p>
- * Version 1.0
+ * Version 1.1
  * <p>
  * MIT License
  * <p>
- * Copyright (c) 2017
+ * Copyright (c) 2017 by Shynixn
  * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -34,30 +27,5 @@ import org.bukkit.plugin.java.JavaPlugin;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public class SimpleConfig {
-    Plugin plugin;
-
-    /**
-     * Reloads the config
-     */
-    public void reload() {
-        this.plugin = JavaPlugin.getPlugin(PetBlocksPlugin.class);
-        this.plugin.reloadConfig();
-    }
-
-    /**
-     * Returns data
-     *
-     * @param path path
-     * @return data
-     */
-    <T> T getData(String path) {
-        if(this.plugin == null)
-            return null;
-        Object data = this.plugin.getConfig().get(path);
-        if (data instanceof String) {
-            data = ChatColor.translateAlternateColorCodes('&', (String) data);
-        }
-        return (T) data;
-    }
+public class s {
 }

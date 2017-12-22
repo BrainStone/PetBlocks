@@ -10,7 +10,7 @@ import com.github.shynixn.petblocks.bukkit.logic.business.entity.Pipeline;
 import com.github.shynixn.petblocks.bukkit.nms.NMSRegistry;
 import com.github.shynixn.petblocks.bukkit.PetBlocksPlugin;
 import com.github.shynixn.petblocks.bukkit.nms.helper.PetBlockHelper;
-import com.github.shynixn.petblocks.bukkit.logic.business.configuration.ConfigPet;
+import com.github.shynixn.petblocks.core.logic.persistence.configuration.ConfigPet;
 import com.github.shynixn.petblocks.bukkit.logic.persistence.entity.PetData;
 import net.minecraft.server.v1_11_R1.*;
 import org.bukkit.Bukkit;

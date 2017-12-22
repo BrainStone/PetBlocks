@@ -3,7 +3,7 @@ package com.github.shynixn.petblocks.bukkit.logic.business.entity;
 import com.github.shynixn.petblocks.api.business.entity.GUIItemContainer;
 import com.github.shynixn.petblocks.api.business.enumeration.GUIPage;
 import com.github.shynixn.petblocks.bukkit.PetBlocksPlugin;
-import com.github.shynixn.petblocks.bukkit.logic.business.configuration.Config;
+import com.github.shynixn.petblocks.core.logic.persistence.configuration.PetBlocksConfig;
 import com.github.shynixn.petblocks.bukkit.logic.business.helper.PetBlockModifyHelper;
 import com.github.shynixn.petblocks.bukkit.logic.business.helper.SkinHelper;
 import com.github.shynixn.petblocks.bukkit.nms.v1_12_R1.MaterialCompatibility12;
@@ -306,9 +306,9 @@ public class ItemContainer implements GUIItemContainer {
             modifiedLore[i] = this.lore[i];
             if (this.lore[i].contains("<permission>")) {
                 if (permissions != null && (permissions.length == 0 || this.hasPermission(player, permissions))) {
-                    modifiedLore[i] = this.lore[i].replace("<permission>", Config.getInstance().getPermissionIconYes());
+                    modifiedLore[i] = this.lore[i].replace("<permission>", PetBlocksConfig.getInstance().getPermissionIconYes());
                 } else {
-                    modifiedLore[i] = this.lore[i].replace("<permission>", Config.getInstance().getPermissionIconNo());
+                    modifiedLore[i] = this.lore[i].replace("<permission>", PetBlocksConfig.getInstance().getPermissionIconNo());
                 }
             }
         }

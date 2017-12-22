@@ -10,7 +10,7 @@ import com.github.shynixn.petblocks.api.persistence.entity.PlayerMeta;
 import com.github.shynixn.petblocks.bukkit.PetBlocksPlugin;
 import com.github.shynixn.petblocks.bukkit.logic.Factory;
 import com.github.shynixn.petblocks.bukkit.logic.persistence.entity.PetData;
-import com.github.shynixn.petblocks.bukkit.logic.business.configuration.Config;
+import com.github.shynixn.petblocks.core.logic.persistence.configuration.PetBlocksConfig;
 import com.github.shynixn.petblocks.bukkit.lib.ExtensionHikariConnectionContext;
 import com.github.shynixn.petblocks.bukkit.nms.v1_12_R1.MaterialCompatibility12;
 import org.bukkit.Material;
@@ -120,10 +120,10 @@ public class PetDataRepository extends DataBaseRepository<PetMeta> implements Pe
     public PetMeta create(Object player) {
         if (player == null)
             throw new IllegalArgumentException("Player cannot be null!");
-        final Optional<GUIItemContainer> containerOpt = Config.getInstance().getGuiItemsController().getGUIItemFromName("default-appearance");
+        final Optional<GUIItemContainer> containerOpt = PetBlocksConfig.getInstance().getGuiItemsController().getGUIItemFromName("default-appearance");
         if (!containerOpt.isPresent())
             throw new IllegalArgumentException("Default appearance could not be loaded from the config.yml!");
-        final PetData petData = new PetData((Player) player, Config.getInstance().getDefaultPetName());
+        final PetData petData = new PetData((Player) player, PetBlocksConfig.getInstance().getDefaultPetName());
         petData.setSkin(containerOpt.get().getItemId(), containerOpt.get().getItemDamage(), containerOpt.get().getSkin(), containerOpt.get().isItemUnbreakable());
         return petData;
     }
@@ -168,7 +168,7 @@ public class PetDataRepository extends DataBaseRepository<PetMeta> implements Pe
         } catch (final SQLException e) {
             PetBlocksPlugin.logger().log(Level.WARNING, "Database error occurred.", e);
         }
-        petMeta.setEngine(Config.getInstance().getEngineController().getById(((PetData) petMeta).getEngineId()));
+        petMeta.setEngine(PetBlocksConfig.getInstance().getEngineController().getById(((PetData) petMeta).getEngineId()));
         ((PetData) petMeta).setParticleEffectMeta(this.particleEffectMetaController.getById(((PetData) petMeta).getParticleId()));
         ((PetData) petMeta).setPlayerMeta(this.playerMetaController.getById(((PetData) petMeta).getPlayerId()));
         return Optional.of(petMeta);
@@ -349,7 +349,7 @@ public class PetDataRepository extends DataBaseRepository<PetMeta> implements Pe
         try {
             petMeta.setPetDisplayName(resultSet.getString("name"));
         } catch (final Exception ex) {
-            petMeta.setPetDisplayName(Config.getInstance().getDefaultPetName().replace(":player", "Player"));
+            petMeta.setPetDisplayName(PetBlocksConfig.getInstance().getDefaultPetName().replace(":player", "Player"));
         }
         petMeta.setEngineId(resultSet.getInt("engine"));
         petMeta.setSkin(Material.getMaterial(resultSet.getString("material")).getId(), resultSet.getInt("data"), resultSet.getString("skull"), resultSet.getBoolean("unbreakable"));

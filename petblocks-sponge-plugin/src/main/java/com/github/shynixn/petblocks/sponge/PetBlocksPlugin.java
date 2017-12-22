@@ -1,20 +1,23 @@
 package com.github.shynixn.petblocks.sponge;
 
+import com.github.shynixn.petblocks.sponge.logic.business.configuration.Config;
+import com.github.shynixn.petblocks.sponge.logic.business.configuration.SpongeCostumeConfiguration;
 import com.google.inject.Inject;
-import ninja.leaping.configurate.ConfigurationNode;
-import ninja.leaping.configurate.commented.CommentedConfigurationNode;
-import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
-import ninja.leaping.configurate.loader.ConfigurationLoader;
-import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
-import org.spongepowered.api.Sponge;
-import org.spongepowered.api.config.DefaultConfig;
+import org.spongepowered.api.Game;
+import org.spongepowered.api.asset.AssetManager;
+import org.spongepowered.api.config.ConfigDir;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.game.GameReloadEvent;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
 import org.spongepowered.api.plugin.Plugin;
+import org.spongepowered.api.plugin.PluginContainer;
+import org.spongepowered.api.text.Text;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.logging.Logger;
 
 /**
  * Copyright 2017 Shynixn
@@ -45,30 +48,51 @@ import java.nio.file.Path;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-@Plugin(id = "PetBlocks", name = "PetBlocks", version = "6.2.0")
+@Plugin(id = "petblocks", name = "PetBlocks", version = "6.4.2-SNAPSHOT")
 public class PetBlocksPlugin {
 
+    @Inject
+    @ConfigDir(sharedRoot = false)
+    private Path privateConfigDir;
 
     @Inject
-    @DefaultConfig(sharedRoot = true)
-    private Path defaultConfig;
+    private Logger logger;
+
+    @Inject
+    private AssetManager assetManager;
+
+    @Inject
+    private PluginContainer plugin;
+
+    @Inject
+    private Config config;
+
+    @Inject
+    private Game game;
+
+    @Inject
+    private SpongeCostumeConfiguration costumeConfiguration;
 
 
     @Listener
     public void onEnable(GameInitializationEvent event) throws IOException {
         System.out.println("Enabled PetBlocks sponge.");
 
+    }
 
-        Path potentialFile = defaultConfig;
-        System.out.println("FILE: " + potentialFile);
+    @Listener
+    public void onReload(GameReloadEvent event) throws IOException {
+        System.out.println("Reloadinng...");
 
-        ConfigurationLoader loader = YAMLConfigurationLoader.builder().setPath(potentialFile).build();
-        ConfigurationNode node = loader.load();
+        config.reload();
 
-        ConfigurationLoader saver= HoconConfigurationLoader.builder().setPath(potentialFile).build();
-        saver.save(node);
+        costumeConfiguration.reload();
 
-        System.out.println("FINISHED");
+
+
+
+
+
     }
 
     @Listener

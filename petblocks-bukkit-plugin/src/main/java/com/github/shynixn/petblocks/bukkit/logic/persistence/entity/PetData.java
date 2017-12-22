@@ -4,8 +4,8 @@ import com.github.shynixn.petblocks.api.persistence.entity.EngineContainer;
 import com.github.shynixn.petblocks.api.persistence.entity.ParticleEffectMeta;
 import com.github.shynixn.petblocks.api.persistence.entity.PetMeta;
 import com.github.shynixn.petblocks.api.persistence.entity.PlayerMeta;
-import com.github.shynixn.petblocks.bukkit.logic.business.configuration.Config;
-import com.github.shynixn.petblocks.bukkit.logic.business.configuration.ConfigPet;
+import com.github.shynixn.petblocks.core.logic.persistence.configuration.PetBlocksConfig;
+import com.github.shynixn.petblocks.core.logic.persistence.configuration.ConfigPet;
 import com.github.shynixn.petblocks.bukkit.logic.business.helper.PetBlockModifyHelper;
 import com.github.shynixn.petblocks.bukkit.logic.business.helper.SkinHelper;
 import com.github.shynixn.petblocks.bukkit.nms.v1_12_R1.MaterialCompatibility12;
@@ -81,7 +81,7 @@ public class PetData extends PersistenceObject implements PetMeta {
         this.sounds = true;
         this.particleEffectBuilder = new ParticleEffectData();
         this.particleEffectBuilder.setEffectType(ParticleEffectMeta.ParticleEffectType.NONE);
-        this.engineContainer = Config.getInstance().getEngineController().getById(Config.getInstance().getDefaultEngine());
+        this.engineContainer = PetBlocksConfig.getInstance().getEngineController().getById(PetBlocksConfig.getInstance().getDefaultEngine());
         if (this.engineContainer == null) {
             throw new RuntimeException("Engine cannot be null!");
         }

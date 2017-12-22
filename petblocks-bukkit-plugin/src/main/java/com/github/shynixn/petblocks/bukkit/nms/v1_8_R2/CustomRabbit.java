@@ -3,7 +3,7 @@ package com.github.shynixn.petblocks.bukkit.nms.v1_8_R2;
 import com.github.shynixn.petblocks.api.business.entity.PetBlock;
 import com.github.shynixn.petblocks.api.business.entity.PetBlockPartEntity;
 import com.github.shynixn.petblocks.bukkit.PetBlocksPlugin;
-import com.github.shynixn.petblocks.bukkit.logic.business.configuration.ConfigPet;
+import com.github.shynixn.petblocks.core.logic.persistence.configuration.ConfigPet;
 import com.github.shynixn.petblocks.bukkit.nms.helper.PetBlockHelper;
 import net.minecraft.server.v1_8_R2.*;
 import org.bukkit.Bukkit;
