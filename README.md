@@ -7,7 +7,7 @@
 | feature/sponge-support | [![Build Status](https://travis-ci.org/Shynixn/PetBlocks.svg?branch=feature%2Fsponge-support)](https://travis-ci.org/Shynixn/PetBlocks) | [Download snapshots](https://oss.sonatype.org/content/repositories/snapshots/com/github/shynixn/petblocks/petblocks-sponge-plugin/) |
 
 
-Documentation:  https://shynixn.github.io/PetBlocks/
+Documentation: https://shynixn.github.io/PetBlocks/
 
 JavaDocs: https://shynixn.github.io/PetBlocks/apidocs/
 
