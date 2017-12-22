@@ -1,8 +1,7 @@
 package com.github.shynixn.petblocks.bukkit.logic.business.configuration;
 
-import com.github.shynixn.petblocks.api.business.entity.GUIItemContainer;
-import com.github.shynixn.petblocks.bukkit.logic.business.entity.ItemContainer;
-import com.github.shynixn.petblocks.core.logic.persistence.configuration.CostumeConfiguration;
+import com.github.shynixn.petblocks.bukkit.logic.persistence.entity.EngineData;
+import com.github.shynixn.petblocks.core.logic.persistence.configuration.EngineConfiguration;
 import org.bukkit.configuration.MemorySection;
 import org.bukkit.plugin.Plugin;
 
@@ -36,17 +35,16 @@ import java.util.logging.Level;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public class BukkitCostumeConfiguration extends CostumeConfiguration {
+public class BukkitEngineConfiguration extends EngineConfiguration {
     private Plugin plugin;
 
     /**
      * Initializes a new engine repository
      *
-     * @param costumeCategory costume
-     * @param plugin          plugin
+     * @param plugin plugin
      */
-    public BukkitCostumeConfiguration(String costumeCategory, Plugin plugin) {
-        super(costumeCategory);
+    public BukkitEngineConfiguration(Plugin plugin) {
+        super();
         if (plugin == null)
             throw new IllegalArgumentException("Plugin cannot be null!");
         this.plugin = plugin;
@@ -57,15 +55,15 @@ public class BukkitCostumeConfiguration extends CostumeConfiguration {
      */
     @Override
     public void reload() {
-        this.items.clear();
+        this.engineContainers.clear();
         this.plugin.reloadConfig();
-        final Map<String, Object> data = ((MemorySection) this.plugin.getConfig().get("wardrobe." + this.costumeCategory)).getValues(false);
+        final Map<String, Object> data = ((MemorySection) this.plugin.getConfig().get("engines")).getValues(false);
         for (final String key : data.keySet()) {
+            final Map<String, Object> content = ((MemorySection) this.plugin.getConfig().get("engines." + key)).getValues(true);
             try {
-                final GUIItemContainer container = new ItemContainer(Integer.parseInt(key), ((MemorySection) data.get(key)).getValues(true));
-                this.items.add(container);
+                this.engineContainers.add(new EngineData(Integer.parseInt(key), content));
             } catch (final Exception e) {
-                this.plugin.getLogger().log(Level.WARNING, "Failed to load guiItem " + this.costumeCategory + '.' + key + '.');
+                this.plugin.getLogger().log(Level.WARNING, "Failed to add content " + key + '.', e);
             }
         }
     }
@@ -74,6 +72,8 @@ public class BukkitCostumeConfiguration extends CostumeConfiguration {
      * Closes this resource, relinquishing any underlying resources.
      * This method is invoked automatically on objects managed by the
      * {@code try}-with-resources statement.
+     * However, implementers of this interface are strongly encouraged
+     * to make their {@code close} methods idempotent.
      *
      * @throws Exception if this resource cannot be closed
      */

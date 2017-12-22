@@ -1,23 +1,25 @@
 package com.github.shynixn.petblocks.bukkit.logic.business.configuration;
 
 import com.github.shynixn.petblocks.api.business.entity.GUIItemContainer;
-import com.github.shynixn.petblocks.api.persistence.controller.OtherGUIItemsController;
 import com.github.shynixn.petblocks.bukkit.PetBlocksPlugin;
 import com.github.shynixn.petblocks.bukkit.logic.business.entity.ItemContainer;
+import com.github.shynixn.petblocks.core.logic.persistence.configuration.FixedItemConfiguration;
+import org.bukkit.ChatColor;
+import org.bukkit.configuration.MemorySection;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 
-import java.util.*;
+import java.util.Map;
 import java.util.logging.Level;
 
 /**
- * Copyright 2017 Shynixn
+ * Created by Shynixn 2017.
  * <p>
- * Do not remove this header!
- * <p>
- * Version 1.0
+ * Version 1.1
  * <p>
  * MIT License
  * <p>
- * Copyright (c) 2017
+ * Copyright (c) 2017 by Shynixn
  * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -37,61 +39,18 @@ import java.util.logging.Level;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public class FixedItemConfiguration implements OtherGUIItemsController {
-
+public class BukkitFixedItemConfiguration extends FixedItemConfiguration {
     private Plugin plugin;
-    private final Map<String, GUIItemContainer> items = new HashMap<>();
 
     /**
      * Initializes a new engine repository
      *
      * @param plugin plugin
      */
-    public FixedItemConfiguration(Plugin plugin) {
-        super();
+    public BukkitFixedItemConfiguration(Plugin plugin) {
         if (plugin == null)
             throw new IllegalArgumentException("Plugin cannot be null!");
         this.plugin = plugin;
-    }
-
-    /**
-     * Stores a new a item in the repository
-     *
-     * @param item item
-     */
-    @Override
-    public void store(GUIItemContainer item) {
-        throw new RuntimeException("Not implemented");
-    }
-
-    /**
-     * Removes an item from the repository
-     *
-     * @param item item
-     */
-    @Override
-    public void remove(GUIItemContainer item) {
-        throw new RuntimeException("Not implemented");
-    }
-
-    /**
-     * Returns the amount of items in the repository
-     *
-     * @return size
-     */
-    @Override
-    public int size() {
-        return this.items.size();
-    }
-
-    /**
-     * Returns all items from the repository as unmodifiableList
-     *
-     * @return items
-     */
-    @Override
-    public List<GUIItemContainer> getAll() {
-        return new ArrayList<>(this.items.values());
     }
 
     /**
@@ -113,34 +72,6 @@ public class FixedItemConfiguration implements OtherGUIItemsController {
                 PetBlocksPlugin.logger().log(Level.WARNING, "Failed to load guiItem " + key + '.', e);
             }
         }
-    }
-
-    /**
-     * Returns the guiItem by the given name
-     *
-     * @param name name
-     * @return item
-     */
-    @Override
-    @Deprecated
-    public GUIItemContainer getGUIItemByName(String name) {
-        if (this.items.containsKey(name))
-            return this.items.get(name);
-        return null;
-    }
-
-    /**
-     * Returns the guiItem by the given name.
-     *
-     * @param name name
-     * @return item
-     */
-    @Override
-    public Optional<GUIItemContainer> getGUIItemFromName(String name) {
-        if (this.items.containsKey(name)) {
-            return Optional.of(this.items.get(name));
-        }
-        return Optional.empty();
     }
 
     /**
@@ -172,7 +103,7 @@ public class FixedItemConfiguration implements OtherGUIItemsController {
      */
     @Override
     public void close() throws Exception {
+        super.close();
         this.plugin = null;
-        this.items.clear();
     }
 }

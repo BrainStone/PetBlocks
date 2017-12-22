@@ -51,7 +51,7 @@ import java.util.regex.Pattern;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public class MinecraftHeadConfiguration extends CostumeConfiguration {
+public class MinecraftHeadConfiguration extends BukkitCostumeConfiguration {
 
     /**
      * Initializes a new engine repository

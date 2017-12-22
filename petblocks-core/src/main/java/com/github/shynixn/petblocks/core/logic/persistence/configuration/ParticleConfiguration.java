@@ -1,27 +1,19 @@
-package com.github.shynixn.petblocks.bukkit.logic.business.configuration;
+package com.github.shynixn.petblocks.core.logic.persistence.configuration;
 
 import com.github.shynixn.petblocks.api.business.entity.GUIItemContainer;
 import com.github.shynixn.petblocks.api.persistence.controller.ParticleController;
 import com.github.shynixn.petblocks.api.persistence.entity.ParticleEffectMeta;
-import com.github.shynixn.petblocks.bukkit.PetBlocksPlugin;
-import com.github.shynixn.petblocks.bukkit.logic.business.entity.ItemContainer;
-import com.github.shynixn.petblocks.bukkit.logic.persistence.entity.ParticleEffectData;
-import org.bukkit.configuration.MemorySection;
-import org.bukkit.plugin.Plugin;
 
 import java.util.*;
-import java.util.logging.Level;
 
 /**
- * Copyright 2017 Shynixn
+ * Created by Shynixn 2017.
  * <p>
- * Do not remove this header!
- * <p>
- * Version 1.0
+ * Version 1.1
  * <p>
  * MIT License
  * <p>
- * Copyright (c) 2017
+ * Copyright (c) 2017 by Shynixn
  * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -41,22 +33,8 @@ import java.util.logging.Level;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public class ParticleConfiguration implements ParticleController {
-
-    private Plugin plugin;
-    private final Map<GUIItemContainer, ParticleEffectMeta> particleCache = new HashMap<>();
-
-    /**
-     * Initializes a new engine repository
-     *
-     * @param plugin plugin
-     */
-    public ParticleConfiguration(Plugin plugin) {
-        super();
-        if (plugin == null)
-            throw new IllegalArgumentException("Plugin cannot be null!");
-        this.plugin = plugin;
-    }
+public abstract class ParticleConfiguration implements ParticleController {
+    protected final Map<GUIItemContainer, ParticleEffectMeta> particleCache = new HashMap<>();
 
     /**
      * Stores a new a item in the repository
@@ -164,25 +142,6 @@ public class ParticleConfiguration implements ParticleController {
     }
 
     /**
-     * Reloads the content from the fileSystem
-     */
-    @Override
-    public void reload() {
-        this.particleCache.clear();
-        this.plugin.reloadConfig();
-        final Map<String, Object> data = ((MemorySection) this.plugin.getConfig().get("particles")).getValues(false);
-        for (final String key : data.keySet()) {
-            try {
-                final GUIItemContainer container = new ItemContainer(Integer.parseInt(key), ((MemorySection) data.get(key)).getValues(false));
-                final ParticleEffectMeta meta = new ParticleEffectData(((MemorySection) ((MemorySection) data.get(key)).getValues(false).get("effect")).getValues(true));
-                this.particleCache.put(container, meta);
-            } catch (final Exception e) {
-                PetBlocksPlugin.logger().log(Level.WARNING, "Failed to load particle " + key + '.', e);
-            }
-        }
-    }
-
-    /**
      * Closes this resource, relinquishing any underlying resources.
      * This method is invoked automatically on objects managed by the
      * {@code try}-with-resources statement.
@@ -193,7 +152,6 @@ public class ParticleConfiguration implements ParticleController {
      */
     @Override
     public void close() throws Exception {
-        this.plugin = null;
         this.particleCache.clear();
     }
 }
