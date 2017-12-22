@@ -5,6 +5,7 @@ import com.github.shynixn.petblocks.sponge.logic.business.configuration.SpongeCo
 import com.google.inject.Inject;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.asset.AssetManager;
+import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
@@ -67,7 +68,7 @@ public class PetBlocksPlugin {
     @Inject
     private Config config;
 
-    @Inject
+    @Inject()
     private Game game;
 
     @Inject

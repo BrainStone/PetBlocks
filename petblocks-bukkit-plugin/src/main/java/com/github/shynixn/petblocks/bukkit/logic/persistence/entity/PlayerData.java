@@ -58,7 +58,11 @@ public class PlayerData extends PersistenceObject implements PlayerMeta {
     @Override
     public Player getPlayer() {
         try {
-            return Bukkit.getPlayer(this.uuid);
+            final Player player = Bukkit.getPlayer(this.uuid);
+            if (player != null) {
+                this.setName(player.getName());
+            }
+            return player;
         } catch (final Exception ex) {
             return null;
         }

@@ -4,12 +4,14 @@ import com.github.shynixn.petblocks.api.persistence.entity.EngineContainer;
 import com.github.shynixn.petblocks.api.persistence.entity.ParticleEffectMeta;
 import com.github.shynixn.petblocks.api.persistence.entity.PetMeta;
 import com.github.shynixn.petblocks.api.persistence.entity.PlayerMeta;
+import com.github.shynixn.petblocks.bukkit.logic.business.configuration.Config;
 import com.github.shynixn.petblocks.core.logic.persistence.configuration.PetBlocksConfig;
 import com.github.shynixn.petblocks.core.logic.persistence.configuration.ConfigPet;
 import com.github.shynixn.petblocks.bukkit.logic.business.helper.PetBlockModifyHelper;
 import com.github.shynixn.petblocks.bukkit.logic.business.helper.SkinHelper;
 import com.github.shynixn.petblocks.bukkit.nms.v1_12_R1.MaterialCompatibility12;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -202,6 +204,16 @@ public class PetData extends PersistenceObject implements PetMeta {
     }
 
     /**
+     * Returns the name of the item.
+     *
+     * @return name
+     */
+    @Override
+    public String getItemName() {
+        return MaterialCompatibility12.getMaterialFromId(this.id).name();
+    }
+
+    /**
      * Returns the damage of the item
      *
      * @return itemDamage
@@ -344,6 +356,34 @@ public class PetData extends PersistenceObject implements PetMeta {
     }
 
     /**
+     * Sets the itemStack skin.
+     *
+     * @param material    material of any supported type
+     * @param damage      damage
+     * @param skin        skin
+     * @param unbreakable unbreakable
+     */
+    @Override
+    public void setDisplaySkin(Object material, int damage, String skin, boolean unbreakable) {
+        String s = skin;
+        if (s != null && s.contains("textures.minecraft")) {
+            if (!s.contains("http://")) {
+                s = "http://" + s;
+            }
+        }
+        if (material instanceof Integer) {
+            this.id = (int) material;
+        } else if (material instanceof Material) {
+            this.id = MaterialCompatibility12.getIdFromMaterial((Material) material);
+        } else if (material instanceof String) {
+            this.id = MaterialCompatibility12.getIdFromMaterial(Material.getMaterial((String) material));
+        }
+        this.damage = damage;
+        this.skin = s;
+        this.unbreakable = unbreakable;
+    }
+
+    /**
      * Returns the itemStack for the head
      *
      * @return headItemStack
@@ -384,8 +424,8 @@ public class PetData extends PersistenceObject implements PetMeta {
     public void setPetDisplayName(String name) {
         if (name == null)
             return;
-        if (ConfigPet.getInstance().getPetNameBlackList() != null) {
-            for (final String blackName : ConfigPet.getInstance().getPetNameBlackList()) {
+        if (Config.getInstance().getPetNameBlackList() != null) {
+            for (final String blackName : Config.getInstance().getPetNameBlackList()) {
                 if (name.toUpperCase().contains(blackName.toUpperCase())) {
                     throw new RuntimeException("Name is not valid!");
                 }

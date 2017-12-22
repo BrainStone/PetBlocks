@@ -155,6 +155,13 @@ public interface ParticleEffectMeta extends Persistenceable {
     ParticleEffectMeta setMaterial(Object material);
 
     /**
+     * Returns the name of the material.
+     *
+     * @return name
+     */
+    String getMaterialName();
+
+    /**
      * Sets the data of the material of the particleEffect.
      *
      * @param data data

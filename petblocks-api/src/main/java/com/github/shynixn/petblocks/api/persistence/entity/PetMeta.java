@@ -106,7 +106,18 @@ public interface PetMeta extends Persistenceable {
      * @param skin        skin
      * @param unbreakable unbreakable
      */
+    @Deprecated
     void setSkin(int id, int damage, String skin, boolean unbreakable);
+
+    /**
+     * Sets the itemStack skin.
+     *
+     * @param material    material of any supported type
+     * @param damage      damage
+     * @param skin        skin
+     * @param unbreakable unbreakable
+     */
+    void setDisplaySkin(Object material, int damage, String skin, boolean unbreakable);
 
     /**
      * Sets the stored display name of the pet which appears above it's head on respawn.
@@ -141,7 +152,15 @@ public interface PetMeta extends Persistenceable {
      *
      * @return itemId
      */
+    @Deprecated
     int getItemId();
+
+    /**
+     * Returns the name of the item.
+     *
+     * @return name
+     */
+    String getItemName();
 
     /**
      * Returns the damage of the item.

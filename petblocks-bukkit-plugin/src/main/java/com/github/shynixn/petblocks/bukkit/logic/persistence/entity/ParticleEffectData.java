@@ -319,12 +319,24 @@ public class ParticleEffectData extends PersistenceObject implements ParticleEff
     public ParticleEffectData setMaterial(Object material) {
         if (material != null && material instanceof Integer) {
             this.material = (Integer) material;
-        } else if (material != null) {
+        } else if (material != null && material instanceof String) {
+            this.material = MaterialCompatibility12.getIdFromMaterial(Material.getMaterial((String) material));
+        } else if (material != null && material instanceof Material) {
             this.material = MaterialCompatibility12.getIdFromMaterial((Material) material);
         } else {
             this.material = null;
         }
         return this;
+    }
+
+    /**
+     * Returns the name of the material.
+     *
+     * @return name
+     */
+    @Override
+    public String getMaterialName() {
+        return MaterialCompatibility12.getMaterialFromId(this.material).name();
     }
 
     /**

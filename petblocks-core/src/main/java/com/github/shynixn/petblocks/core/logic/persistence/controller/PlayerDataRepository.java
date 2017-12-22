@@ -1,11 +1,9 @@
-package com.github.shynixn.petblocks.bukkit.logic.persistence.controller;
+package com.github.shynixn.petblocks.core.logic.persistence.controller;
 
 import com.github.shynixn.petblocks.api.persistence.controller.PlayerMetaController;
 import com.github.shynixn.petblocks.api.persistence.entity.PlayerMeta;
-import com.github.shynixn.petblocks.bukkit.PetBlocksPlugin;
-import com.github.shynixn.petblocks.bukkit.lib.ExtensionHikariConnectionContext;
-import com.github.shynixn.petblocks.bukkit.logic.persistence.entity.PlayerData;
-import org.bukkit.entity.Player;
+import com.github.shynixn.petblocks.core.logic.business.helper.ExtensionHikariConnectionContext;
+import com.github.shynixn.petblocks.core.logic.persistence.entity.Identifiable;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -44,7 +42,7 @@ import java.util.logging.Level;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public class PlayerDataRepository extends DataBaseRepository<PlayerMeta> implements PlayerMetaController {
+public abstract class PlayerDataRepository extends DataBaseRepository<PlayerMeta> implements PlayerMetaController {
 
     /**
      * Initializes a new playerData repository.
@@ -53,19 +51,6 @@ public class PlayerDataRepository extends DataBaseRepository<PlayerMeta> impleme
      */
     public PlayerDataRepository(ExtensionHikariConnectionContext connectionContext) {
         super(connectionContext);
-    }
-
-    /**
-     * Creates a new playerData from the given player.
-     *
-     * @param player player
-     * @return playerData
-     */
-    @Override
-    public <T> PlayerMeta create(T player) {
-        if (player == null)
-            throw new IllegalArgumentException("Player cannot be null!");
-        return PlayerData.from((Player) player);
     }
 
     /**
@@ -98,7 +83,7 @@ public class PlayerDataRepository extends DataBaseRepository<PlayerMeta> impleme
                 return Optional.of(this.from(resultSet));
             }
         } catch (final SQLException e) {
-            PetBlocksPlugin.logger().log(Level.WARNING, "Database error occurred.", e);
+            this.getLogger().log(Level.WARNING, "Database error occurred.", e);
         }
         return Optional.empty();
     }
@@ -117,7 +102,7 @@ public class PlayerDataRepository extends DataBaseRepository<PlayerMeta> impleme
                 return Optional.of(this.from(resultSet));
             }
         } catch (final SQLException e) {
-            PetBlocksPlugin.logger().log(Level.WARNING, "Database error occurred.", e);
+            this.getLogger().log(Level.WARNING, "Database error occurred.", e);
         }
         return Optional.empty();
     }
@@ -145,11 +130,11 @@ public class PlayerDataRepository extends DataBaseRepository<PlayerMeta> impleme
              PreparedStatement preparedStatement = this.dbContext.executeStoredQuery("player/selectall", connection);
              ResultSet resultSet = preparedStatement.executeQuery()) {
             while (resultSet.next()) {
-                final PlayerData playerData = this.from(resultSet);
+                final PlayerMeta playerData = this.from(resultSet);
                 playerList.add(playerData);
             }
         } catch (final SQLException e) {
-            PetBlocksPlugin.logger().log(Level.WARNING, "Database error occurred.", e);
+            this.getLogger().log(Level.WARNING, "Database error occurred.", e);
         }
         return playerList;
     }
@@ -167,7 +152,7 @@ public class PlayerDataRepository extends DataBaseRepository<PlayerMeta> impleme
                     item.getName(),
                     item.getId());
         } catch (final SQLException e) {
-            PetBlocksPlugin.logger().log(Level.WARNING, "Database error occurred.", e);
+            this.getLogger().log(Level.WARNING, "Database error occurred.", e);
         }
     }
 
@@ -182,7 +167,7 @@ public class PlayerDataRepository extends DataBaseRepository<PlayerMeta> impleme
             this.dbContext.executeStoredUpdate("player/delete", connection,
                     item.getId());
         } catch (final SQLException e) {
-            PetBlocksPlugin.logger().log(Level.WARNING, "Database error occurred.", e);
+            this.getLogger().log(Level.WARNING, "Database error occurred.", e);
         }
     }
 
@@ -198,25 +183,10 @@ public class PlayerDataRepository extends DataBaseRepository<PlayerMeta> impleme
                 throw new IllegalArgumentException("UUId cannot be null!");
             final long id = this.dbContext.executeStoredInsert("player/insert", connection,
                     item.getName(), item.getUUID().toString());
-            ((PlayerData) item).setId(id);
+            ((Identifiable) item).setId(id);
         } catch (final SQLException e) {
-            PetBlocksPlugin.logger().log(Level.WARNING, "Database error occurred.", e);
+            this.getLogger().log(Level.WARNING, "Database error occurred.", e);
         }
-    }
-
-    /**
-     * Generates the entity from the given resultSet.
-     *
-     * @param resultSet resultSet
-     * @return entity
-     */
-    @Override
-    protected PlayerData from(ResultSet resultSet) throws SQLException {
-        final PlayerData playerStats = new PlayerData();
-        playerStats.setId(resultSet.getLong("id"));
-        playerStats.setName(resultSet.getString("name"));
-        playerStats.setUuid(UUID.fromString(resultSet.getString("uuid")));
-        return playerStats;
     }
 
     /**
@@ -230,9 +200,31 @@ public class PlayerDataRepository extends DataBaseRepository<PlayerMeta> impleme
             resultSet.next();
             return resultSet.getInt(1);
         } catch (final SQLException e) {
-            PetBlocksPlugin.logger().log(Level.WARNING, "Database error occurred.", e);
+            this.getLogger().log(Level.WARNING, "Database error occurred.", e);
         }
         return 0;
+    }
+
+    /**
+     * Creates a new playerMeta instance.
+     *
+     * @return playerMeta
+     */
+    protected abstract PlayerMeta create();
+
+    /**
+     * Generates the entity from the given resultSet.
+     *
+     * @param resultSet resultSet
+     * @return entity
+     */
+    @Override
+    protected PlayerMeta from(ResultSet resultSet) throws SQLException {
+        final PlayerMeta playerStats = this.create();
+        ((Identifiable) playerStats).setId(resultSet.getLong("id"));
+        playerStats.setName(resultSet.getString("name"));
+        playerStats.setUuid(UUID.fromString(resultSet.getString("uuid")));
+        return playerStats;
     }
 
     /**

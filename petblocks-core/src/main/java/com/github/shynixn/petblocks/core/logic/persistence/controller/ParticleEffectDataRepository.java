@@ -1,11 +1,9 @@
-package com.github.shynixn.petblocks.bukkit.logic.persistence.controller;
+package com.github.shynixn.petblocks.core.logic.persistence.controller;
 
 import com.github.shynixn.petblocks.api.persistence.controller.ParticleEffectMetaController;
 import com.github.shynixn.petblocks.api.persistence.entity.ParticleEffectMeta;
-import com.github.shynixn.petblocks.bukkit.PetBlocksPlugin;
-import com.github.shynixn.petblocks.bukkit.logic.persistence.entity.ParticleEffectData;
-import com.github.shynixn.petblocks.bukkit.lib.ExtensionHikariConnectionContext;
-import org.bukkit.Material;
+import com.github.shynixn.petblocks.core.logic.business.helper.ExtensionHikariConnectionContext;
+import com.github.shynixn.petblocks.core.logic.persistence.entity.Identifiable;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -43,7 +41,7 @@ import java.util.logging.Level;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public class ParticleEffectDataRepository extends DataBaseRepository<ParticleEffectMeta> implements ParticleEffectMetaController {
+public abstract class ParticleEffectDataRepository extends DataBaseRepository<ParticleEffectMeta> implements ParticleEffectMetaController {
 
     /**
      * Initializes a new particleEffect repository.
@@ -81,7 +79,7 @@ public class ParticleEffectDataRepository extends DataBaseRepository<ParticleEff
                 items.add(data);
             }
         } catch (final SQLException e) {
-            PetBlocksPlugin.logger().log(Level.WARNING, "Database error occurred.", e);
+            this.getLogger().log(Level.WARNING, "Database error occurred.", e);
         }
         return items;
     }
@@ -96,7 +94,7 @@ public class ParticleEffectDataRepository extends DataBaseRepository<ParticleEff
         try (Connection connection = this.dbContext.getConnection()) {
             String materialName = null;
             if (item.getMaterial() != null)
-                materialName = ((Material) item.getMaterial()).name();
+                materialName = item.getMaterialName();
             int data = -1;
             if (item.getData() != null)
                 data = item.getData();
@@ -111,18 +109,8 @@ public class ParticleEffectDataRepository extends DataBaseRepository<ParticleEff
                     data,
                     item.getId());
         } catch (final SQLException e) {
-            PetBlocksPlugin.logger().log(Level.WARNING, "Database error occurred.", e);
+            this.getLogger().log(Level.WARNING, "Database error occurred.", e);
         }
-    }
-
-    /**
-     * Creates a new particleEffectMeta.
-     *
-     * @return meta
-     */
-    @Override
-    public ParticleEffectMeta create() {
-        return new ParticleEffectData();
     }
 
     /**
@@ -140,7 +128,7 @@ public class ParticleEffectDataRepository extends DataBaseRepository<ParticleEff
                 return Optional.of(this.from(resultSet));
             }
         } catch (final SQLException e) {
-            PetBlocksPlugin.logger().log(Level.WARNING, "Database error occurred.", e);
+            this.getLogger().log(Level.WARNING, "Database error occurred.", e);
         }
         return Optional.empty();
     }
@@ -157,7 +145,7 @@ public class ParticleEffectDataRepository extends DataBaseRepository<ParticleEff
                 this.dbContext.executeStoredUpdate("particle/delete", connection,
                         item.getId());
             } catch (final SQLException e) {
-                PetBlocksPlugin.logger().log(Level.WARNING, "Database error occurred.", e);
+                this.getLogger().log(Level.WARNING, "Database error occurred.", e);
             }
         }
     }
@@ -172,7 +160,7 @@ public class ParticleEffectDataRepository extends DataBaseRepository<ParticleEff
         try (Connection connection = this.dbContext.getConnection()) {
             String materialName = null;
             if (item.getMaterial() != null)
-                materialName = ((Material) item.getMaterial()).name();
+                materialName = item.getMaterialName();
             final long id = this.dbContext.executeStoredInsert("particle/insert", connection,
                     item.getEffectName(),
                     item.getAmount(),
@@ -182,9 +170,9 @@ public class ParticleEffectDataRepository extends DataBaseRepository<ParticleEff
                     item.getOffsetZ(),
                     materialName,
                     item.getData());
-            ((ParticleEffectData) item).setId(id);
+            ((Identifiable) item).setId(id);
         } catch (final SQLException e) {
-            PetBlocksPlugin.logger().log(Level.WARNING, "Database error occurred.", e);
+            this.getLogger().log(Level.WARNING, "Database error occurred.", e);
         }
     }
 
@@ -199,7 +187,7 @@ public class ParticleEffectDataRepository extends DataBaseRepository<ParticleEff
             resultSet.next();
             return resultSet.getInt(1);
         } catch (final SQLException e) {
-            PetBlocksPlugin.logger().log(Level.WARNING, "Database error occurred.", e);
+            this.getLogger().log(Level.WARNING, "Database error occurred.", e);
         }
         return 0;
     }
@@ -212,8 +200,8 @@ public class ParticleEffectDataRepository extends DataBaseRepository<ParticleEff
      */
     @Override
     protected ParticleEffectMeta from(ResultSet resultSet) throws SQLException {
-        final ParticleEffectData particleEffectData = new ParticleEffectData();
-        particleEffectData.setId(resultSet.getLong("id"));
+        final ParticleEffectMeta particleEffectData = this.create();
+        ((Identifiable) particleEffectData).setId(resultSet.getLong("id"));
         particleEffectData.setEffectName(resultSet.getString("name"));
         particleEffectData.setAmount(resultSet.getInt("amount"));
         particleEffectData.setSpeed(resultSet.getDouble("speed"));
@@ -221,7 +209,7 @@ public class ParticleEffectDataRepository extends DataBaseRepository<ParticleEff
         particleEffectData.setOffsetY(resultSet.getDouble("y"));
         particleEffectData.setOffsetZ(resultSet.getDouble("z"));
         if (resultSet.getString("material") != null) {
-            particleEffectData.setMaterial(Material.getMaterial(resultSet.getString("material")).getId());
+            particleEffectData.setMaterial(resultSet.getString("material"));
         }
         if (resultSet.getInt("data") == -1) {
             particleEffectData.setData(null);
