@@ -15,6 +15,7 @@
         <module>petblocks-sponge-plugin</module>
         <module>petblocks-core</module>
         <module>petblocks-sponge-api</module>
+        <module>petblocks-universal-plugin</module>
     </modules>
     <version>6.4.2-SNAPSHOT</version>
     <packaging>pom</packaging>
