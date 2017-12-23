@@ -60,7 +60,7 @@ final class CustomGroundArmorstand extends EntityArmorStand implements PetBlock 
         else if (this.petMeta.getEngine().getEntityType().equalsIgnoreCase("ZOMBIE"))
             this.rabbit = new CustomZombie(this.owner, this);
         else
-            throw new RuntimeException("Cannot find engine!");
+             throw new RuntimeException("Cannot find engine!");
 
         this.pipeline = new Pipeline(this);
         this.spawn(location);
