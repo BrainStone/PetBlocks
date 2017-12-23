@@ -71,10 +71,6 @@ public class PetBlocksPlugin {
     @Inject()
     private Game game;
 
-    @Inject
-    private SpongeCostumeConfiguration costumeConfiguration;
-
-
     @Listener
     public void onEnable(GameInitializationEvent event) throws IOException {
         System.out.println("Enabled PetBlocks sponge.");
@@ -87,7 +83,6 @@ public class PetBlocksPlugin {
 
         config.reload();
 
-        costumeConfiguration.reload();
 
 
 

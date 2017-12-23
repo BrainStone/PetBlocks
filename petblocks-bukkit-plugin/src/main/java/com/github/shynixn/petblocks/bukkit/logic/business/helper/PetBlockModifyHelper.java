@@ -5,6 +5,7 @@ import com.github.shynixn.petblocks.api.business.entity.PetBlock;
 import com.github.shynixn.petblocks.api.persistence.entity.EngineContainer;
 import com.github.shynixn.petblocks.api.persistence.entity.ParticleEffectMeta;
 import com.github.shynixn.petblocks.api.persistence.entity.PetMeta;
+import com.github.shynixn.petblocks.bukkit.logic.business.configuration.Config;
 import com.github.shynixn.petblocks.core.logic.persistence.configuration.PetBlocksConfig;
 import com.github.shynixn.petblocks.bukkit.nms.v1_12_R1.MaterialCompatibility12;
 import org.bukkit.Bukkit;
@@ -103,7 +104,7 @@ public class PetBlockModifyHelper {
         if (engineContainer == null)
             return;
         petMeta.setEngine(engineContainer);
-        if (PetBlocksConfig.getInstance().isCopySkinEnabled()) {
+        if (Config.getInstance().isCopySkinEnabled()) {
             final GUIItemContainer container = engineContainer.getGUIItem();
             petMeta.setSkin(container.getItemId(), container.getItemDamage(), container.getSkin(), container.isItemUnbreakable());
         }
@@ -152,7 +153,7 @@ public class PetBlockModifyHelper {
     public static void setParticleEffect(PetMeta petMeta, PetBlock petBlock, GUIItemContainer container) {
         if (container == null)
             return;
-        final Optional<ParticleEffectMeta> transferOpt = PetBlocksConfig.getInstance().getParticleController().getFromItem(container);
+        final Optional<ParticleEffectMeta> transferOpt = Config.getInstance().getParticleController().getFromItem(container);
         if (!transferOpt.isPresent())
             return;
         final ParticleEffectMeta transfer = transferOpt.get();

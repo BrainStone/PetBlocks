@@ -13,7 +13,6 @@ public abstract class PetBlocksConfig implements IConfig {
     protected final EngineController engineController = Factory.createEngineController();
     private final OtherGUIItemsController guiItemsController = Factory.createGUIItemsController();
     private final ParticleController particleController = Factory.createParticleConfiguration();
-    private final CostumeController ordinaryCostumesController = Factory.createCostumesController("ordinary");
     private final CostumeController colorCostumesController = Factory.createCostumesController("color");
     private final CostumeController rareCostumesController = Factory.createCostumesController("rare");
     private final CostumeController minecraftHeadsCostumesController = Factory.createMinecraftHeadsCostumesController();
@@ -21,8 +20,9 @@ public abstract class PetBlocksConfig implements IConfig {
     /**
      * Reloads the config
      */
+    @Override
     public void reload() {
-        this.ordinaryCostumesController.reload();
+        this.getOrdinaryCostumesController().reload();
         this.colorCostumesController.reload();
         this.rareCostumesController.reload();
         this.minecraftHeadsCostumesController.reload();
@@ -43,9 +43,11 @@ public abstract class PetBlocksConfig implements IConfig {
         return this.engineController;
     }
 
-    public CostumeController getOrdinaryCostumesController() {
-        return this.ordinaryCostumesController;
-    }
+    /**
+     * Returns the ordinary costume controller.
+     * @return controller
+     */
+    public abstract CostumeController getOrdinaryCostumesController();
 
     public CostumeController getColorCostumesController() {
         return this.colorCostumesController;
@@ -60,7 +62,7 @@ public abstract class PetBlocksConfig implements IConfig {
     }
 
     public int getDefaultEngine() {
-        return getData("gui.settings.default-engine");
+        return this.getData("gui.settings.default-engine");
     }
 
     /**
@@ -69,7 +71,7 @@ public abstract class PetBlocksConfig implements IConfig {
      * @return copySkin
      */
     public boolean isCopySkinEnabled() {
-        return getData("gui.settings.copy-skin");
+        return this.getData("gui.settings.copy-skin");
     }
 
     /**
@@ -78,7 +80,7 @@ public abstract class PetBlocksConfig implements IConfig {
      * @return lore
      */
     boolean isLoreEnabled() {
-        return getData("gui.settings.lore");
+        return this.getData("gui.settings.lore");
     }
 
     /**
@@ -87,7 +89,7 @@ public abstract class PetBlocksConfig implements IConfig {
      * @return enabled
      */
     public boolean isEmptyClickBackEnabled() {
-        return getData("gui.settings.click-empty-slot-back");
+        return this.getData("gui.settings.click-empty-slot-back");
     }
 
     /**

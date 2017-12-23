@@ -10,7 +10,6 @@ import com.github.shynixn.petblocks.bukkit.logic.business.PetRunnable;
 import com.github.shynixn.petblocks.bukkit.logic.business.configuration.Config;
 import com.github.shynixn.petblocks.core.logic.persistence.configuration.ConfigPet;
 import com.github.shynixn.petblocks.bukkit.logic.business.PetBlockManager;
-import com.github.shynixn.petblocks.bukkit.lib.SimpleCommandExecutor;
 import com.github.shynixn.petblocks.bukkit.logic.business.helper.PetBlockModifyHelper;
 import org.bukkit.Material;
 import org.bukkit.configuration.MemorySection;
@@ -96,7 +95,7 @@ public final class PetDataCommandExecutor extends SimpleCommandExecutor.UnRegist
     private void renameNameCommand(Player player, String[] args) {
         try {
             final String message = this.mergeArgs(args, 1);
-            if (message.length() > ConfigPet.getInstance().getDesign_maxPetNameLength()) {
+            if (message.length() > Config.getInstance().pet().getDesign_maxPetNameLength()) {
                 player.sendMessage(Config.getInstance().getPrefix() + Config.getInstance().getNamingErrorMessage());
             } else {
                 this.providePetblock(player, (meta, petBlock) -> {

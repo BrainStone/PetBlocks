@@ -1,4 +1,7 @@
-package com.github.shynixn.petblocks.core.logic.business;
+package com.github.shynixn.petblocks.sponge.logic;
+
+import com.github.shynixn.petblocks.core.logic.persistence.configuration.CostumeConfiguration;
+import com.github.shynixn.petblocks.sponge.logic.business.configuration.SpongeCostumeConfiguration;
 
 /**
  * Created by Shynixn 2017.
@@ -27,5 +30,7 @@ package com.github.shynixn.petblocks.core.logic.business;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public class s {
+public class FactoryContainer {
+
+
 }

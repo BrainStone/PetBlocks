@@ -6,6 +6,7 @@ import com.github.shynixn.petblocks.api.business.entity.PetBlock;
 import com.github.shynixn.petblocks.api.business.entity.PetBlockPartEntity;
 import com.github.shynixn.petblocks.api.business.enumeration.RideType;
 import com.github.shynixn.petblocks.api.persistence.entity.PetMeta;
+import com.github.shynixn.petblocks.bukkit.logic.business.configuration.Config;
 import com.github.shynixn.petblocks.bukkit.logic.business.entity.Pipeline;
 import com.github.shynixn.petblocks.bukkit.nms.NMSRegistry;
 import com.github.shynixn.petblocks.bukkit.PetBlocksPlugin;
@@ -121,11 +122,11 @@ final class CustomGroundArmorstand extends EntityArmorStand implements PetBlock 
                     if (this.onGround && this.isJumping()) {
                         this.motY = 0.5D;
                     }
-                    this.P = (float) ConfigPet.getInstance().getModifier_petclimbing();
+                    this.P = (float) Config.getInstance().pet().getModifier_petclimbing();
                     this.aQ = (this.ck() * 0.1F);
                     if (!this.world.isClientSide) {
                         this.l(0.35F);
-                        super.g(sideMot * (float) ConfigPet.getInstance().getModifier_petriding(), forMot * (float) ConfigPet.getInstance().getModifier_petriding());
+                        super.g(sideMot * (float) Config.getInstance().pet().getModifier_petriding(), forMot * (float) Config.getInstance().pet().getModifier_petriding());
                     }
                     this.aE = this.aF;
                     final double d0 = this.locX - this.lastX;
@@ -176,10 +177,10 @@ final class CustomGroundArmorstand extends EntityArmorStand implements PetBlock 
                     }
                     if (this.hitflor) {
                         v.setY(0);
-                        l.add(v.multiply(2.25).multiply(ConfigPet.getInstance().getModifier_petriding()));
+                        l.add(v.multiply(2.25).multiply(Config.getInstance().pet().getModifier_petriding()));
                         this.setPosition(l.getX(), l.getY(), l.getZ());
                     } else {
-                        l.add(v.multiply(2.25).multiply(ConfigPet.getInstance().getModifier_petriding()));
+                        l.add(v.multiply(2.25).multiply(Config.getInstance().pet().getModifier_petriding()));
                         this.setPosition(l.getX(), l.getY(), l.getZ());
                     }
                     final Vec3D vec3d = new Vec3D(this.locX, this.locY, this.locZ);
@@ -188,7 +189,7 @@ final class CustomGroundArmorstand extends EntityArmorStand implements PetBlock 
                     if (movingobjectposition == null) {
                         this.bumper = l.toVector();
                     } else {
-                        if (this.bumper != null && ConfigPet.getInstance().isFollow_wallcolliding())
+                        if (this.bumper != null && Config.getInstance().pet().isFollow_wallcolliding())
                             this.setPosition(this.bumper.getX(), this.bumper.getY(), this.bumper.getZ());
                     }
                 }
@@ -225,7 +226,7 @@ final class CustomGroundArmorstand extends EntityArmorStand implements PetBlock 
             ((ArmorStand)this.getArmorStand()).setCustomName(this.petMeta.getPetDisplayName());
             ((ArmorStand)this.getArmorStand()).setRemoveWhenFarAway(false);
             ((LivingEntity) this.getEngineEntity()).setRemoveWhenFarAway(false);
-            this.health = ConfigPet.getInstance().getCombat_health();
+            this.health = Config.getInstance().pet().getCombat_health();
             if (this.petMeta == null)
                 return;
             PetBlockHelper.setItemConsideringAge(this);

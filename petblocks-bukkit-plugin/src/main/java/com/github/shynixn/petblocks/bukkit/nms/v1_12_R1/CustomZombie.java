@@ -3,6 +3,7 @@ package com.github.shynixn.petblocks.bukkit.nms.v1_12_R1;
 import com.github.shynixn.petblocks.api.business.entity.PetBlock;
 import com.github.shynixn.petblocks.api.business.entity.PetBlockPartEntity;
 import com.github.shynixn.petblocks.bukkit.PetBlocksPlugin;
+import com.github.shynixn.petblocks.bukkit.logic.business.configuration.Config;
 import com.github.shynixn.petblocks.core.logic.persistence.configuration.ConfigPet;
 import com.github.shynixn.petblocks.bukkit.nms.helper.PetBlockHelper;
 import com.google.common.collect.Sets;
@@ -44,12 +45,12 @@ public final class CustomZombie extends EntityZombie implements PetBlockPartEnti
             cField.set(this.targetSelector, Sets.newLinkedHashSet());
             this.goalSelector.a(0, new PathfinderGoalFloat(this));
             this.goalSelector.a(1, new OwnerPathfinder(this,petBlock));
-            this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.30000001192092896D * ConfigPet.getInstance().getModifier_petwalking());
+            this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.30000001192092896D * Config.getInstance().pet().getModifier_petwalking());
         } catch (final Exception exc) {
             PetBlocksPlugin.logger().log(Level.WARNING, "EntityNMS exception.", exc);
         }
         this.petBlock = petBlock;
-        this.P = (float) ConfigPet.getInstance().getModifier_petclimbing();
+        this.P = (float) Config.getInstance().pet().getModifier_petclimbing();
     }
 
     @Override

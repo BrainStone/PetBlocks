@@ -1,5 +1,6 @@
 package com.github.shynixn.petblocks.bukkit.logic.business.configuration;
 
+import com.github.shynixn.petblocks.api.persistence.controller.CostumeController;
 import com.github.shynixn.petblocks.api.persistence.entity.ParticleEffectMeta;
 import com.github.shynixn.petblocks.api.persistence.entity.PetMeta;
 import com.github.shynixn.petblocks.api.persistence.entity.SoundMeta;
@@ -77,6 +78,16 @@ public class Config extends PetBlocksConfig {
         }
         this.pet().reload();
         super.reload();
+    }
+
+    /**
+     * Returns the ordinary costume controller.
+     *
+     * @return controller
+     */
+    @Override
+    public CostumeController getOrdinaryCostumesController() {
+        return null;
     }
 
     /**

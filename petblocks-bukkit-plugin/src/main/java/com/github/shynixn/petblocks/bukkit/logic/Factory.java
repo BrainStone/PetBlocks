@@ -5,6 +5,13 @@ import com.github.shynixn.petblocks.api.persistence.controller.*;
 import com.github.shynixn.petblocks.bukkit.PetBlocksPlugin;
 import com.github.shynixn.petblocks.bukkit.logic.business.configuration.*;
 import com.github.shynixn.petblocks.bukkit.logic.business.controller.PetBlockRepository;
+import com.github.shynixn.petblocks.bukkit.logic.persistence.controller.BukkitParticleEffectDataRepository;
+import com.github.shynixn.petblocks.bukkit.logic.persistence.controller.BukkitPetDataRepository;
+import com.github.shynixn.petblocks.bukkit.logic.persistence.controller.BukkitPlayerDataRepository;
+import com.github.shynixn.petblocks.core.logic.persistence.configuration.CostumeConfiguration;
+import com.github.shynixn.petblocks.core.logic.persistence.configuration.EngineConfiguration;
+import com.github.shynixn.petblocks.core.logic.persistence.configuration.FixedItemConfiguration;
+import com.github.shynixn.petblocks.core.logic.persistence.configuration.ParticleConfiguration;
 import com.github.shynixn.petblocks.core.logic.persistence.controller.ParticleEffectDataRepository;
 import com.github.shynixn.petblocks.core.logic.persistence.controller.PetDataRepository;
 import com.github.shynixn.petblocks.core.logic.persistence.controller.PlayerDataRepository;
@@ -28,15 +35,15 @@ public class Factory {
     private static ExtensionHikariConnectionContext connectionContext;
 
     public static PlayerMetaController createPlayerDataController() {
-        return new PlayerDataRepository(connectionContext);
+        return new BukkitPlayerDataRepository(JavaPlugin.getPlugin(PetBlocksPlugin.class),connectionContext);
     }
 
     public static ParticleEffectMetaController createParticleEffectController() {
-        return new ParticleEffectDataRepository(connectionContext);
+        return new BukkitParticleEffectDataRepository(JavaPlugin.getPlugin(PetBlocksPlugin.class),connectionContext);
     }
 
     public static EngineController createEngineController() {
-        return new EngineConfiguration(JavaPlugin.getPlugin(PetBlocksPlugin.class));
+        return new BukkitEngineConfiguration(JavaPlugin.getPlugin(PetBlocksPlugin.class));
     }
 
     public static PetBlockController createPetBlockController() {
@@ -44,7 +51,7 @@ public class Factory {
     }
 
     public static CostumeController createCostumesController(String category) {
-        return new CostumeConfiguration(category, JavaPlugin.getPlugin(PetBlocksPlugin.class));
+        return new BukkitCostumeConfiguration(category, JavaPlugin.getPlugin(PetBlocksPlugin.class));
     }
 
     public static CostumeController createMinecraftHeadsCostumesController() {
@@ -52,15 +59,15 @@ public class Factory {
     }
 
     public static PetMetaController createPetDataController() {
-        return new PetDataRepository(connectionContext);
+        return new BukkitPetDataRepository(JavaPlugin.getPlugin(PetBlocksPlugin.class),connectionContext);
     }
 
     public static OtherGUIItemsController createGUIItemsController() {
-        return new FixedItemConfiguration(JavaPlugin.getPlugin(PetBlocksPlugin.class));
+        return new BukkitFixedItemConfiguration(JavaPlugin.getPlugin(PetBlocksPlugin.class));
     }
 
     public static ParticleController createParticleConfiguration() {
-        return new ParticleConfiguration(JavaPlugin.getPlugin(PetBlocksPlugin.class));
+        return new BukkitParticleConfiguration(JavaPlugin.getPlugin(PetBlocksPlugin.class));
     }
 
     public static void disable() {

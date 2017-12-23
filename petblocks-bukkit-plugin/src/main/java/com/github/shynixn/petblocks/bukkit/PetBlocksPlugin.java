@@ -3,12 +3,13 @@ package com.github.shynixn.petblocks.bukkit;
 import com.github.shynixn.petblocks.api.PetBlocksApi;
 import com.github.shynixn.petblocks.api.business.controller.PetBlockController;
 import com.github.shynixn.petblocks.api.persistence.controller.PetMetaController;
+import com.github.shynixn.petblocks.bukkit.logic.business.configuration.Config;
 import com.github.shynixn.petblocks.bukkit.nms.NMSRegistry;
 import com.github.shynixn.petblocks.bukkit.nms.VersionSupport;
 import com.github.shynixn.petblocks.bukkit.logic.business.PetBlockManager;
 import com.github.shynixn.petblocks.core.logic.persistence.configuration.PetBlocksConfig;
-import com.github.shynixn.petblocks.bukkit.lib.ReflectionUtils;
-import com.github.shynixn.petblocks.bukkit.lib.UpdateUtils;
+import com.github.shynixn.petblocks.core.logic.business.helper.ReflectionUtils;
+import com.github.shynixn.petblocks.bukkit.logic.business.helper.UpdateUtils;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -69,8 +70,8 @@ public final class PetBlocksPlugin extends JavaPlugin {
             Bukkit.getPluginManager().disablePlugin(this);
         } else {
             Bukkit.getServer().getConsoleSender().sendMessage(PREFIX_CONSOLE + ChatColor.GREEN + "Loading PetBlocks ...");
-            PetBlocksConfig.getInstance().reload();
-            if (PetBlocksConfig.getInstance().isMetricsEnabled()) {
+            Config.getInstance().reload();
+            if (Config.getInstance().isMetricsEnabled()) {
                 new Metrics(this);
             }
             this.getServer().getScheduler().runTaskAsynchronously(this, () -> {

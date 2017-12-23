@@ -5,8 +5,7 @@ import com.github.shynixn.petblocks.api.business.entity.PetBlock;
 import com.github.shynixn.petblocks.api.persistence.entity.EngineContainer;
 import com.github.shynixn.petblocks.api.persistence.entity.PetMeta;
 import com.github.shynixn.petblocks.bukkit.PetBlocksPlugin;
-import com.github.shynixn.petblocks.bukkit.lib.ChatBuilder;
-import com.github.shynixn.petblocks.bukkit.lib.SimpleCommandExecutor;
+import com.github.shynixn.petblocks.bukkit.logic.business.helper.ChatBuilder;
 import com.github.shynixn.petblocks.bukkit.logic.business.PetBlockManager;
 import com.github.shynixn.petblocks.bukkit.logic.business.PetRunnable;
 import com.github.shynixn.petblocks.bukkit.logic.business.configuration.Config;
@@ -398,7 +397,7 @@ public final class PetBlockCommandExecutor extends SimpleCommandExecutor.UnRegis
             }
             final String message = (String) mergedArgs[0];
             if (player != null) {
-                if (message.length() > ConfigPet.getInstance().getDesign_maxPetNameLength()) {
+                if (message.length() > Config.getInstance().pet().getDesign_maxPetNameLength()) {
                     commandSender.sendMessage(Config.getInstance().getPrefix() + Config.getInstance().getNamingErrorMessage());
 
                 } else {

@@ -5,8 +5,6 @@ import com.github.shynixn.petblocks.api.persistence.entity.ParticleEffectMeta;
 import com.github.shynixn.petblocks.api.persistence.entity.PetMeta;
 import com.github.shynixn.petblocks.api.persistence.entity.PlayerMeta;
 import com.github.shynixn.petblocks.bukkit.logic.business.configuration.Config;
-import com.github.shynixn.petblocks.core.logic.persistence.configuration.PetBlocksConfig;
-import com.github.shynixn.petblocks.core.logic.persistence.configuration.ConfigPet;
 import com.github.shynixn.petblocks.bukkit.logic.business.helper.PetBlockModifyHelper;
 import com.github.shynixn.petblocks.bukkit.logic.business.helper.SkinHelper;
 import com.github.shynixn.petblocks.bukkit.nms.v1_12_R1.MaterialCompatibility12;
@@ -79,11 +77,11 @@ public class PetData extends PersistenceObject implements PetMeta {
         super();
         this.petDisplayName = name.replace(":player", player.getName());
         this.playerInfo = PlayerData.from(player);
-        this.ageTicks = ConfigPet.getInstance().getAge_smallticks();
+        this.ageTicks = Config.getInstance().pet().getAge_smallticks();
         this.sounds = true;
         this.particleEffectBuilder = new ParticleEffectData();
         this.particleEffectBuilder.setEffectType(ParticleEffectMeta.ParticleEffectType.NONE);
-        this.engineContainer = PetBlocksConfig.getInstance().getEngineController().getById(PetBlocksConfig.getInstance().getDefaultEngine());
+        this.engineContainer = Config.getInstance().getEngineController().getById(Config.getInstance().getDefaultEngine());
         if (this.engineContainer == null) {
             throw new RuntimeException("Engine cannot be null!");
         }
@@ -424,8 +422,8 @@ public class PetData extends PersistenceObject implements PetMeta {
     public void setPetDisplayName(String name) {
         if (name == null)
             return;
-        if (Config.getInstance().getPetNameBlackList() != null) {
-            for (final String blackName : Config.getInstance().getPetNameBlackList()) {
+        if (Config.getInstance().pet().getPetNameBlackList() != null) {
+            for (final String blackName : Config.getInstance().pet().getPetNameBlackList()) {
                 if (name.toUpperCase().contains(blackName.toUpperCase())) {
                     throw new RuntimeException("Name is not valid!");
                 }

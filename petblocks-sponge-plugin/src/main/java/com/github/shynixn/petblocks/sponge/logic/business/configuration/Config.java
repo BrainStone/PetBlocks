@@ -1,8 +1,9 @@
 package com.github.shynixn.petblocks.sponge.logic.business.configuration;
 
-import com.github.shynixn.petblocks.api.business.entity.PetBlock;
+import com.github.shynixn.petblocks.api.persistence.controller.CostumeController;
 import com.github.shynixn.petblocks.core.logic.persistence.configuration.PetBlocksConfig;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
@@ -44,6 +45,7 @@ import java.util.regex.Pattern;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+@Singleton
 public class Config extends PetBlocksConfig {
 
     @Inject
@@ -57,6 +59,10 @@ public class Config extends PetBlocksConfig {
     private Logger logger;
 
     private ConfigurationNode node;
+
+    @Inject
+    private SpongeCostumeConfiguration spongeCostumeConfiguration;
+
 
     /**
      * Reloads the config
@@ -78,6 +84,17 @@ public class Config extends PetBlocksConfig {
         } catch (final IOException e) {
             this.logger.log(Level.WARNING, "Failed to reload config.yml.", e);
         }
+        super.reload();
+    }
+
+    /**
+     * Returns the ordinary costume controller.
+     *
+     * @return controller
+     */
+    @Override
+    public CostumeController getOrdinaryCostumesController() {
+        return this.spongeCostumeConfiguration;
     }
 
     /**
