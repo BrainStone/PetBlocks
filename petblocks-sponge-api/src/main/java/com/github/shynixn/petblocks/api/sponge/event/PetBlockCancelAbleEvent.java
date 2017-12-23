@@ -1,10 +1,10 @@
-package com.github.shynixn.petblocks.sponge.nms;
+package com.github.shynixn.petblocks.api.sponge.event;
 
 import com.github.shynixn.petblocks.api.business.entity.PetBlock;
-import com.github.shynixn.petblocks.api.persistence.entity.PetMeta;
-import org.spongepowered.api.world.Location;
-import org.spongepowered.api.world.World; /**
- * Created by Shynixn 2017.
+import org.spongepowered.api.event.Cancellable;
+
+/**
+ * PetBlock event which can be cancelled.
  * <p>
  * Version 1.1
  * <p>
@@ -30,10 +30,35 @@ import org.spongepowered.api.world.World; /**
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public class NMSRegistry {
-    public static String[] getWorldGuardRegionsFromLocation(Location location) {
+public class PetBlockCancelAbleEvent extends PetBlockEvent implements Cancellable {
+    private boolean isCanceled;
+
+    /**
+     * Initializes a new petblock event.
+     *
+     * @param petBlock petblock
+     */
+    public PetBlockCancelAbleEvent(PetBlock petBlock) {
+        super(petBlock);
     }
 
-    public static PetBlock createPetBlock(Location<World> location, PetMeta petMeta) {
+    /**
+     * Returns if the event is cancelled.
+     *
+     * @return isCancelled
+     */
+    @Override
+    public boolean isCancelled() {
+        return this.isCanceled;
+    }
+
+    /**
+     * Sets the event cancelled or not.
+     *
+     * @param cancel cancelled
+     */
+    @Override
+    public void setCancelled(boolean cancel) {
+        this.isCanceled = cancel;
     }
 }

@@ -1,10 +1,13 @@
-package com.github.shynixn.petblocks.sponge.nms;
+package com.github.shynixn.petblocks.api.sponge.event;
 
 import com.github.shynixn.petblocks.api.business.entity.PetBlock;
-import com.github.shynixn.petblocks.api.persistence.entity.PetMeta;
-import org.spongepowered.api.world.Location;
-import org.spongepowered.api.world.World; /**
- * Created by Shynixn 2017.
+import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.event.Event;
+import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.event.impl.AbstractEvent;
+
+/**
+ * Sub instance of all PetBlock events.
  * <p>
  * Version 1.1
  * <p>
@@ -30,10 +33,47 @@ import org.spongepowered.api.world.World; /**
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public class NMSRegistry {
-    public static String[] getWorldGuardRegionsFromLocation(Location location) {
+public class PetBlockEvent extends AbstractEvent implements Event {
+
+    private final PetBlock petBlock;
+
+    /**
+     * Initializes a new petblock event.
+     *
+     * @param petBlock petblock
+     */
+    public PetBlockEvent(PetBlock petBlock) {
+        super();
+        if (petBlock == null)
+            throw new IllegalArgumentException("PetBlock cannot be null!");
+        this.petBlock = petBlock;
     }
 
-    public static PetBlock createPetBlock(Location<World> location, PetMeta petMeta) {
+    /**
+     * Returns the petblock which triggered the event.
+     *
+     * @return petblock
+     */
+    public PetBlock getPetBlock() {
+        return this.petBlock;
+    }
+
+    /**
+     * Returns the player who owns the petblock.
+     *
+     * @return player
+     */
+    public Player getPlayer() {
+        return (Player) this.petBlock.getPlayer();
+    }
+
+    /**
+     * Unused sponge feature.
+     *
+     * @return cause
+     */
+    @Override
+    public Cause getCause() {
+        return Cause.builder().build();
     }
 }

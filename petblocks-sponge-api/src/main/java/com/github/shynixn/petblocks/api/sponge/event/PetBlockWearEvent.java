@@ -1,10 +1,9 @@
-package com.github.shynixn.petblocks.sponge.nms;
+package com.github.shynixn.petblocks.api.sponge.event;
 
 import com.github.shynixn.petblocks.api.business.entity.PetBlock;
-import com.github.shynixn.petblocks.api.persistence.entity.PetMeta;
-import org.spongepowered.api.world.Location;
-import org.spongepowered.api.world.World; /**
- * Created by Shynixn 2017.
+
+/**
+ * PetBlock event which gets called when a player starts wearing his pet.
  * <p>
  * Version 1.1
  * <p>
@@ -30,10 +29,26 @@ import org.spongepowered.api.world.World; /**
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public class NMSRegistry {
-    public static String[] getWorldGuardRegionsFromLocation(Location location) {
+public class PetBlockWearEvent extends PetBlockCancelAbleEvent {
+    private final boolean wearing;
+
+    /**
+     * Initializes a new petblock event.
+     *
+     * @param petBlock petblock
+     * @param wearing isWearing
+     */
+    public PetBlockWearEvent(PetBlock petBlock, boolean wearing) {
+        super(petBlock);
+        this.wearing = wearing;
     }
 
-    public static PetBlock createPetBlock(Location<World> location, PetMeta petMeta) {
+    /**
+     * Returns if the owner of the petblock is currently wearing his pet.
+     *
+     * @return isWearing
+     */
+    public boolean isWearing() {
+        return this.wearing;
     }
 }

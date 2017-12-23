@@ -1,10 +1,9 @@
-package com.github.shynixn.petblocks.sponge.nms;
+package com.github.shynixn.petblocks.api.sponge.event;
 
 import com.github.shynixn.petblocks.api.business.entity.PetBlock;
-import com.github.shynixn.petblocks.api.persistence.entity.PetMeta;
-import org.spongepowered.api.world.Location;
-import org.spongepowered.api.world.World; /**
- * Created by Shynixn 2017.
+
+/**
+ * PetBlock event which gets called when the pet gets shoot by the cannon item.
  * <p>
  * Version 1.1
  * <p>
@@ -30,10 +29,14 @@ import org.spongepowered.api.world.World; /**
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public class NMSRegistry {
-    public static String[] getWorldGuardRegionsFromLocation(Location location) {
-    }
+public class PetBlockCannonEvent extends PetBlockCancelAbleEvent {
 
-    public static PetBlock createPetBlock(Location<World> location, PetMeta petMeta) {
+    /**
+     * Initializes a new petblock event.
+     *
+     * @param petBlock petblock
+     */
+    public PetBlockCannonEvent(PetBlock petBlock) {
+        super(petBlock);
     }
 }

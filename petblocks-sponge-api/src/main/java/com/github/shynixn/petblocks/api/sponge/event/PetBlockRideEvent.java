@@ -1,10 +1,9 @@
-package com.github.shynixn.petblocks.sponge.nms;
+package com.github.shynixn.petblocks.api.sponge.event;
 
 import com.github.shynixn.petblocks.api.business.entity.PetBlock;
-import com.github.shynixn.petblocks.api.persistence.entity.PetMeta;
-import org.spongepowered.api.world.Location;
-import org.spongepowered.api.world.World; /**
- * Created by Shynixn 2017.
+
+/**
+ * PetBlock event which gets called when the player starts or stops riding his petblock.
  * <p>
  * Version 1.1
  * <p>
@@ -30,10 +29,27 @@ import org.spongepowered.api.world.World; /**
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public class NMSRegistry {
-    public static String[] getWorldGuardRegionsFromLocation(Location location) {
+public class PetBlockRideEvent extends PetBlockCancelAbleEvent {
+    private final boolean isRiding;
+
+    /**
+     * Initializes a new petblock event.
+     *
+     * @param petBlock petblock
+     * @param isRiding isRiding
+     */
+    public PetBlockRideEvent(PetBlock petBlock, boolean isRiding) {
+        super(petBlock);
+        this.isRiding = isRiding;
     }
 
-    public static PetBlock createPetBlock(Location<World> location, PetMeta petMeta) {
+    /**
+     * Returns if the owner is currently riding the petblock.
+     *
+     * @return isRiding
+     */
+    public boolean isRiding() {
+        return this.isRiding;
     }
 }
+
