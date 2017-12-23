@@ -48,7 +48,7 @@ import java.util.logging.Level;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public class Config extends PetBlocksConfig {
+public class Config extends PetBlocksConfig<String> {
     private Plugin plugin;
 
     private static final Config config = new Config();
@@ -88,15 +88,6 @@ public class Config extends PetBlocksConfig {
     @Override
     public CostumeController getOrdinaryCostumesController() {
         return null;
-    }
-
-    /**
-     * Returns the pet config.
-     *
-     * @return pet
-     */
-    public ConfigPet pet() {
-        return this.configPet;
     }
 
     /**

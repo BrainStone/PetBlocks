@@ -31,6 +31,15 @@ public abstract class PetBlocksConfig<T> implements IConfig {
         this.engineController.reload();*/
     }
 
+    /**
+     * Returns the pet config.
+     *
+     * @return pet
+     */
+    public ConfigPet pet() {
+        return null;
+    }
+
     public ParticleController getParticleController() {
         return this.particleController;
     }

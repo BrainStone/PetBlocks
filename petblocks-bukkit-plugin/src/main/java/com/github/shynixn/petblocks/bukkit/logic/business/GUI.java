@@ -6,7 +6,7 @@ import com.github.shynixn.petblocks.api.business.enumeration.Permission;
 import com.github.shynixn.petblocks.api.persistence.entity.PetMeta;
 import com.github.shynixn.petblocks.bukkit.PetBlocksPlugin;
 import com.github.shynixn.petblocks.bukkit.logic.business.configuration.Config;
-import com.github.shynixn.petblocks.bukkit.logic.business.entity.GuiPageContainer;
+import com.github.shynixn.petblocks.core.logic.business.entity.GuiPageContainer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;

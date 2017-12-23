@@ -1,23 +1,26 @@
-package com.github.shynixn.petblocks.bukkit.logic.persistence.entity;
+package com.github.shynixn.petblocks.sponge.logic.persistence.entity;
 
 import com.github.shynixn.petblocks.api.persistence.entity.EngineContainer;
 import com.github.shynixn.petblocks.api.persistence.entity.ParticleEffectMeta;
 import com.github.shynixn.petblocks.api.persistence.entity.PetMeta;
 import com.github.shynixn.petblocks.api.persistence.entity.PlayerMeta;
-import com.github.shynixn.petblocks.bukkit.logic.business.configuration.Config;
-import com.github.shynixn.petblocks.bukkit.logic.business.helper.PetBlockModifyHelper;
-import com.github.shynixn.petblocks.bukkit.logic.business.helper.SkinHelper;
-import com.github.shynixn.petblocks.bukkit.nms.v1_12_R1.MaterialCompatibility12;
 import com.github.shynixn.petblocks.core.logic.persistence.entity.PersistenceObject;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.SkullMeta;
+import com.github.shynixn.petblocks.sponge.logic.business.configuration.Config;
+import com.github.shynixn.petblocks.sponge.logic.business.helper.CompatibilityItemType;
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.data.key.Keys;
+import org.spongepowered.api.data.manipulator.mutable.RepresentedPlayerData;
+import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.item.ItemType;
+import org.spongepowered.api.item.inventory.ItemStack;
+import org.spongepowered.api.profile.GameProfile;
+import org.spongepowered.api.profile.property.ProfileProperty;
+import org.spongepowered.api.text.serializer.TextSerializers;
+import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Implementation of the petMeta interface which is persistence able to the database.
@@ -46,7 +49,7 @@ import java.util.Map;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public class PetData extends PersistenceObject implements PetMeta {
+public class SpongePetData extends PersistenceObject implements PetMeta {
 
     private String petDisplayName;
 
@@ -74,13 +77,13 @@ public class PetData extends PersistenceObject implements PetMeta {
      * @param player player
      * @param name   nameOfThePet
      */
-    public PetData(Player player, String name) {
+    public SpongePetData(Player player, String name) {
         super();
         this.petDisplayName = name.replace(":player", player.getName());
-        this.playerInfo = PlayerData.from(player);
+        this.playerInfo = SpongePlayerData.from(player);
         this.ageTicks = Config.getInstance().pet().getAge_smallticks();
         this.sounds = true;
-        this.particleEffectBuilder = new ParticleEffectData();
+        this.particleEffectBuilder = new SpongeParticleEffectMeta();
         this.particleEffectBuilder.setEffectType(ParticleEffectMeta.ParticleEffectType.NONE);
         this.engineContainer = Config.getInstance().getEngineController().getById(Config.getInstance().getDefaultEngine());
         if (this.engineContainer == null) {
@@ -91,7 +94,7 @@ public class PetData extends PersistenceObject implements PetMeta {
     /**
      * Initializes a new petData.
      */
-    public PetData() {
+    public SpongePetData() {
         super();
     }
 
@@ -209,7 +212,7 @@ public class PetData extends PersistenceObject implements PetMeta {
      */
     @Override
     public String getItemName() {
-        return MaterialCompatibility12.getMaterialFromId(this.id).name();
+        return CompatibilityItemType.getFromId(this.id).getMinecraftId();
     }
 
     /**
@@ -370,12 +373,12 @@ public class PetData extends PersistenceObject implements PetMeta {
                 s = "http://" + s;
             }
         }
-        if (material instanceof Integer) {
-            this.id = (int) material;
-        } else if (material instanceof Material) {
-            this.id = MaterialCompatibility12.getIdFromMaterial((Material) material);
-        } else if (material instanceof String) {
-            this.id = MaterialCompatibility12.getIdFromMaterial(Material.getMaterial((String) material));
+        if (material != null && material instanceof Integer) {
+            this.id = (Integer) material;
+        } else if (material != null && material instanceof String) {
+            this.id = CompatibilityItemType.getFromName((String) material).getId();
+        } else if (material != null && material instanceof ItemType) {
+            this.id = CompatibilityItemType.getFromItemType((ItemType) material).getId();
         }
         this.damage = damage;
         this.skin = s;
@@ -389,28 +392,26 @@ public class PetData extends PersistenceObject implements PetMeta {
      */
     @Override
     public Object getHeadItemStack() {
-        ItemStack itemStack;
+        final CompatibilityItemType itemType = CompatibilityItemType.getFromId(this.getItemId());
+        final ItemStack itemStack = ItemStack.builder().quantity(1)
+                .itemType(itemType.getItemType())
+                .add(Keys.ITEM_DURABILITY, this.getItemDamage())
+                .build();
         if (this.getSkin() != null) {
-            if (this.getSkin().contains("textures.minecraft")) {
-                itemStack = new ItemStack(MaterialCompatibility12.getMaterialFromId(this.getItemId()), 1, (short) this.getItemDamage());
-                SkinHelper.setItemStackSkin(itemStack, this.getSkin());
+            final GameProfile gameProfile;
+            if (this.getSkin().contains("textures.minecraft.net")) {
+                final String skinUrl = "http://" + this.getSkin();
+                gameProfile = GameProfile.of(UUID.randomUUID(), null);
+                gameProfile.addProperty("textures", ProfileProperty.of("textures", Base64Coder.encodeString("{textures:{SKIN:{url:\"" + skinUrl + "\"}}}")));
             } else {
-                itemStack = new ItemStack(MaterialCompatibility12.getMaterialFromId(this.getItemId()), 1, (short) this.getItemDamage());
-                final ItemMeta meta = itemStack.getItemMeta();
-                if (meta instanceof SkullMeta) {
-                    ((SkullMeta) meta).setOwner(this.skin);
-                }
-                itemStack.setItemMeta(meta);
+                gameProfile = GameProfile.of(null, this.getSkin());
             }
-        } else {
-            itemStack = new ItemStack(MaterialCompatibility12.getMaterialFromId(this.getItemId()), 1, (short) this.getItemDamage());
+            final RepresentedPlayerData skinData = Sponge.getGame().getDataManager().getManipulatorBuilder(RepresentedPlayerData.class).get().create();
+            skinData.set(Keys.REPRESENTED_PLAYER, gameProfile);
+            itemStack.offer(skinData);
         }
-        final ItemMeta meta = itemStack.getItemMeta();
-        meta.setDisplayName(this.petDisplayName);
-        itemStack.setItemMeta(meta);
-        final Map<String, Object> data = new HashMap<>();
-        data.put("Unbreakable", this.isItemStackUnbreakable());
-        itemStack = PetBlockModifyHelper.setItemStackNBTTag(itemStack, data);
+        itemStack.offer(Keys.UNBREAKABLE, this.isItemUnbreakable());
+        itemStack.offer(Keys.DISPLAY_NAME, TextSerializers.LEGACY_FORMATTING_CODE.deserialize(getItemName()));
         return itemStack;
     }
 
@@ -430,7 +431,7 @@ public class PetData extends PersistenceObject implements PetMeta {
                 }
             }
         }
-        this.petDisplayName = ChatColor.translateAlternateColorCodes('&', name);
+        this.petDisplayName = name;
     }
 
     /**

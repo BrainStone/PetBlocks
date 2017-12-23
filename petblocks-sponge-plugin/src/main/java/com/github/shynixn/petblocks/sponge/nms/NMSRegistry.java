@@ -32,8 +32,10 @@ import org.spongepowered.api.world.World; /**
  */
 public class NMSRegistry {
     public static String[] getWorldGuardRegionsFromLocation(Location location) {
+        return null;
     }
 
     public static PetBlock createPetBlock(Location<World> location, PetMeta petMeta) {
+        return null;
     }
 }

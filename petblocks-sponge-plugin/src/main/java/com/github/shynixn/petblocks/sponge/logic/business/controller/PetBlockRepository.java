@@ -3,7 +3,9 @@ package com.github.shynixn.petblocks.sponge.logic.business.controller;
 import com.github.shynixn.petblocks.api.business.controller.PetBlockController;
 import com.github.shynixn.petblocks.api.business.entity.PetBlock;
 import com.github.shynixn.petblocks.api.persistence.entity.PetMeta;
+import com.github.shynixn.petblocks.api.sponge.event.PetBlockDeathEvent;
 import com.github.shynixn.petblocks.sponge.nms.NMSRegistry;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 
 import java.util.*;
@@ -49,9 +51,9 @@ public final class PetBlockRepository implements PetBlockController {
      */
     @Override
     public PetBlock create(Object player, PetMeta petMeta) {
-        if(player == null)
+        if (player == null)
             throw new IllegalArgumentException("Player cannot be null!");
-        if(petMeta == null)
+        if (petMeta == null)
             throw new IllegalArgumentException("PetMeta cannot be null!");
         final Player mPlayer = (Player) player;
         return NMSRegistry.createPetBlock(mPlayer.getLocation(), petMeta);
@@ -80,7 +82,7 @@ public final class PetBlockRepository implements PetBlockController {
      */
     @Override
     public Optional<PetBlock> getFromPlayer(Object player) {
-        if(player == null)
+        if (player == null)
             throw new IllegalArgumentException("Player cannot be null!");
         final Player mPlayer = (Player) player;
         if (this.petblocks.containsKey(mPlayer)) {
@@ -96,7 +98,7 @@ public final class PetBlockRepository implements PetBlockController {
      */
     @Override
     public void removeByPlayer(Object player) {
-        if(player == null)
+        if (player == null)
             throw new IllegalArgumentException("Player cannot be null!");
         this.remove(this.getByPlayer(player));
     }
@@ -108,7 +110,7 @@ public final class PetBlockRepository implements PetBlockController {
      */
     @Override
     public void store(PetBlock item) {
-        if(item == null)
+        if (item == null)
             throw new IllegalArgumentException("Item cannot be null!");
         final Player mPlayer = (Player) item.getPlayer();
         if (!this.petblocks.containsKey(mPlayer)) {
@@ -128,8 +130,8 @@ public final class PetBlockRepository implements PetBlockController {
         final Player player = (Player) item.getPlayer();
         if (this.petblocks.containsKey(player)) {
             final PetBlockDeathEvent event = new PetBlockDeathEvent(this.petblocks.get(player));
-            Bukkit.getPluginManager().callEvent(event);
-            if (!event.isCanceled()) {
+            Sponge.getEventManager().post(event);
+            if (!event.isCancelled()) {
                 this.petblocks.get(player).remove();
                 this.petblocks.remove(player);
             }

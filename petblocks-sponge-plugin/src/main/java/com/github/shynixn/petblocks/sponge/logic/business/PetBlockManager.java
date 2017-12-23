@@ -1,20 +1,15 @@
-package com.github.shynixn.petblocks.bukkit.logic.business;
+package com.github.shynixn.petblocks.sponge.logic.business;
 
 import com.github.shynixn.petblocks.api.business.controller.PetBlockController;
 import com.github.shynixn.petblocks.api.persistence.controller.PetMetaController;
-import com.github.shynixn.petblocks.bukkit.PetBlocksPlugin;
-import com.github.shynixn.petblocks.bukkit.logic.Factory;
-import com.github.shynixn.petblocks.bukkit.logic.business.commandexecutor.PetBlockCommandExecutor;
-import com.github.shynixn.petblocks.bukkit.logic.business.commandexecutor.PetBlockReloadCommandExecutor;
-import com.github.shynixn.petblocks.bukkit.logic.business.commandexecutor.PetDataCommandExecutor;
 import com.github.shynixn.petblocks.core.logic.business.entity.GuiPageContainer;
-import com.github.shynixn.petblocks.bukkit.logic.business.filter.PetBlockFilter;
-import com.github.shynixn.petblocks.bukkit.logic.business.listener.PetBlockListener;
-import com.github.shynixn.petblocks.bukkit.nms.NMSRegistry;
-import com.github.shynixn.petblocks.bukkit.logic.business.listener.PetDataListener;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.plugin.Plugin;
+import com.github.shynixn.petblocks.sponge.logic.business.controller.PetBlockRepository;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.item.inventory.Inventory;
+import org.spongepowered.api.plugin.Plugin;
+import org.spongepowered.api.plugin.PluginContainer;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -51,6 +46,7 @@ import java.util.logging.Level;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+@Singleton
 public class PetBlockManager implements AutoCloseable {
 
     public final Set<Player> carryingPet = new HashSet<>();
@@ -58,16 +54,19 @@ public class PetBlockManager implements AutoCloseable {
     public final Set<Player> headDatabasePlayers = new HashSet<>();
     public final Map<Player, Inventory> inventories = new HashMap<>();
     public final Map<Player, GuiPageContainer> pages = new HashMap<>();
-    public GUI gui;
+    //public GUI gui;
 
-    private PetBlockFilter filter;
-    private final PetBlockController petBlockController;
-    private final PetMetaController petMetaController;
+    @Inject
+    private PluginContainer plugin;
 
-    public PetBlockManager(Plugin plugin) {
+    @Inject
+    private PetBlockRepository petBlockController;
+
+  /*  @Inject
+    private PetBlock petMetaController;
+
+    public PetBlockManager() {
         super();
-
-        Factory.initialize(plugin);
         this.petBlockController = Factory.createPetBlockController();
         this.petMetaController = Factory.createPetDataController();
         try {
@@ -81,14 +80,14 @@ public class PetBlockManager implements AutoCloseable {
         } catch (final Exception e) {
             PetBlocksPlugin.logger().log(Level.WARNING, "Failed to initialize petblockmanager.", e);
         }
-    }
+    }*/
 
     public PetBlockController getPetBlockController() {
         return this.petBlockController;
     }
 
     public PetMetaController getPetMetaController() {
-        return this.petMetaController;
+        return null; //this.petMetaController;
     }
 
     /**
@@ -102,7 +101,7 @@ public class PetBlockManager implements AutoCloseable {
      */
     @Override
     public void close() throws Exception {
-        for (final Player player : this.carryingPet) {
+      /*  for (final Player player : this.carryingPet) {
             NMSRegistry.setItemInHand19(player, null, true);
         }
         this.timeBlocked.clear();
@@ -112,6 +111,6 @@ public class PetBlockManager implements AutoCloseable {
         this.petBlockController.close();
         this.petMetaController.close();
         this.filter.close();
-        this.carryingPet.clear();
+        this.carryingPet.clear();*/
     }
 }

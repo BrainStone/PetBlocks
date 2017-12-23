@@ -1,6 +1,7 @@
 package com.github.shynixn.petblocks.sponge.logic.business.helper;
 
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.item.ItemType;
 
 public enum CompatibilityItemType {
@@ -483,6 +484,28 @@ public enum CompatibilityItemType {
 
     public ItemType getItemType() {
         return Sponge.getGame().getRegistry().getType(ItemType.class, this.getMinecraftId()).get();
+    }
+
+    public BlockType getBlockType() {
+        return Sponge.getGame().getRegistry().getType(BlockType.class, this.getMinecraftId()).get();
+    }
+
+    public static CompatibilityItemType getFromName(String name) {
+        for (final CompatibilityItemType compatibilityItemType : values()) {
+            if (compatibilityItemType.name().equalsIgnoreCase(name)) {
+                return compatibilityItemType;
+            }
+        }
+        return null;
+    }
+
+    public static CompatibilityItemType getFromItemType(ItemType itemType) {
+        for (final CompatibilityItemType compatibilityItemType : values()) {
+            if (itemType.getId().equalsIgnoreCase(compatibilityItemType.minecraftId)) {
+                return compatibilityItemType;
+            }
+        }
+        return null;
     }
 
     public static CompatibilityItemType getFromId(int id) {

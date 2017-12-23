@@ -1,12 +1,22 @@
 package com.github.shynixn.petblocks.sponge;
 
+import com.github.shynixn.petblocks.api.persistence.entity.ParticleEffectMeta;
 import com.github.shynixn.petblocks.sponge.logic.business.commandexecutor.PetBlockReloadCommandExecutor;
 import com.github.shynixn.petblocks.sponge.logic.business.configuration.Config;
 import com.github.shynixn.petblocks.sponge.logic.business.helper.CompatibilityItemType;
+import com.github.shynixn.petblocks.sponge.logic.persistence.entity.SoundBuilder;
+import com.github.shynixn.petblocks.sponge.logic.persistence.entity.SpongeLocationBuilder;
+import com.github.shynixn.petblocks.sponge.logic.persistence.entity.SpongeParticleEffectMeta;
+import com.google.common.reflect.TypeToken;
 import com.google.inject.Inject;
+import ninja.leaping.configurate.objectmapping.serialize.TypeSerializers;
+import org.apache.commons.io.FileUtils;
 import org.spongepowered.api.Game;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.asset.AssetManager;
 import org.spongepowered.api.config.ConfigDir;
+import org.spongepowered.api.effect.particle.ParticleType;
+import org.spongepowered.api.effect.particle.ParticleTypes;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.GameReloadEvent;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
@@ -16,6 +26,7 @@ import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.nio.file.Path;
 import java.util.Optional;
 import java.util.logging.Logger;
@@ -78,6 +89,11 @@ public class PetBlocksPlugin {
     public void onEnable(GameInitializationEvent event) throws IOException {
         System.out.println("Enabled PetBlocks sponge.");
 
+        TypeSerializers.getDefaultSerializers().registerType(TypeToken.of(SpongeParticleEffectMeta.class), new SpongeParticleEffectMeta.ParticleEffectSerializer());
+        TypeSerializers.getDefaultSerializers().registerType(TypeToken.of(SoundBuilder.class), new SoundBuilder.SoundBuilderSerializer());
+        TypeSerializers.getDefaultSerializers().registerType(TypeToken.of(SpongeLocationBuilder.class), new SpongeLocationBuilder.LocationBuilderSerializer());
+
+
     }
 
     @Listener
@@ -90,8 +106,21 @@ public class PetBlocksPlugin {
 
         this.config.reload();
 
-        this.reloadCommandExecutor.register("petblockreload", "Reloads the petblock configuration.", "petblocks.reload", "You don't have permission.");
+     //   this.reloadCommandExecutor.register("petblockreload", "Reloads the petblock configuration.", "petblocks.reload", "You don't have permission.");
     }
+
+    public static void main(String[] args)
+    {
+        for(ParticleEffectMeta.ParticleEffectType particleEffectType : ParticleEffectMeta.ParticleEffectType.values())
+        {
+           ParticleType type =  Sponge.getGame().getRegistry().getType(ParticleType.class, particleEffectType.getSimpleName()).get();
+            System.out.println("FOUND  " + type);
+        }
+
+
+
+    }
+
 
     public static Logger logger() {
         return logger();

@@ -1,4 +1,4 @@
-package com.github.shynixn.petblocks.bukkit.logic.business.entity;
+package com.github.shynixn.petblocks.core.logic.business.entity;
 
 import com.github.shynixn.petblocks.api.business.enumeration.GUIPage;
 

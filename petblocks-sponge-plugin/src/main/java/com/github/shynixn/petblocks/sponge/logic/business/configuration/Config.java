@@ -79,6 +79,8 @@ public class Config extends PetBlocksConfig<Text> {
         instance = this;
     }
 
+
+
     /**
      * Reloads the config
      */

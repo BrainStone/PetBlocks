@@ -1,7 +1,6 @@
-package com.github.shynixn.petblocks.bukkit.logic.persistence.entity;
+package com.github.shynixn.petblocks.core.logic.persistence.entity;
 
 import com.github.shynixn.petblocks.api.persistence.entity.Persistenceable;
-import com.github.shynixn.petblocks.core.logic.persistence.entity.Identifiable;
 
 public class PersistenceObject implements Persistenceable, Identifiable {
     long id;
