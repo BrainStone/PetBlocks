@@ -9,7 +9,7 @@ import com.github.shynixn.petblocks.core.logic.persistence.entity.IConfig;
 
 import java.util.List;
 
-public abstract class PetBlocksConfig implements IConfig {
+public abstract class PetBlocksConfig<T> implements IConfig {
     protected final EngineController engineController = Factory.createEngineController();
     private final OtherGUIItemsController guiItemsController = Factory.createGUIItemsController();
     private final ParticleController particleController = Factory.createParticleConfiguration();
@@ -117,7 +117,7 @@ public abstract class PetBlocksConfig implements IConfig {
         return this.getData("gui.settings.title");
     }
 
-    public String getPrefix() {
+    public T getPrefix() {
         return this.getData("messages.prefix");
     }
 

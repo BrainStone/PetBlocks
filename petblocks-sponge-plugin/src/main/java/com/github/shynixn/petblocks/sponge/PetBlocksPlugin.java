@@ -1,5 +1,6 @@
 package com.github.shynixn.petblocks.sponge;
 
+import com.github.shynixn.petblocks.sponge.logic.business.commandexecutor.PetBlockReloadCommandExecutor;
 import com.github.shynixn.petblocks.sponge.logic.business.configuration.Config;
 import com.github.shynixn.petblocks.sponge.logic.business.helper.CompatibilityItemType;
 import com.google.inject.Inject;
@@ -67,8 +68,11 @@ public class PetBlocksPlugin {
     @Inject
     private Config config;
 
-    @Inject()
+    @Inject
     private Game game;
+
+    @Inject
+    private PetBlockReloadCommandExecutor reloadCommandExecutor;
 
     @Listener
     public void onEnable(GameInitializationEvent event) throws IOException {
@@ -76,33 +80,17 @@ public class PetBlocksPlugin {
 
     }
 
-
     @Listener
     public void onReload(GameReloadEvent event) throws IOException {
         System.out.println("Reloadinng...");
 
-
-       Optional<ItemType> type = game.getRegistry().getType(ItemType.class, CompatibilityItemType.REDSTONE.getMinecraftId());
+        Optional<ItemType> type = this.game.getRegistry().getType(ItemType.class, CompatibilityItemType.REDSTONE.getMinecraftId());
 
         System.out.println("TYPE: " + type.get().getName());
 
+        this.config.reload();
 
-
-
-
-
-
-
-
-        config.reload();
-
-
-
-
-
-
-
-
+        this.reloadCommandExecutor.register("petblockreload", "Reloads the petblock configuration.", "petblocks.reload", "You don't have permission.");
     }
 
     public static Logger logger() {

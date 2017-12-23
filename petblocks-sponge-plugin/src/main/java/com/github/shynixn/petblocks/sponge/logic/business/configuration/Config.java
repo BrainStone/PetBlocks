@@ -9,6 +9,7 @@ import ninja.leaping.configurate.loader.ConfigurationLoader;
 import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
 import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.plugin.PluginContainer;
+import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.serializer.TextSerializers;
 
 import java.io.IOException;
@@ -46,7 +47,7 @@ import java.util.regex.Pattern;
  * SOFTWARE.
  */
 @Singleton
-public class Config extends PetBlocksConfig {
+public class Config extends PetBlocksConfig<Text> {
 
     private static Config instance;
 
