@@ -5,10 +5,11 @@ import com.github.shynixn.petblocks.api.persistence.controller.EngineController;
 import com.github.shynixn.petblocks.api.persistence.controller.OtherGUIItemsController;
 import com.github.shynixn.petblocks.api.persistence.controller.ParticleController;
 import com.github.shynixn.petblocks.core.logic.Factory;
+import com.github.shynixn.petblocks.core.logic.persistence.entity.IConfig;
 
 import java.util.List;
 
-public abstract class PetBlocksConfig implements IConfig{
+public abstract class PetBlocksConfig implements IConfig {
     protected final EngineController engineController = Factory.createEngineController();
     private final OtherGUIItemsController guiItemsController = Factory.createGUIItemsController();
     private final ParticleController particleController = Factory.createParticleConfiguration();

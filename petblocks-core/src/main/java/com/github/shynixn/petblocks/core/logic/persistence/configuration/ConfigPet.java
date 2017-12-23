@@ -1,5 +1,7 @@
 package com.github.shynixn.petblocks.core.logic.persistence.configuration;
 
+import com.github.shynixn.petblocks.core.logic.persistence.entity.IConfig;
+
 import java.util.List;
 
 /**

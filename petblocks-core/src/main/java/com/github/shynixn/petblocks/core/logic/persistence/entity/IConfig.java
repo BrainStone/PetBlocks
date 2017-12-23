@@ -1,4 +1,4 @@
-package com.github.shynixn.petblocks.core.logic.persistence.configuration;
+package com.github.shynixn.petblocks.core.logic.persistence.entity;
 
 /**
  * Created by Shynixn 2017.
