@@ -1,7 +1,7 @@
 package com.github.shynixn.petblocks.bukkit.logic.business.configuration;
 
 import com.github.shynixn.petblocks.api.business.entity.GUIItemContainer;
-import com.github.shynixn.petblocks.bukkit.logic.business.entity.ItemContainer;
+import com.github.shynixn.petblocks.bukkit.logic.business.entity.BukkitItemContainer;
 import com.github.shynixn.petblocks.core.logic.persistence.configuration.CostumeConfiguration;
 import org.bukkit.configuration.MemorySection;
 import org.bukkit.plugin.Plugin;
@@ -62,7 +62,7 @@ public class BukkitCostumeConfiguration extends CostumeConfiguration {
         final Map<String, Object> data = ((MemorySection) this.plugin.getConfig().get("wardrobe." + this.costumeCategory)).getValues(false);
         for (final String key : data.keySet()) {
             try {
-                final GUIItemContainer container = new ItemContainer(Integer.parseInt(key), ((MemorySection) data.get(key)).getValues(true));
+                final GUIItemContainer container = new BukkitItemContainer(Integer.parseInt(key), ((MemorySection) data.get(key)).getValues(true));
                 this.items.add(container);
             } catch (final Exception e) {
                 this.plugin.getLogger().log(Level.WARNING, "Failed to load guiItem " + this.costumeCategory + '.' + key + '.');

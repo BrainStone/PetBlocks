@@ -48,6 +48,8 @@ import java.util.regex.Pattern;
 @Singleton
 public class Config extends PetBlocksConfig {
 
+    private static Config instance;
+
     @Inject
     @ConfigDir(sharedRoot = false)
     private Path privateConfigDir;
@@ -63,6 +65,14 @@ public class Config extends PetBlocksConfig {
     @Inject
     private SpongeCostumeConfiguration spongeCostumeConfiguration;
 
+    @Deprecated
+    public static Config getInstance() {
+        return instance;
+    }
+
+    public Config() {
+        instance = this;
+    }
 
     /**
      * Reloads the config

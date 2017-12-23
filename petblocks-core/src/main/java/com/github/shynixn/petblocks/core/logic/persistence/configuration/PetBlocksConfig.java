@@ -23,12 +23,12 @@ public abstract class PetBlocksConfig implements IConfig {
     @Override
     public void reload() {
         this.getOrdinaryCostumesController().reload();
-        this.colorCostumesController.reload();
+     /*   this.colorCostumesController.reload();
         this.rareCostumesController.reload();
         this.minecraftHeadsCostumesController.reload();
         this.guiItemsController.reload();
         this.particleController.reload();
-        this.engineController.reload();
+        this.engineController.reload();*/
     }
 
     public ParticleController getParticleController() {

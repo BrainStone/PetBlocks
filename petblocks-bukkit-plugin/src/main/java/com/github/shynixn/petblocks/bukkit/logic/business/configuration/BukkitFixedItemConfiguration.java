@@ -2,7 +2,8 @@ package com.github.shynixn.petblocks.bukkit.logic.business.configuration;
 
 import com.github.shynixn.petblocks.api.business.entity.GUIItemContainer;
 import com.github.shynixn.petblocks.bukkit.PetBlocksPlugin;
-import com.github.shynixn.petblocks.bukkit.logic.business.entity.ItemContainer;
+import com.github.shynixn.petblocks.bukkit.logic.business.entity.BukkitItemContainer;
+import com.github.shynixn.petblocks.core.logic.business.entity.ItemContainer;
 import com.github.shynixn.petblocks.core.logic.persistence.configuration.FixedItemConfiguration;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.MemorySection;
@@ -63,7 +64,7 @@ public class BukkitFixedItemConfiguration extends FixedItemConfiguration {
         final Map<String, Object> data = ((MemorySection) this.plugin.getConfig().get("gui.items")).getValues(false);
         for (final String key : data.keySet()) {
             try {
-                final GUIItemContainer container = new ItemContainer(0, ((MemorySection) data.get(key)).getValues(false));
+                final GUIItemContainer container = new BukkitItemContainer(0, ((MemorySection) data.get(key)).getValues(false));
                 if (key.equals("suggest-heads")) {
                     ((ItemContainer) container).setDisplayName(ChatColor.AQUA + "" + ChatColor.BOLD + "Suggest Heads");
                 }

@@ -1,23 +1,22 @@
 package com.github.shynixn.petblocks.sponge;
 
 import com.github.shynixn.petblocks.sponge.logic.business.configuration.Config;
-import com.github.shynixn.petblocks.sponge.logic.business.configuration.SpongeCostumeConfiguration;
+import com.github.shynixn.petblocks.sponge.logic.business.helper.CompatibilityItemType;
 import com.google.inject.Inject;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.asset.AssetManager;
-import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.config.ConfigDir;
-import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.GameReloadEvent;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
+import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
-import org.spongepowered.api.text.Text;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 /**
@@ -77,9 +76,23 @@ public class PetBlocksPlugin {
 
     }
 
+
     @Listener
     public void onReload(GameReloadEvent event) throws IOException {
         System.out.println("Reloadinng...");
+
+
+       Optional<ItemType> type = game.getRegistry().getType(ItemType.class, CompatibilityItemType.REDSTONE.getMinecraftId());
+
+        System.out.println("TYPE: " + type.get().getName());
+
+
+
+
+
+
+
+
 
         config.reload();
 
@@ -89,6 +102,11 @@ public class PetBlocksPlugin {
 
 
 
+
+    }
+
+    public static Logger logger() {
+        return logger();
     }
 
     @Listener

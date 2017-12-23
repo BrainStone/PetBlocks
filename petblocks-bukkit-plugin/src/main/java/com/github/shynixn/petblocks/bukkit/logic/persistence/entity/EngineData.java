@@ -4,8 +4,9 @@ import com.github.shynixn.petblocks.api.business.entity.GUIItemContainer;
 import com.github.shynixn.petblocks.api.business.enumeration.RideType;
 import com.github.shynixn.petblocks.api.persistence.entity.EngineContainer;
 import com.github.shynixn.petblocks.api.persistence.entity.SoundMeta;
-import com.github.shynixn.petblocks.bukkit.logic.business.entity.ItemContainer;
+import com.github.shynixn.petblocks.bukkit.logic.business.entity.BukkitItemContainer;
 import org.bukkit.configuration.MemorySection;
+import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.Map;
 
@@ -58,7 +59,7 @@ public class EngineData extends PersistenceObject implements EngineContainer {
     public EngineData(long id, Map<String, Object> data) throws Exception {
         super();
         this.setId(id);
-        this.itemContainer = new ItemContainer((int) id, ((MemorySection) data.get("gui")).getValues(false));
+        this.itemContainer = new BukkitItemContainer((int) id, ((MemorySection) data.get("gui")).getValues(false));
         this.entity = (String) data.get("behaviour.entity");
         this.rideType = RideType.valueOf((String) data.get("behaviour.riding"));
         this.ambientSound = new SoundBuilder((String) data.get("sound.ambient.name"), (double) data.get("sound.ambient.volume"), (double) data.get("sound.ambient.pitch"));

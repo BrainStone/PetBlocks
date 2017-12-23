@@ -2,13 +2,11 @@ package com.github.shynixn.petblocks.sponge.logic.business.configuration;
 
 import com.github.shynixn.petblocks.api.business.entity.GUIItemContainer;
 import com.github.shynixn.petblocks.core.logic.persistence.configuration.CostumeConfiguration;
-import com.github.shynixn.petblocks.sponge.logic.business.entity.ItemContainer;
+import com.github.shynixn.petblocks.sponge.logic.business.entity.SpongeItemContainer;
 import com.google.inject.Inject;
-import ninja.leaping.configurate.ConfigurationNode;
 import org.spongepowered.api.plugin.PluginContainer;
 
 import java.util.Map;
-import java.util.logging.Level;
 
 /**
  * Created by Shynixn 2017.
@@ -57,20 +55,14 @@ public class SpongeCostumeConfiguration extends CostumeConfiguration {
      */
     @Override
     public void reload() {
-        System.out.println("CALLED 1");
         this.items.clear();
-        this.config.reload();
-        final ConfigurationNode node = this.config.getData("wardrobe.ordinary");
-        System.out.println("CALLED 2");
-        final Map<Object, ? extends ConfigurationNode> data = node.getChildrenMap();
+        final Map<Object, Object> data = this.config.getData("wardrobe.ordinary");
         for (final Object key : data.keySet()) {
             try {
-                System.out.println("KEY  3 " + key);
-                final GUIItemContainer container = new ItemContainer(Integer.parseInt((String) key), data.get(key));
+                final GUIItemContainer container = new SpongeItemContainer((Integer) key, (Map<String, Object>) data.get(key));
                 this.items.add(container);
-                System.out.println("ADDED");
             } catch (final Exception e) {
-                this.plugin.getLogger().info("Failed to load guiItem " + this.costumeCategory + '.' + key + '.');
+                this.plugin.getLogger().info("Failed to load guiItem " + this.costumeCategory + '.' + key + '.', e);
             }
         }
     }

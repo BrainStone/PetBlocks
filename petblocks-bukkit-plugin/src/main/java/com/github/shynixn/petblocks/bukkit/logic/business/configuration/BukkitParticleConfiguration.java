@@ -2,7 +2,7 @@ package com.github.shynixn.petblocks.bukkit.logic.business.configuration;
 
 import com.github.shynixn.petblocks.api.business.entity.GUIItemContainer;
 import com.github.shynixn.petblocks.api.persistence.entity.ParticleEffectMeta;
-import com.github.shynixn.petblocks.bukkit.logic.business.entity.ItemContainer;
+import com.github.shynixn.petblocks.bukkit.logic.business.entity.BukkitItemContainer;
 import com.github.shynixn.petblocks.bukkit.logic.persistence.entity.ParticleEffectData;
 import com.github.shynixn.petblocks.core.logic.persistence.configuration.ParticleConfiguration;
 import org.bukkit.configuration.MemorySection;
@@ -64,7 +64,7 @@ public class BukkitParticleConfiguration extends ParticleConfiguration {
         final Map<String, Object> data = ((MemorySection) this.plugin.getConfig().get("particles")).getValues(false);
         for (final String key : data.keySet()) {
             try {
-                final GUIItemContainer container = new ItemContainer(Integer.parseInt(key), ((MemorySection) data.get(key)).getValues(false));
+                final GUIItemContainer container = new BukkitItemContainer(Integer.parseInt(key), ((MemorySection) data.get(key)).getValues(false));
                 final ParticleEffectMeta meta = new ParticleEffectData(((MemorySection) ((MemorySection) data.get(key)).getValues(false).get("effect")).getValues(true));
                 this.particleCache.put(container, meta);
             } catch (final Exception e) {
