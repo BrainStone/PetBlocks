@@ -2,6 +2,7 @@ package com.github.shynixn.petblocks.sponge.logic.business.configuration;
 
 import com.github.shynixn.petblocks.api.persistence.controller.CostumeController;
 import com.github.shynixn.petblocks.core.logic.persistence.configuration.PetBlocksConfig;
+import com.github.shynixn.petblocks.sponge.nms.NMSRegistry;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import ninja.leaping.configurate.ConfigurationNode;
@@ -11,10 +12,13 @@ import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.serializer.TextSerializers;
+import org.spongepowered.api.world.Location;
+import org.spongepowered.api.world.World;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -129,4 +133,43 @@ public class Config extends PetBlocksConfig<Text> {
         return (T) data;
     }
 
+    public boolean allowRidingOnRegionChanging() {
+        return true;
+    }
+
+    public boolean allowPetSpawning(Location location) {
+        final List<String> includedWorlds = this.getIncludedWorlds();
+        final List<String> excludedWorlds = this.getExcludedWorlds();
+        if (includedWorlds.contains("all")) {
+            return !excludedWorlds.contains(((World) location.getExtent()).getName()) && this.handleRegionSpawn(location);
+        } else if (excludedWorlds.contains("all")) {
+            return includedWorlds.contains(((World) location.getExtent()).getName()) && this.handleRegionSpawn(location);
+        } else {
+            this.logger.log(Level.WARNING, "Please add 'all' to excluded or included worlds inside of the config.yml");
+        }
+        return true;
+    }
+
+    private boolean handleRegionSpawn(Location location) {
+        final List<String> includedRegions = this.getIncludedRegions();
+        final List<String> excludedRegions = this.getExcludedRegion();
+        if (includedRegions.contains("all")) {
+            for (final String k : NMSRegistry.getWorldGuardRegionsFromLocation(location)) {
+                if (excludedRegions.contains(k)) {
+                    return false;
+                }
+            }
+            return true;
+        } else if (excludedRegions.contains("all")) {
+            for (final String k : NMSRegistry.getWorldGuardRegionsFromLocation(location)) {
+                if (includedRegions.contains(k)) {
+                    return true;
+                }
+            }
+            return false;
+        } else {
+            this.logger.log(Level.WARNING, "Please add 'all' to excluded or included regions inside of the config.yml");
+        }
+        return true;
+    }
 }

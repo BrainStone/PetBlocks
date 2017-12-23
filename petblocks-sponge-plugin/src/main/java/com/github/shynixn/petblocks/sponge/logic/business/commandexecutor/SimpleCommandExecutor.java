@@ -55,10 +55,11 @@ public class SimpleCommandExecutor implements CommandExecutor {
      *
      * @param data data
      */
-    public void register(Map<String, Object> data) {
+    public CommandSpec register(Map<String, Object> data, OnCommandBuild onCommandBuild) {
         if (data.containsKey("enabled") && (boolean) data.get("enabled")) {
-            this.register((String) data.get("command"), (String) data.get("description"), (String) data.get("permission"), (String) data.get("permission-message"));
+            return this.register((String) data.get("command"), (String) data.get("description"), (String) data.get("permission"), (String) data.get("permission-message"), onCommandBuild);
         }
+        return null;
     }
 
     /**
@@ -69,16 +70,19 @@ public class SimpleCommandExecutor implements CommandExecutor {
      * @param permission        permission
      * @param permissionMessage permissionMesssage
      */
-    public void register(String command, String description, String permission, String permissionMessage) {
+    public CommandSpec register(String command, String description, String permission, String permissionMessage, OnCommandBuild onCommandBuild) {
         this.permission = permission;
         this.permissionMessage = permissionMessage;
-
-        this.commandSpec = CommandSpec.builder()
+        final CommandSpec.Builder builder = CommandSpec.builder()
                 .description(this.parseString(description))
                 .permission(permission)
-                .executor(this)
-                .build();
+                .executor(this);
+
+        onCommandBuild.run(builder);
+        this.commandSpec = builder.build();
+
         Sponge.getCommandManager().register(this.plugin, this.commandSpec, command);
+        return this.commandSpec;
     }
 
     @Override
@@ -117,5 +121,14 @@ public class SimpleCommandExecutor implements CommandExecutor {
 
     private Text parseString(String s) {
         return TextSerializers.LEGACY_FORMATTING_CODE.deserialize(s);
+    }
+
+    protected interface OnCommandBuild {
+        /**
+         * On command built.
+         *
+         * @param builder builder
+         */
+        void run(CommandSpec.Builder builder);
     }
 }
