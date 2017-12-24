@@ -3,6 +3,7 @@ package com.github.shynixn.petblocks.sponge.nms.v1_11_R1;
 import com.flowpowered.math.vector.Vector3d;
 import com.github.shynixn.petblocks.api.business.entity.PetBlock;
 import com.github.shynixn.petblocks.sponge.logic.business.configuration.Config;
+import com.github.shynixn.petblocks.sponge.nms.helper.PetBlockHelper;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.pathfinding.Path;

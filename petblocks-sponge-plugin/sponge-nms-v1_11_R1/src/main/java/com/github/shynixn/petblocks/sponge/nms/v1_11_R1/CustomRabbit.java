@@ -2,60 +2,57 @@ package com.github.shynixn.petblocks.sponge.nms.v1_11_R1;
 
 import com.github.shynixn.petblocks.api.business.entity.PetBlock;
 import com.github.shynixn.petblocks.api.business.entity.PetBlockPartEntity;
-import com.github.shynixn.petblocks.bukkit.PetBlocksPlugin;
-import com.github.shynixn.petblocks.bukkit.logic.business.configuration.Config;
-import com.github.shynixn.petblocks.bukkit.nms.helper.PetBlockHelper;
+import com.github.shynixn.petblocks.sponge.PetBlocksPlugin;
+import com.github.shynixn.petblocks.sponge.logic.business.configuration.Config;
+import com.github.shynixn.petblocks.sponge.nms.helper.PetBlockHelper;
 import com.google.common.collect.Sets;
+import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.EntityAISwimming;
 import net.minecraft.entity.passive.EntityRabbit;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_11_R1.CraftWorld;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
-import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.world.World;
+import org.spongepowered.api.data.key.Keys;
+import org.spongepowered.api.data.manipulator.mutable.PotionEffectData;
+import org.spongepowered.api.effect.potion.PotionEffect;
+import org.spongepowered.api.effect.potion.PotionEffectTypes;
+import org.spongepowered.api.entity.living.Living;
+import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.text.Text;
+import org.spongepowered.api.world.Location;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.logging.Level;
 
 public final class CustomRabbit extends EntityRabbit implements PetBlockPartEntity {
     private PetBlock petBlock;
     private long playedMovingSound = 100000;
 
-    public CustomRabbit(World world) {
-        super(world);
+    public CustomRabbit(World worldIn) {
+        super(worldIn);
     }
 
-    public CustomRabbit(Player player,PetBlock petBlock) {
-        super(((CraftWorld) player.getWorld()).getHandle());
+    public CustomRabbit(Player player, PetBlock petBlock) {
+        super((World) player.getWorld());
         this.setSilent(true);
         try {
-            final Field bField = PathfinderGoalSelector.class.getDeclaredField("b");
-            final Field cField = PathfinderGoalSelector.class.getDeclaredField("c");
-            this.ignoreFinalField(bField);
-            this.ignoreFinalField(cField);
-            cField.setAccessible(true);
-            bField.set(this.goalSelector, Sets.newLinkedHashSet());
-            bField.set(this.targetSelector, Sets.newLinkedHashSet());
-            cField.set(this.goalSelector, Sets.newLinkedHashSet());
-            cField.set(this.targetSelector, Sets.newLinkedHashSet());
-            this.goalSelector.a(0, new PathfinderGoalFloat(this));
-            this.goalSelector.a(1, new OwnerPathfinder(this,petBlock));
-            this.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(0.30000001192092896D * Config.getInstance().pet().getModifier_petwalking());
+            this.tasks.taskEntries = Sets.newLinkedHashSet();
+            this.tasks.executingTaskEntries = Sets.newLinkedHashSet();
+            this.targetTasks.taskEntries = Sets.newLinkedHashSet();
+            this.targetTasks.executingTaskEntries = Sets.newLinkedHashSet();
+            this.tasks.addTask(0, new EntityAISwimming(this));
+            this.tasks.addTask(1, new OwnerPathfinder(this, petBlock));
+            this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED)
+                    .setBaseValue(0.30000001192092896D * Config.getInstance().pet().getModifier_petwalking());
         } catch (final Exception exc) {
             PetBlocksPlugin.logger().log(Level.WARNING, "EntityNMS exception.", exc);
         }
         this.petBlock = petBlock;
-        this.P = (float) Config.getInstance().pet().getModifier_petclimbing();
+        this.stepHeight = (float) Config.getInstance().pet().getModifier_petclimbing();
     }
 
     @Override
-    protected SoundEffect di() {
+    protected SoundEvent getJumpSound() {
         this.playedMovingSound = PetBlockHelper.executeMovingSound(this.petBlock, this.playedMovingSound);
-        return super.di();
+        return super.getJumpSound();
     }
 
     /**
@@ -65,7 +62,7 @@ public final class CustomRabbit extends EntityRabbit implements PetBlockPartEnti
      */
     @Override
     public Object getEntity() {
-        return this.getBukkitEntity();
+        return this;
     }
 
     /**
@@ -76,14 +73,20 @@ public final class CustomRabbit extends EntityRabbit implements PetBlockPartEnti
     @Override
     public void spawn(Object mLocation) {
         final Location location = (Location) mLocation;
-        final LivingEntity entity = (LivingEntity) this.getEntity();
-        final net.minecraft.server.v1_11_R1.World mcWorld = ((CraftWorld) location.getWorld()).getHandle();
+        final Living entity = (Living) this.getEntity();
+        final World mcWorld = (World) location.getExtent();
         this.setPosition(location.getX(), location.getY(), location.getZ());
-        mcWorld.addEntity(this, SpawnReason.CUSTOM);
-        entity.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 9999999, 1));
-        entity.setMetadata("keep", this.getKeepField());
-        entity.setCustomNameVisible(false);
-        entity.setCustomName("PetBlockIdentifier");
+        mcWorld.spawnEntity(this);
+
+        final PotionEffect effect = PotionEffect.builder()
+                .potionType(PotionEffectTypes.INVISIBILITY)
+                .duration(9999999).amplifier(1).build();
+        final PotionEffectData effects = entity.getOrCreate(PotionEffectData.class).get();
+        effects.addElement(effect);
+        entity.offer(effects);
+
+        entity.offer(Keys.DISPLAY_NAME, Text.of("PetBlockIdentifier"));
+        entity.offer(Keys.CUSTOM_NAME_VISIBLE, false);
     }
 
     /**
@@ -91,30 +94,7 @@ public final class CustomRabbit extends EntityRabbit implements PetBlockPartEnti
      */
     @Override
     public void remove() {
-        ((LivingEntity) this.getEntity()).remove();
+        ((Living) this.getEntity()).remove();
     }
 
-    /**
-     * Returns the keepField
-     *
-     * @return keepField
-     */
-    private FixedMetadataValue getKeepField() {
-        return new FixedMetadataValue(Bukkit.getPluginManager().getPlugin("PetBlocks"), true);
-    }
-    /**
-     * Ignores any final field value
-     *
-     * @param field field
-     * @throws NoSuchFieldException     exception
-     * @throws SecurityException        exception
-     * @throws IllegalArgumentException exception
-     * @throws IllegalAccessException   exception
-     */
-    private void ignoreFinalField(Field field) throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
-        field.setAccessible(true);
-        final Field modifiersField = Field.class.getDeclaredField("modifiers");
-        modifiersField.setAccessible(true);
-        modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
-    }
 }
