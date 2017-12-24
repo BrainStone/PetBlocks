@@ -9,6 +9,7 @@ import com.google.common.collect.Sets;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAISwimming;
 import net.minecraft.entity.passive.EntityRabbit;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
 import org.spongepowered.api.data.key.Keys;
@@ -78,6 +79,7 @@ public final class CustomRabbit extends EntityRabbit implements PetBlockPartEnti
         this.setPosition(location.getX(), location.getY(), location.getZ());
         mcWorld.spawnEntity(this);
 
+        this.enablePersistence();
         final PotionEffect effect = PotionEffect.builder()
                 .potionType(PotionEffectTypes.INVISIBILITY)
                 .duration(9999999).amplifier(1).build();

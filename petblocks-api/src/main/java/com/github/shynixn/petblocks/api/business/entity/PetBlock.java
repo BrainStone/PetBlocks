@@ -30,13 +30,6 @@ import com.github.shynixn.petblocks.api.persistence.entity.PetMeta;
  * SOFTWARE.
  */
 public interface PetBlock {
-
-    @Deprecated
-    void setSkin(String skin);
-
-    @Deprecated
-    void setSkin(Object material, byte data);
-
     @Deprecated
     void setDieing();
 
@@ -98,14 +91,22 @@ public interface PetBlock {
      *
      * @param name name
      */
+    @Deprecated
     void setDisplayName(String name);
+
+    /**
+     * Sets the displayName of the petblock.
+     *
+     * @param name name
+     */
+    void setCustomName(String name);
 
     /**
      * Returns the displayName of the petblock.
      *
      * @return name
      */
-    String getDisplayName();
+    String getCustomName();
 
     /**
      * Respawns the petblock

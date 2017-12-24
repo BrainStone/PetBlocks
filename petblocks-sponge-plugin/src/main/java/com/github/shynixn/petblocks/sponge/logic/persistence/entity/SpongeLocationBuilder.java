@@ -433,6 +433,19 @@ public class SpongeLocationBuilder implements IPosition {
     }
 
     /**
+     * Returns the direction of the location.
+     *
+     * @return direction
+     */
+    public Vector3d getDirection() {
+        final Vector3d vector = new Vector3d();
+        final double rotX = this.getYaw();
+        final double rotY = this.getPitch();
+        final double xz = Math.cos(Math.toRadians(rotY));
+        return new Vector3d(-xz * Math.sin(Math.toRadians(rotX)), -Math.sin(Math.toRadians(rotY)), xz * Math.cos(Math.toRadians(rotX)));
+    }
+
+    /**
      * Returns the id of the object
      *
      * @return id
