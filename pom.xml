@@ -95,7 +95,7 @@
                     </dependency>
                 </dependencies>
             </plugin>
-            <plugin>
+          <!--  <plugin>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <version>2.19.1</version>
                 <dependencies>
@@ -126,7 +126,7 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
