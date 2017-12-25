@@ -287,16 +287,6 @@ final class CustomGroundArmorstand extends EntityArmorStand implements PetBlock 
         return this.pipeline;
     }
 
-    @Override
-    public void setSkin(String skin) {
-        PetBlockHelper.setSkin(this, skin);
-    }
-
-    @Override
-    public void setSkin(Object material, byte data) {
-        PetBlockHelper.setSkin(this, (org.bukkit.Material) material, data);
-    }
-
     /**
      * Lets the petblock perform a jump
      */
@@ -395,16 +385,6 @@ final class CustomGroundArmorstand extends EntityArmorStand implements PetBlock 
     @Override
     public void teleport(Object location) {
         PetBlockHelper.teleport(this, (Location) location);
-    }
-
-    /**
-     * Returns the displayName of the petblock
-     *
-     * @return name
-     */
-    @Override
-    public String getDisplayName() {
-        return ((ArmorStand) this.getArmorStand()).getCustomName();
     }
 
     /**

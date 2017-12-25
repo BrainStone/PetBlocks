@@ -11,7 +11,6 @@ import org.bukkit.Material;
 import org.bukkit.Server;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
-import org.junit.Assert;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -21,6 +20,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -37,7 +37,7 @@ public class ParticleEffectMetaSQLiteControllerIT {
             field.setAccessible(true);
             field.set(null, Logger.getGlobal());
         } catch (IllegalAccessException | NoSuchFieldException e) {
-            Assert.fail();
+            fail(e);
         }
         final YamlConfiguration configuration = new YamlConfiguration();
         configuration.set("sql.enabled",false);
@@ -83,7 +83,7 @@ public class ParticleEffectMetaSQLiteControllerIT {
             assertEquals(ParticleEffectMeta.ParticleEffectType.CLOUD, controller.getById(meta.getId()).getEffectType());
         } catch (final Exception e) {
             Logger.getLogger(this.getClass().getSimpleName()).log(Level.WARNING, "Failed to run test.", e);
-            Assert.fail();
+            fail(e);
         }
     }
 
@@ -141,7 +141,7 @@ public class ParticleEffectMetaSQLiteControllerIT {
             assertEquals((byte)7, (byte)meta.getData());
         } catch (final Exception e) {
             Logger.getLogger(this.getClass().getSimpleName()).log(Level.WARNING, "Failed to run test.", e);
-            Assert.fail();
+            fail(e);
         }
     }
 }

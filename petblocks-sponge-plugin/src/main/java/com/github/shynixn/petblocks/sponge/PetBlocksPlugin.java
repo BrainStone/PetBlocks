@@ -57,7 +57,7 @@ import java.util.logging.Logger;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-@Plugin(id = "petblocks", name = "PetBlocks", version = "6.4.2-SNAPSHOT")
+@Plugin(id = "petblocks", name = "PetBlocks", version = "6.4.2-SNAPSHOT", description = "PetBlocks is a spigot and sponge plugin to use custom Pets in minecraft.")
 public class PetBlocksPlugin {
 
     @Inject

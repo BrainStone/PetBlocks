@@ -10,7 +10,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
-import org.junit.Assert;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -21,6 +20,7 @@ import java.util.logging.Logger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -83,7 +83,7 @@ public class PlayerMetaSQLiteControllerIT {
             assertEquals(uuid, controller.getById(playerMeta.getId()).getUUID());
         } catch (final Exception e) {
             Logger.getLogger(this.getClass().getSimpleName()).log(Level.WARNING, "Failed to run test.", e);
-            Assert.fail();
+            fail(e);
         }
     }
 
@@ -121,7 +121,7 @@ public class PlayerMetaSQLiteControllerIT {
             assertEquals("Shynixn", playerMeta.getName());
         } catch (final Exception e) {
             Logger.getLogger(this.getClass().getSimpleName()).log(Level.WARNING, "Failed to run test.", e);
-            Assert.fail();
+            fail(e);
         }
     }
 }

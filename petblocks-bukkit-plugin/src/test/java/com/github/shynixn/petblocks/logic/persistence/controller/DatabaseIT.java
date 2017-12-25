@@ -3,7 +3,6 @@ package com.github.shynixn.petblocks.logic.persistence.controller;
 import ch.vorburger.mariadb4j.DB;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 import java.sql.Connection;
@@ -11,6 +10,8 @@ import java.sql.DriverManager;
 import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class DatabaseIT {
 
@@ -28,7 +29,7 @@ public class DatabaseIT {
             ds.close();
         } catch (final Exception ex) {
             Logger.getLogger(this.getClass().getSimpleName()).log(Level.WARNING, "Failed to enable database.", ex);
-            Assert.fail();
+            fail(ex);
         }
     }
 
@@ -54,7 +55,7 @@ public class DatabaseIT {
             database.stop();
         } catch (final Exception ex) {
             Logger.getLogger(this.getClass().getSimpleName()).log(Level.WARNING, "Failed to enable database.", ex);
-            Assert.fail();
+            fail(ex);
         }
     }
 }

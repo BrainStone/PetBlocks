@@ -1,8 +1,9 @@
 package com.github.shynixn.petblocks.logic.persistence.controller;
 
 import com.github.shynixn.petblocks.bukkit.nms.VersionSupport;
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Copyright 2017 Shynixn
@@ -37,29 +38,29 @@ public class VersionSupportIT {
 
     @Test
     public void versionSameOrGreaterSupportTest() {
-        Assert.assertEquals(false, VersionSupport.VERSION_1_8_R1.isVersionSameOrGreaterThan(VersionSupport.VERSION_1_8_R2));
-        Assert.assertEquals(true, VersionSupport.VERSION_1_9_R2.isVersionSameOrGreaterThan(VersionSupport.VERSION_1_9_R2));
-        Assert.assertEquals(true, VersionSupport.VERSION_1_9_R2.isVersionSameOrGreaterThan(VersionSupport.VERSION_1_8_R2));
+        assertEquals(false, VersionSupport.VERSION_1_8_R1.isVersionSameOrGreaterThan(VersionSupport.VERSION_1_8_R2));
+        assertEquals(true, VersionSupport.VERSION_1_9_R2.isVersionSameOrGreaterThan(VersionSupport.VERSION_1_9_R2));
+        assertEquals(true, VersionSupport.VERSION_1_9_R2.isVersionSameOrGreaterThan(VersionSupport.VERSION_1_8_R2));
     }
 
     @Test
     public void versionGreaterSupportTest() {
-        Assert.assertEquals(false, VersionSupport.VERSION_1_8_R1.isVersionGreaterThan(VersionSupport.VERSION_1_8_R2));
-        Assert.assertEquals(false, VersionSupport.VERSION_1_12_R1.isVersionGreaterThan(VersionSupport.VERSION_1_12_R1));
-        Assert.assertEquals(true, VersionSupport.VERSION_1_9_R2.isVersionGreaterThan(VersionSupport.VERSION_1_8_R2));
+        assertEquals(false, VersionSupport.VERSION_1_8_R1.isVersionGreaterThan(VersionSupport.VERSION_1_8_R2));
+        assertEquals(false, VersionSupport.VERSION_1_12_R1.isVersionGreaterThan(VersionSupport.VERSION_1_12_R1));
+        assertEquals(true, VersionSupport.VERSION_1_9_R2.isVersionGreaterThan(VersionSupport.VERSION_1_8_R2));
     }
 
     @Test
     public void versionSameOrLowerSupportTest() {
-        Assert.assertEquals(true, VersionSupport.VERSION_1_8_R1.isVersionSameOrLowerThan(VersionSupport.VERSION_1_8_R2));
-        Assert.assertEquals(true, VersionSupport.VERSION_1_9_R2.isVersionSameOrLowerThan(VersionSupport.VERSION_1_9_R2));
-        Assert.assertEquals(false, VersionSupport.VERSION_1_9_R2.isVersionSameOrLowerThan(VersionSupport.VERSION_1_8_R2));
+        assertEquals(true, VersionSupport.VERSION_1_8_R1.isVersionSameOrLowerThan(VersionSupport.VERSION_1_8_R2));
+        assertEquals(true, VersionSupport.VERSION_1_9_R2.isVersionSameOrLowerThan(VersionSupport.VERSION_1_9_R2));
+        assertEquals(false, VersionSupport.VERSION_1_9_R2.isVersionSameOrLowerThan(VersionSupport.VERSION_1_8_R2));
     }
 
     @Test
     public void versionLowerSupportTest() {
-        Assert.assertEquals(true, VersionSupport.VERSION_1_8_R1.isVersionLowerThan(VersionSupport.VERSION_1_8_R2));
-        Assert.assertEquals(false, VersionSupport.VERSION_1_9_R2.isVersionLowerThan(VersionSupport.VERSION_1_9_R2));
-        Assert.assertEquals(false, VersionSupport.VERSION_1_9_R2.isVersionLowerThan(VersionSupport.VERSION_1_8_R2));
+        assertEquals(true, VersionSupport.VERSION_1_8_R1.isVersionLowerThan(VersionSupport.VERSION_1_8_R2));
+        assertEquals(false, VersionSupport.VERSION_1_9_R2.isVersionLowerThan(VersionSupport.VERSION_1_9_R2));
+        assertEquals(false, VersionSupport.VERSION_1_9_R2.isVersionLowerThan(VersionSupport.VERSION_1_8_R2));
     }
 }
