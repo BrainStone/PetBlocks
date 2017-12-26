@@ -1,0 +1,20 @@
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            pom.project {
+                packaging 'jar'
+                groupId = 'com.github.shynixn.petblocks'
+                artifactId = 'petblocks-sponge-api'
+            }
+        }
+    }
+}
+
+repositories {
+    maven { url "https://repo.spongepowered.org/maven" }
+}
+
+dependencies {
+    compile project(':petblocks-api')
+    compileOnly group: 'org.spongepowered', name: 'spongeapi', version: '6.0.0'
+}

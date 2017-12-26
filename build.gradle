@@ -1,0 +1,128 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.2'
+    }
+}
+
+
+allprojects {
+    group = 'com.github.shynixn.petblocks'
+    version = '6.4.2-SNAPSHOT'
+
+    apply plugin: 'java'
+    apply plugin: 'maven'
+    apply plugin: 'signing'
+    apply plugin: 'com.github.johnrengelman.shadow'
+
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    javadoc {
+        options.encoding = 'UTF-8'
+    }
+
+    tasks.withType(JavaCompile) {
+        options.encoding = 'UTF-8'
+    }
+
+    task javadocJar(type: Jar) {
+        classifier = 'javadoc'
+        from javadoc
+    }
+
+    task sourcesJar(type: Jar) {
+        classifier = 'sources'
+        from sourceSets.main.allSource
+    }
+
+    task shadeJar(type: ShadowJar) {
+        classifier = 'tests'
+        from sourceSets.test.output
+        configurations = [project.configurations.testRuntime]
+
+        shadowJar{
+            baseName = project.name
+            version = project.version
+            relocate 'com.zaxxer', 'com.github.shynixn.petblocks.lib.com.zaxxer'
+            relocate 'org.slf4j', 'com.github.shynixn.petblocks.lib.org.slf4j'
+            relocate 'org.bstats', 'com.github.shynixn.petblocks.lib.org.bstats'
+        }
+    }
+
+    artifacts {
+        archives javadocJar, sourcesJar, shadowJar
+    }
+
+    signing {
+        sign configurations.archives
+    }
+
+    uploadArchives {
+        repositories {
+            mavenDeployer {
+
+                beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+                repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                    authentication(userName: ossrhUsername, password: ossrhPassword)
+                }
+
+                snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                    authentication(userName: ossrhUsername, password: ossrhPassword)
+                }
+
+                pom.project {
+                    name 'PetBlocks'
+                    packaging 'pom'
+                    groupId = 'com.github.shynixn.petblocks'
+                    artifactId = 'gradle-petblock'
+                    description 'PetBlocks is a minecraft plugin for spigot and sponge to use blocks and custom heads as pets in Minecraft.'
+                    url 'https://github.com/Shynixn/PetBlocks'
+
+                    scm {
+                        connection 'scm:git:git://github.com/Shynixn/PetBlocks.git'
+                        developerConnection 'scm:git:ssh://github.com:Shynixn/PetBlocks.git'
+                        url 'http://github.com/Shynixn/PetBlocks.git/tree/master'
+                    }
+
+                    licenses {
+                        license {
+                            name 'The Apache License, Version 2.0'
+                            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        }
+                    }
+
+                    developers {
+                        developer {
+                            id 'shynixn'
+                            name 'Shynixn'
+                            email 'shynixn@email.com'
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+subprojects {
+    repositories {
+        mavenLocal()
+        maven { url "http://repo.maven.apache.org/maven2" }
+    }
+
+    dependencies {
+        compile group: 'com.zaxxer', name: 'HikariCP', version: '2.7.4'
+        compile group: 'org.slf4j', name: 'slf4j-jdk14', version: '1.7.25'
+        testCompile group: 'org.xerial', name: 'sqlite-jdbc', version: '3.21.0.1'
+        testCompile group: 'ch.vorburger.mariaDB4j', name: 'mariaDB4j', version: '2.2.3'
+        testCompile group: 'org.mockito', name: 'mockito-core', version: '2.13.0'
+        testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.0.0-M4'
+    }
+}
+

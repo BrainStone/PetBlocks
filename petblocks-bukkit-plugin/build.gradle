@@ -1,0 +1,45 @@
+uploadArchives {
+  repositories {
+    mavenDeployer {
+      pom.project {
+        packaging 'jar'
+        groupId = 'com.github.shynixn.petblocks'
+        artifactId = 'petblocks-bukkit-plugin'
+      }
+    }
+  }
+}
+
+repositories {
+  maven { url "http://repo.bstats.org/content/repositories/releases/" }
+  maven { url "http://repo.dmulloy2.net/content/groups/public/" }
+  maven { url "http://minebuilders.me:8080/plugin/repository/everything/" }
+  maven { url "http://maven.sk89q.com/repo/" }
+}
+
+dependencies {
+  compile project(':petblocks-bukkit-api')
+  compile project(':petblocks-core')
+
+  compile group: 'org.bstats', name: 'bstats-bukkit', version:'1.2'
+  compileOnly group: 'me.minebuilders', name: 'clearlag-core', version:'2.9.0-SNAPSHOT'
+  compileOnly group: 'com.sk89q', name: 'worldguard', version:'6.1'
+
+  compileOnly files('../lib/spigot-1.8.jar')
+  compileOnly files('../lib/spigot-1.8.3.jar')
+  compileOnly files('../lib/spigot-1.8.8.jar')
+  compileOnly files('../lib/spigot-1.9.jar')
+  compileOnly files('../lib/spigot-1.9.4.jar')
+  compileOnly files('../lib/spigot-1.10.2.jar')
+  compileOnly files('../lib/spigot-1.11.jar')
+  compileOnly files('../lib/spigot-1.12.jar')
+
+  testCompile files('../lib/spigot-1.8.jar')
+  testCompile files('../lib/spigot-1.8.3.jar')
+  testCompile files('../lib/spigot-1.8.8.jar')
+  testCompile files('../lib/spigot-1.9.jar')
+  testCompile files('../lib/spigot-1.9.4.jar')
+  testCompile files('../lib/spigot-1.10.2.jar')
+  testCompile files('../lib/spigot-1.11.jar')
+  testCompile files('../lib/spigot-1.12.jar')
+}

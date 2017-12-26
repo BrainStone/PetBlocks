@@ -38,6 +38,25 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
+    shadowJar {
+    baseName = 'PetBlocks'
+    classifier = null
+    version = 1.0
+    relocate 'com.zaxxer', 'com.github.shynixn.petblocks.lib.com.zaxxer'
+    relocate 'org.slf4j', 'com.github.shynixn.petblocks.lib.org.slf4j'
+    relocate 'org.bstats', 'com.github.shynixn.petblocks.lib.org.bstats'
+
+    task copyJarToBin {
+    copy {
+    from 'build/libs/PetBlocks-1.0.jar'
+    into "D:/Temp/plugins"
+    }
+    copy{
+    from 'build/libs/PetBlocks-1.0.jar'
+    into "D:/Temp/SpongePowered/mods"
+    }
+    }
+    }
 
     <profiles>
         <profile>

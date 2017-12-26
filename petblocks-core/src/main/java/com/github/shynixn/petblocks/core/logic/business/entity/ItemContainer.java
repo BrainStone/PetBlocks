@@ -79,6 +79,7 @@ public abstract class ItemContainer implements GUIItemContainer {
      * Initializes a new itemContainer
      *
      * @param orderNumber orderNumber
+     * @param data        data
      * @throws Exception exception
      */
     public ItemContainer(int orderNumber, Map<String, Object> data) throws Exception {
@@ -111,8 +112,7 @@ public abstract class ItemContainer implements GUIItemContainer {
             if (m != null) {
                 final List<String> lore = new ArrayList<>();
                 for (final String s : m) {
-                    if (!s.equals("none"))
-                    {
+                    if (!s.equals("none")) {
                         // lore.add(ChatColor.translateAlternateColorCodes('&', s));
                     }
                 }

@@ -1,0 +1,15 @@
+uploadArchives {
+  repositories {
+    mavenDeployer {
+      pom.project {
+        packaging 'jar'
+        groupId = 'com.github.shynixn.petblocks'
+        artifactId = 'petblocks-core'
+      }
+    }
+  }
+}
+
+dependencies {
+  compile project(':petblocks-api')
+}

@@ -1,0 +1,23 @@
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            pom.project {
+                packaging 'jar'
+                groupId = 'com.github.shynixn.petblocks'
+                artifactId = 'petblocks-sponge-plugin'
+            }
+        }
+    }
+}
+
+repositories {
+    maven { url "http://repo.bstats.org/content/repositories/releases/" }
+}
+
+dependencies {
+    compile project(':petblocks-sponge-api')
+    compile project(':petblocks-core')
+
+    compile group: 'org.bstats', name: 'bstats-sponge', version:'1.2'
+    compileOnly group: 'org.spongepowered', name: 'spongeapi', version: '6.0.0'
+}

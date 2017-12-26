@@ -4,8 +4,13 @@ uploadArchives {
             pom.project {
                 packaging 'jar'
                 groupId = 'com.github.shynixn.petblocks'
-                artifactId = 'petblocks-api'
+                artifactId = 'petblocks-universal-plugin'
             }
         }
     }
+}
+
+dependencies {
+    compile project(':petblocks-sponge-plugin')
+    compile project(':petblocks-bukkit-plugin')
 }
