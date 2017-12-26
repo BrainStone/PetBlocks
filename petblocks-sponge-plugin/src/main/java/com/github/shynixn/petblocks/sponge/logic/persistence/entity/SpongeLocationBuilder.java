@@ -351,10 +351,10 @@ public class SpongeLocationBuilder implements IPosition {
      *
      * @return bukkitLocation
      */
-    public Location toLocation() {
+    public Location<World> toLocation() {
         if (!this.getWorld().isPresent())
             return null;
-        return new Location(this.getWorld().get(), this.x, this.y, this.z);
+        return new Location<>(this.getWorld().get(), this.x, this.y, this.z);
     }
 
     /**

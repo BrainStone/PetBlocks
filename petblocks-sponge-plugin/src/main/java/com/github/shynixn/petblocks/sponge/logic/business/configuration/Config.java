@@ -1,6 +1,7 @@
 package com.github.shynixn.petblocks.sponge.logic.business.configuration;
 
 import com.github.shynixn.petblocks.api.persistence.controller.CostumeController;
+import com.github.shynixn.petblocks.api.persistence.controller.EngineController;
 import com.github.shynixn.petblocks.core.logic.persistence.configuration.PetBlocksConfig;
 import com.github.shynixn.petblocks.sponge.nms.NMSRegistry;
 import com.google.inject.Inject;
@@ -70,6 +71,14 @@ public class Config extends PetBlocksConfig<Text> {
     @Inject
     private SpongeCostumeConfiguration spongeCostumeConfiguration;
 
+    @Inject
+    private SpongeEngineConfiguration engineConfiguration;
+
+    @Override
+    public EngineController getEngineController() {
+        return this.engineConfiguration;
+    }
+
     @Deprecated
     public static Config getInstance() {
         return instance;
@@ -103,6 +112,7 @@ public class Config extends PetBlocksConfig<Text> {
         }
         super.reload();
     }
+
 
     /**
      * Returns the ordinary costume controller.

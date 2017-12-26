@@ -16,6 +16,7 @@ repositories {
 
 dependencies {
     compile project(':petblocks-sponge-api')
+
     compile project(':petblocks-core')
 
     compile group: 'org.bstats', name: 'bstats-sponge', version:'1.2'

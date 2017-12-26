@@ -1,6 +1,7 @@
 package com.github.shynixn.petblocks.bukkit.logic.business.configuration;
 
 import com.github.shynixn.petblocks.api.persistence.controller.CostumeController;
+import com.github.shynixn.petblocks.api.persistence.controller.EngineController;
 import com.github.shynixn.petblocks.api.persistence.entity.ParticleEffectMeta;
 import com.github.shynixn.petblocks.api.persistence.entity.PetMeta;
 import com.github.shynixn.petblocks.api.persistence.entity.SoundMeta;
@@ -9,7 +10,6 @@ import com.github.shynixn.petblocks.bukkit.logic.persistence.entity.ParticleEffe
 import com.github.shynixn.petblocks.bukkit.logic.persistence.entity.PetData;
 import com.github.shynixn.petblocks.bukkit.logic.persistence.entity.SoundBuilder;
 import com.github.shynixn.petblocks.bukkit.nms.NMSRegistry;
-import com.github.shynixn.petblocks.core.logic.persistence.configuration.ConfigPet;
 import com.github.shynixn.petblocks.core.logic.persistence.configuration.PetBlocksConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -52,7 +52,6 @@ public class Config extends PetBlocksConfig<String> {
     private Plugin plugin;
 
     private static final Config config = new Config();
-    private ConfigPet configPet;
 
     private ParticleEffectMeta feedingClickParticleCache;
     private SoundMeta feedingClickSoundCache;
@@ -68,16 +67,12 @@ public class Config extends PetBlocksConfig<String> {
     public void reload() {
         this.plugin = JavaPlugin.getPlugin(PetBlocksPlugin.class);
         this.plugin.reloadConfig();
-        if (this.pet() == null) {
-            this.configPet = new ConfigPet() {
-                @Override
-                public <T> T getData(String path) {
-                    return this.getData(path);
-                }
-            };
-        }
-        this.pet().reload();
         super.reload();
+    }
+
+    @Override
+    public EngineController getEngineController() {
+        return null;
     }
 
     /**

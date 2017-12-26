@@ -1,12 +1,15 @@
 package com.github.shynixn.petblocks.sponge;
 
+import com.github.shynixn.petblocks.api.business.entity.PetBlock;
 import com.github.shynixn.petblocks.api.persistence.entity.ParticleEffectMeta;
+import com.github.shynixn.petblocks.api.persistence.entity.PetMeta;
+import com.github.shynixn.petblocks.api.sponge.entity.SpongePetBlock;
 import com.github.shynixn.petblocks.sponge.logic.business.commandexecutor.PetBlockReloadCommandExecutor;
 import com.github.shynixn.petblocks.sponge.logic.business.configuration.Config;
 import com.github.shynixn.petblocks.sponge.logic.business.helper.CompatibilityItemType;
-import com.github.shynixn.petblocks.sponge.logic.persistence.entity.SoundBuilder;
-import com.github.shynixn.petblocks.sponge.logic.persistence.entity.SpongeLocationBuilder;
-import com.github.shynixn.petblocks.sponge.logic.persistence.entity.SpongeParticleEffectMeta;
+import com.github.shynixn.petblocks.sponge.logic.persistence.entity.*;
+import com.github.shynixn.petblocks.sponge.nms.NMSRegistry;
+import com.github.shynixn.petblocks.sponge.nms.VersionSupport;
 import com.google.common.reflect.TypeToken;
 import com.google.inject.Inject;
 import ninja.leaping.configurate.objectmapping.serialize.TypeSerializers;
@@ -22,6 +25,7 @@ import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
+import org.spongepowered.api.world.Location;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -96,13 +100,34 @@ public class PetBlocksPlugin {
     @Listener
     public void onReload(GameReloadEvent event) throws IOException {
         System.out.println("Reloadinng...");
+    this.config.reload();
 
-        Optional<ItemType> type = this.game.getRegistry().getType(ItemType.class, CompatibilityItemType.REDSTONE.getMinecraftId());
+        System.out.println("MEME");
+        System.out.println("SPONGE VERSION : " + VersionSupport.getServerVersion().getSimpleVersionText());
 
-        System.out.println("TYPE: " + type.get().getName());
+        SpongePetData petMeta = new SpongePetData();
+        System.out.println("1");
+        petMeta.setPetDisplayName("Shynixn's Pet");
+        petMeta.setPlayerMeta(new SpongePlayerData());
+        petMeta.setAge(Config.getInstance().pet().getAge_smallticks());
+        petMeta.setParticleEffectMeta(new SpongeParticleEffectMeta());
+        System.out.println("23");
 
-        this.config.reload();
+        System.out.println("ENGINE  " + Config.getInstance().getEngineController());
+        System.out.println("DEFAULT: " + Config.getInstance().getDefaultEngine());
 
+        petMeta.setEngine(Config.getInstance().getEngineController().getById(Config.getInstance().getDefaultEngine()));
+
+
+        Location location = new SpongeLocationBuilder("world",0,0,0,0,0).toLocation();
+
+        System.out.println("3");
+
+        SpongePetBlock petBlock = NMSRegistry.createPetBlock(location,petMeta);
+
+        petBlock.teleport(location);
+
+        System.out.println("4s");
      //   this.reloadCommandExecutor.register("petblockreload", "Reloads the petblock configuration.", "petblocks.reload", "You don't have permission.");
     }
 
@@ -120,7 +145,7 @@ public class PetBlocksPlugin {
 
 
     public static Logger logger() {
-        return logger();
+        return Logger.getAnonymousLogger();
     }
 
     @Listener

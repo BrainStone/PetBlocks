@@ -29,12 +29,12 @@ import com.github.shynixn.petblocks.api.persistence.entity.PetMeta;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public interface PetBlock {
+public interface PetBlock<Player, Location> {
     @Deprecated
     void setDieing();
 
     @Deprecated
-    void teleportWithOwner(Object location);
+    void teleportWithOwner(Location location);
 
     @Deprecated
     boolean isDieing();
@@ -58,7 +58,7 @@ public interface PetBlock {
      *
      * @return player
      */
-    Object getPlayer();
+    Player getPlayer();
 
     /**
      * Removes the petblock.
@@ -70,21 +70,21 @@ public interface PetBlock {
      *
      * @param player player
      */
-    void ride(Object player);
+    void ride(Player player);
 
     /**
      * Lets the given player wear the petblock.
      *
      * @param player player
      */
-    void wear(Object player);
+    void wear(Player player);
 
     /**
      * Ejects the given player riding from the petblock.
      *
      * @param player player
      */
-    void eject(Object player);
+    void eject(Player player);
 
     /**
      * Sets the displayName of the petblock.
@@ -139,7 +139,7 @@ public interface PetBlock {
      *
      * @return position
      */
-    Object getLocation();
+    Location getLocation();
 
     /**
      * Damages the petblock the given amount of damage.
@@ -165,5 +165,5 @@ public interface PetBlock {
      *
      * @param location location
      */
-    void teleport(Object location);
+    void teleport(Location location);
 }

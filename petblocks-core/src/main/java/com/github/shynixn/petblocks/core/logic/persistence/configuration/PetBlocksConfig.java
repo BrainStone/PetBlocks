@@ -17,12 +17,15 @@ public abstract class PetBlocksConfig<T> implements IConfig {
     private final CostumeController rareCostumesController = Factory.createCostumesController("rare");
     private final CostumeController minecraftHeadsCostumesController = Factory.createMinecraftHeadsCostumesController();
 
+    private PetConf petConf = new PetConf();
+
     /**
      * Reloads the config
      */
     @Override
     public void reload() {
         this.getOrdinaryCostumesController().reload();
+        this.getEngineController().reload();
      /*   this.colorCostumesController.reload();
         this.rareCostumesController.reload();
         this.minecraftHeadsCostumesController.reload();
@@ -36,8 +39,8 @@ public abstract class PetBlocksConfig<T> implements IConfig {
      *
      * @return pet
      */
-    public ConfigPet pet() {
-        return null;
+    public PetConf pet() {
+        return petConf;
     }
 
     public ParticleController getParticleController() {
@@ -48,12 +51,12 @@ public abstract class PetBlocksConfig<T> implements IConfig {
         return this.guiItemsController;
     }
 
-    public EngineController getEngineController() {
-        return this.engineController;
-    }
+
+    public abstract EngineController getEngineController();
 
     /**
      * Returns the ordinary costume controller.
+     *
      * @return controller
      */
     public abstract CostumeController getOrdinaryCostumesController();
@@ -199,8 +202,130 @@ public abstract class PetBlocksConfig<T> implements IConfig {
         return (boolean) this.getData("metrics");
     }
 
-
     private List<String> getDataAsStringList(String path) {
         return ((List<String>) this.getData(path));
+    }
+
+    public class PetConf {
+
+        /**
+         * Returns the forbidden pet names.
+         *
+         * @return names
+         */
+        public List<String> getPetNameBlackList() {
+            return PetBlocksConfig.this.getData("pet.design.petname-blacklist");
+        }
+
+        /**
+         * Returns the amount of blocks the pet has to stay away from the player.
+         *
+         * @return amount
+         */
+        public int getBlocksAwayFromPlayer() {
+            return (int) PetBlocksConfig.this.getData("pet.follow.amount-blocks-away");
+        }
+
+        /**
+         * Returns if feeding is enabled.
+         *
+         * @return feeding
+         */
+        public boolean isFeedingEnabled() {
+            return PetBlocksConfig.this.getData("pet.feeding.enabled");
+        }
+
+        public boolean isAfraidOfwater() {
+            return (boolean) PetBlocksConfig.this.getData("pet.follow.afraid-water");
+        }
+
+        public boolean isAfraidwaterParticles() {
+            return (boolean) PetBlocksConfig.this.getData("pet.follow.afraid-water-particles");
+        }
+
+        public int getAge_smallticks() {
+            return (int) PetBlocksConfig.this.getData("pet.age.small-ticks");
+        }
+
+        public int getAge_largeticks() {
+            return (int) PetBlocksConfig.this.getData("pet.age.large-ticks");
+        }
+
+        public int getAge_maxticks() {
+            return (int) PetBlocksConfig.this.getData("pet.age.max-ticks");
+        }
+
+        public boolean isAge_deathOnMaxTicks() {
+            return (boolean) PetBlocksConfig.this.getData("pet.age.death-on-maxticks");
+        }
+
+        public double getCombat_health() {
+            return (double) PetBlocksConfig.this.getData("pet.combat.health");
+        }
+
+        public boolean isCombat_invincible() {
+            return (boolean) PetBlocksConfig.this.getData("pet.combat.invincible");
+        }
+
+        public int getFollow_maxRangeTeleport() {
+            return (int) PetBlocksConfig.this.getData("pet.follow.max-range-teleport");
+        }
+
+        public boolean isFollow_fallOffHead() {
+            return (boolean) PetBlocksConfig.this.getData("pet.follow.teleport-fall");
+        }
+
+        public boolean isFollow_carry() {
+            return (boolean) PetBlocksConfig.this.getData("pet.follow.carry");
+        }
+
+        public int getDesign_maxPetNameLength() {
+            return (int) PetBlocksConfig.this.getData("pet.design.max-petname-length");
+        }
+
+        public boolean isDesign_showDamageAnimation() {
+            return (boolean) PetBlocksConfig.this.getData("pet.design.show-damage-animation");
+        }
+
+        public boolean isSoundForOtherPlayersHearable() {
+            return (boolean) PetBlocksConfig.this.getData("pet.design.sounds-other-players");
+        }
+
+        /**
+         * Returns if particles are visible for other players.
+         *
+         * @return visible
+         */
+        public boolean areParticlesForOtherPlayersVisible() {
+            return PetBlocksConfig.this.getData("pet.design.particles-other-players");
+        }
+
+        public double getModifier_petriding() {
+            return (double) PetBlocksConfig.this.getData("pet.modifier.riding-speed");
+        }
+
+        public double getModifier_petwalking() {
+            return (double) PetBlocksConfig.this.getData("pet.modifier.walking-speed");
+        }
+
+        public double getModifier_petclimbing() {
+            return (double) PetBlocksConfig.this.getData("pet.modifier.climbing-height");
+        }
+
+        public boolean isFollow_wallcolliding() {
+            return (boolean) PetBlocksConfig.this.getData("pet.follow.flying-wall-colliding");
+        }
+
+        public boolean isFleesInCombat() {
+            return (boolean) PetBlocksConfig.this.getData("pet.flee.flees-in-combat");
+        }
+
+        public int getReappearsInSeconds() {
+            return (int) PetBlocksConfig.this.getData("pet.flee.reappears-in-seconds");
+        }
+
+        public int getWarpDelay() {
+            return (int) PetBlocksConfig.this.getData("pet.warp.teleports-in-seconds");
+        }
     }
 }

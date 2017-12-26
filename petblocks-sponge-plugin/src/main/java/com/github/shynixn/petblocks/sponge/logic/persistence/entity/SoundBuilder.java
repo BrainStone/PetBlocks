@@ -71,6 +71,17 @@ public class SoundBuilder implements SoundMeta {
     }
 
     /**
+     * Initializes a new soundBuilder.
+     *
+     * @param data data data
+     */
+    public SoundBuilder(Map<String, Object> data) {
+        this.text = (String) data.get("name");
+        this.volume = (float) (double) data.get("volume");
+        this.pitch = (float) (double) data.get("pitch");
+    }
+
+    /**
      * Initializes a new soundBuilder
      *
      * @param text   text

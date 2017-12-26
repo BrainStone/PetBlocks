@@ -9,8 +9,6 @@ import com.github.shynixn.petblocks.bukkit.PetBlocksPlugin;
 import com.github.shynixn.petblocks.bukkit.logic.business.PetBlockManager;
 import com.github.shynixn.petblocks.bukkit.logic.business.PetRunnable;
 import com.github.shynixn.petblocks.bukkit.logic.business.configuration.Config;
-import com.github.shynixn.petblocks.core.logic.persistence.configuration.PetBlocksConfig;
-import com.github.shynixn.petblocks.core.logic.persistence.configuration.ConfigPet;
 import com.github.shynixn.petblocks.bukkit.nms.NMSRegistry;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
