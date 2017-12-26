@@ -46,9 +46,9 @@ public class NMSRegistry {
 
     static {
         try {
-            wrappedRegistry = (CustomEntityType.WrappedRegistry) findClassFromVersion("com.github.shynixn.petblocks.bukkit.sponge.VERSION.CustomEntityRegistry").newInstance();
-            rabbitClazz = findClassFromVersion("com.github.shynixn.petblocks.bukkit.sponge.VERSION.CustomRabbit");
-            zombieClazz = findClassFromVersion("com.github.shynixn.petblocks.bukkit.sponge.VERSION.CustomZombie");
+            wrappedRegistry = (CustomEntityType.WrappedRegistry) findClassFromVersion("com.github.shynixn.petblocks.sponge.nms.VERSION.CustomEntityRegistry").newInstance();
+            rabbitClazz = findClassFromVersion("com.github.shynixn.petblocks.sponge.nms.VERSION.CustomRabbit");
+            zombieClazz = null;
         } catch (final ClassNotFoundException | IllegalAccessException | InstantiationException e) {
             throw new RuntimeException(e);
         }
@@ -69,9 +69,10 @@ public class NMSRegistry {
         try {
             if (!wrappedRegistry.isRegistered(rabbitClazz)) {
                 wrappedRegistry.register(rabbitClazz, CustomEntityType.RABBIT);
-                wrappedRegistry.register(zombieClazz, CustomEntityType.ZOMBIE);
+             // wrappedRegistry.register(zombieClazz, CustomEntityType.ZOMBIE);
+                System.out.println("HELLO");
             }
-            return (SpongePetBlock) ReflectionUtils.invokeConstructor(findClassFromVersion("com.github.shynixn.petblocks.bukkit.nms.VERSION.CustomGroundArmorstand")
+            return (SpongePetBlock) ReflectionUtils.invokeConstructor(findClassFromVersion("com.github.shynixn.petblocks.sponge.nms.VERSION.CustomGroundArmorstand")
                     , new Class[]{location.getClass(), PetMeta.class}, new Object[]{location, meta});
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | InstantiationException | ClassNotFoundException e) {
             PetBlocksPlugin.logger().log(Level.WARNING, "Cannot create petblock.", e);

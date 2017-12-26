@@ -36,6 +36,7 @@ import java.util.regex.Pattern;
  */
 public enum VersionSupport {
     VERSION_1_10_R1("v1_10_R1", "1.10.2", 1.10),
+    VERSION_1_11_R1("v1_11_R1", "1.11.2", 1.11),
     VERSION_1_12_R1("v1_12_R1", "1.12.2", 1.12);
 
     private final String versionText;
