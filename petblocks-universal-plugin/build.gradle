@@ -10,7 +10,7 @@ uploadArchives {
     }
 }
 
-shadowJar{
+shadowJar {
     baseName = project.name
     version = project.version
     relocate 'com.zaxxer', 'com.github.shynixn.petblocks.lib.com.zaxxer'
@@ -22,7 +22,7 @@ shadowJar{
             from 'build/libs/petblocks-universal-plugin-' + project.version + '-all.jar'
             into "D:/Temp/plugins"
         }
-        copy{
+        copy {
             from 'build/libs/petblocks-universal-plugin-' + project.version + '-all.jar'
             into "D:/Temp/SpongePowered/mods"
         }
@@ -31,5 +31,5 @@ shadowJar{
 
 dependencies {
     compile project(':petblocks-bukkit-plugin')
-    compile project(':petblocks-sponge-plugin')
+    compile project(path: ':petblocks-sponge-nms-v1_11_R1', configuration: 'schema')
 }

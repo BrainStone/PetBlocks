@@ -20,6 +20,5 @@ dependencies {
 
     compile group: 'org.bstats', name: 'bstats-sponge', version:'1.2'
     compileOnly group: 'org.spongepowered', name: 'spongeapi', version: '6.0.0'
-
-    compile files("../petblocks-sponge-plugin/petblocks-sponge-nms-v1_11_R1/build/retromapping/retromappedReplacedMain.jar")
 }
+

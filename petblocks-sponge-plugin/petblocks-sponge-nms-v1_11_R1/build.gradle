@@ -53,3 +53,22 @@ minecraft {
     version = '1.11'
     mappings = 'snapshot_20170120'
 }
+
+configurations {
+    schema
+}
+
+task schemaJar(type: Jar,dependsOn: 'build') {
+    println 'Generating sponge implementation for sponge-v1_11_R1...'
+    from {
+        zipTree 'build\\libs\\petblocks-sponge-nms-v1_11_R1-6.4.2-SNAPSHOT-all.jar'
+    }
+}
+
+artifacts {
+    schema schemaJar
+}
+
+reobf{
+    shadowJar {}
+}
