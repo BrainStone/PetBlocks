@@ -5,11 +5,13 @@ import com.github.shynixn.petblocks.api.persistence.entity.ParticleEffectMeta;
 import com.github.shynixn.petblocks.api.persistence.entity.PetMeta;
 import com.github.shynixn.petblocks.api.persistence.entity.PlayerMeta;
 import com.github.shynixn.petblocks.core.logic.persistence.entity.PersistenceObject;
+import com.github.shynixn.petblocks.sponge.PetBlocksPlugin;
 import com.github.shynixn.petblocks.sponge.logic.business.configuration.Config;
 import com.github.shynixn.petblocks.sponge.logic.business.helper.CompatibilityItemType;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.manipulator.mutable.RepresentedPlayerData;
+import org.spongepowered.api.data.type.SkullTypes;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.inventory.ItemStack;
@@ -21,6 +23,9 @@ import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.logging.Level;
 
 /**
  * Implementation of the petMeta interface which is persistence able to the database.
@@ -404,15 +409,24 @@ public class SpongePetData extends PersistenceObject implements PetMeta {
                 gameProfile = GameProfile.of(UUID.randomUUID(), null);
                 gameProfile.addProperty("textures", ProfileProperty.of("textures", Base64Coder.encodeString("{textures:{SKIN:{url:\"" + skinUrl + "\"}}}")));
             } else {
-                gameProfile = GameProfile.of(UUID.randomUUID(), this.getSkin());
+                CompletableFuture<GameProfile> futureGameProfile = Sponge.getServer().getGameProfileManager().get(skin);
+                try {
+                    gameProfile = futureGameProfile.get();
+                } catch (InterruptedException | ExecutionException e) {
+                    PetBlocksPlugin.logger().log(Level.WARNING, "Too many requests.", e);
+                    throw new RuntimeException();
+                }
             }
             final RepresentedPlayerData skinData = Sponge.getGame().getDataManager().getManipulatorBuilder(RepresentedPlayerData.class).get().create();
-            skinData.set(Keys.REPRESENTED_PLAYER, gameProfile);
+            skinData.set(Keys.REPRESENTED_PLAYER,  GameProfile.of(UUID.fromString("4c38ed11-596a-4fd4-ab1d-26f386c1cbac")));
+            if (this.damage == 3) {
+                itemStack.offer(Keys.SKULL_TYPE, SkullTypes.PLAYER);
+                itemStack.offer(Keys.REPRESENTED_PLAYER, GameProfile.of(UUID.fromString("4c38ed11-596a-4fd4-ab1d-26f386c1cbac")));
+            }
             itemStack.offer(skinData);
         }
         itemStack.offer(Keys.UNBREAKABLE, this.isItemUnbreakable());
         itemStack.offer(Keys.DISPLAY_NAME, TextSerializers.LEGACY_FORMATTING_CODE.deserialize(getItemName()));
-        System.out.println("GENERATED ITEMSTACK");
         return itemStack;
     }
 

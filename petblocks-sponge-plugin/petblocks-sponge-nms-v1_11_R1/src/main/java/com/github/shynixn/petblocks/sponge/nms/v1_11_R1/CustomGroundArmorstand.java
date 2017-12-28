@@ -91,8 +91,9 @@ final class CustomGroundArmorstand extends EntityArmorStand implements SpongePet
     @Override
     protected void updateEntityActionState() {
         if (this.isSpecial) {
+            ((Living) this.getArmorStand()).getHealthData().health().set( ((Living) this.getArmorStand()).getHealthData().maxHealth().getMaxValue());
             this.counter = PetBlockHelper.doTick(this.counter, this, location -> {
-                this.setPositionAndRotation(location.getX(), location.getY(), location.getZ(), (float) location.getYaw(), (float) location.getPitch());
+                this.setLocationAndAngles(location.getX(), location.getY()+0.2, location.getZ(), (float) location.getYaw(), (float) location.getPitch());
                 final SPacketEntityTeleport animation = new SPacketEntityTeleport(this);
                 for (final Player player : ((ArmorStand) this.getArmorStand()).getWorld().getPlayers()) {
                     ((EntityPlayerMP) player).connection.sendPacket(animation);
@@ -214,6 +215,9 @@ final class CustomGroundArmorstand extends EntityArmorStand implements SpongePet
     }
 
     public void spawn(Location location) {
+
+        PetBlocksPlugin.logger().log(Level.WARNING, "RESPAWNING PETBLOCK!");
+
         final PetBlockSpawnEvent event = new PetBlockSpawnEvent(this);
         Sponge.getEventManager().post(event);
         if (!event.isCancelled()) {
@@ -223,6 +227,10 @@ final class CustomGroundArmorstand extends EntityArmorStand implements SpongePet
             } else if (this.petMeta.getEngine().getEntityType().equalsIgnoreCase("ZOMBIE")) {
                 //  this.rabbit = new CustomZombie(this.owner, this);
             }
+
+            this.dead = false;
+            this.isDead = false;
+
             this.rabbit.spawn(location);
             final World mcWorld = (World) location.getExtent();
             this.setPosition(location.getX(), location.getY(), location.getZ());
@@ -234,6 +242,7 @@ final class CustomGroundArmorstand extends EntityArmorStand implements SpongePet
             compound.setBoolean("ShowArms", true);
             compound.setBoolean("NoBasePlate", true);
             this.readEntityFromNBT(compound);
+            ((ArmorStand) this.getArmorStand()).gravity().set(false);
             ((ArmorStand) this.getArmorStand()).getBodyPartRotationalData().bodyRotation().set(new Vector3d(0, 0, 2878));
             ((ArmorStand) this.getArmorStand()).getBodyPartRotationalData().leftArmDirection().set(new Vector3d(2878, 0, 0));
             ((ArmorStand) this.getArmorStand()).offer(Keys.CUSTOM_NAME_VISIBLE, true);
@@ -241,12 +250,7 @@ final class CustomGroundArmorstand extends EntityArmorStand implements SpongePet
             this.health = Config.getInstance().pet().getCombat_health();
             if (this.petMeta == null)
                 return;
-
-            System.out.println(" I HAVE COMPLETELY SPAWNED THE PETBLOCK");
-
             PetBlockHelper.setItemConsideringAge(this);
-
-
         }
     }
 
@@ -403,12 +407,12 @@ final class CustomGroundArmorstand extends EntityArmorStand implements SpongePet
             ((Living) this.getEngineEntity()).remove();
         }
         if (!((Living) this.getArmorStand()).isRemoved()) {
-            ((Living) this.getEngineEntity()).remove();
+            ((World) this.getLocation().getExtent()).removeEntity(this);
         }
     }
 
     /**
-     * Lets the given player ride on the petblock.
+     * Lets the given player ride on the petblocks.
      *
      * @param player player
      */

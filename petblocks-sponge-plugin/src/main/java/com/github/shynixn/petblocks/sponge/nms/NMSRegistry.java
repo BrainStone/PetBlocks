@@ -70,7 +70,6 @@ public class NMSRegistry {
             if (!wrappedRegistry.isRegistered(rabbitClazz)) {
                 wrappedRegistry.register(rabbitClazz, CustomEntityType.RABBIT);
              // wrappedRegistry.register(zombieClazz, CustomEntityType.ZOMBIE);
-                System.out.println("HELLO");
             }
             return (SpongePetBlock) ReflectionUtils.invokeConstructor(findClassFromVersion("com.github.shynixn.petblocks.sponge.nms.VERSION.CustomGroundArmorstand")
                     , new Class[]{location.getClass(), PetMeta.class}, new Object[]{location, meta});

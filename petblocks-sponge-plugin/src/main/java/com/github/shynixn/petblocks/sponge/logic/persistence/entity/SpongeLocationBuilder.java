@@ -86,7 +86,7 @@ public class SpongeLocationBuilder implements IPosition {
      * @param rotation      rotation
      */
     public SpongeLocationBuilder(Location<World> worldLocation, Vector3d rotation) {
-        this(worldLocation.getExtent().getName(), worldLocation.getX(), worldLocation.getY(), worldLocation.getZ(), (float) rotation.getX(), (float) rotation.getY());
+        this(worldLocation.getExtent().getName(), worldLocation.getX(), worldLocation.getY(), worldLocation.getZ(), (float) rotation.getY(), (float) rotation.getX());
     }
 
     /**

@@ -187,9 +187,7 @@ public enum VersionSupport {
      */
     public static VersionSupport getServerVersion() {
         final String version = Sponge.getPluginManager().getPlugin("sponge").get().getVersion().get().split(Pattern.quote("-"))[0];
-        System.out.println("VERSION: " + version);
         for (final VersionSupport versionSupport : VersionSupport.values()) {
-            System.out.println("E: " + versionSupport.getSimpleVersionText() + " = " + version);
             if (versionSupport.getSimpleVersionText().equals(version))
                 return versionSupport;
         }

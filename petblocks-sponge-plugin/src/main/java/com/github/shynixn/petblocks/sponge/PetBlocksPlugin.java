@@ -101,7 +101,6 @@ public class PetBlocksPlugin {
         System.out.println("Reloadinng...");
     this.config.reload();
 
-        System.out.println("MEME");
         System.out.println("SPONGE VERSION : " + VersionSupport.getServerVersion().getSimpleVersionText());
 
         Player player = Sponge.getGame().getServer().getPlayer("Shynixn").get();
@@ -123,8 +122,6 @@ public class PetBlocksPlugin {
 
 
         Location location = new SpongeLocationBuilder(player.getLocation(), player.getRotation()).toLocation();
-
-        System.out.println("34aa");
 
         SpongePetBlock petBlock = NMSRegistry.createPetBlock(location,petMeta);
 

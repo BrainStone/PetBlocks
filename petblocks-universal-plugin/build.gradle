@@ -34,4 +34,5 @@ shadowJar() {
 dependencies {
     compile project(':petblocks-bukkit-plugin')
     compile project(path: ':petblocks-sponge-nms-v1_11_R1', configuration: 'schema')
+    compile project(':petblocks-sponge-plugin')
 }

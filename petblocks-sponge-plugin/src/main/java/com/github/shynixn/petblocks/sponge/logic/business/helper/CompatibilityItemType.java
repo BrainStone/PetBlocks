@@ -506,7 +506,6 @@ public enum CompatibilityItemType {
 
     public static CompatibilityItemType getFromItemType(ItemType itemType) {
         for (final CompatibilityItemType compatibilityItemType : values()) {
-            System.out.println("COMPAT: " + itemType.getId() + " - " + compatibilityItemType.getFullMinecraftId());
             if (itemType.getId().equalsIgnoreCase(compatibilityItemType.getFullMinecraftId())) {
                 return compatibilityItemType;
             }

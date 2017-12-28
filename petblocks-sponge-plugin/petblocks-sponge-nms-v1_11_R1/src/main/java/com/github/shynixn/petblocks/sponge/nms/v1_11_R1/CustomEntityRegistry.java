@@ -55,7 +55,6 @@ public class CustomEntityRegistry implements CustomEntityType.WrappedRegistry {
         final ResourceLocation minecraftKey = new ResourceLocation("PetBlocks", customEntityType.getSaveGame_11());
         final RegistryNamespaced<ResourceLocation, Class<? extends Entity>> materialRegistry = EntityList.REGISTRY;
         materialRegistry.register(customEntityType.getEntityId(), minecraftKey, (Class<? extends Entity>) customEntityClazz);
-        System.out.println("ADDED");
         this.registeredClasses.add(customEntityClazz);
     }
 
@@ -85,7 +84,6 @@ public class CustomEntityRegistry implements CustomEntityType.WrappedRegistry {
      */
     @Override
     public boolean isRegistered(Class<?> customEntityClazz) {
-        System.out.println("REGISTERD?????");
         return this.registeredClasses.contains(customEntityClazz);
     }
 }

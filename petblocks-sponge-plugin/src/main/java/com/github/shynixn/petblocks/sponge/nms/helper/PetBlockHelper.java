@@ -117,25 +117,20 @@ public final class PetBlockHelper {
 
     public static int doTick(int counter, PetBlock petBlock, TickCallBack callBack) {
         final PetMeta petData = petBlock.getMeta();
-
-        System.out.println("a-REMOVED: " + (!getArmorstand(petBlock).isRemoved())
-                + "-" + (getArmorstand(petBlock).getPassengers().isEmpty())
-                + "-" +  (getEngineEntity(petBlock) != null )
-                + "-" + (getArmorstand(petBlock).getVehicle() == null));
-
         if (!getArmorstand(petBlock).isRemoved() && getArmorstand(petBlock).getPassengers().isEmpty() && getEngineEntity(petBlock) != null && !getArmorstand(petBlock).getVehicle().isPresent()) {
             IPosition location = null;
             if (petData.getAge() >= Config.getInstance().pet().getAge_largeticks())
-                location = new SpongeLocationBuilder(getEngineEntity(petBlock).getLocation().getExtent().getName(), getEngineEntity(petBlock).getLocation().getX(), getEngineEntity(petBlock).getLocation().getY() - 1.2, getEngineEntity(petBlock).getLocation().getZ(), getEngineEntity(petBlock).getRotation().getX(), getEngineEntity(petBlock).getRotation().getY());
+            {
+                location = new SpongeLocationBuilder(getEngineEntity(petBlock).getLocation(), getEngineEntity(petBlock).getHeadRotation());
+                location.setY(location.getY()-1.2);
+            }
             else if (petData.getAge() <= Config.getInstance().pet().getAge_smallticks())
                 location = new SpongeLocationBuilder(getEngineEntity(petBlock).getLocation().getExtent().getName(), getEngineEntity(petBlock).getLocation().getX(), getEngineEntity(petBlock).getLocation().getY() - 0.7, getEngineEntity(petBlock).getLocation().getZ(), getEngineEntity(petBlock).getRotation().getX(), getEngineEntity(petBlock).getRotation().getY());
             if (location != null)
                 callBack.run(location);
-            System.out.println("RABBIT FOUND");
             counter = doTickSounds(counter, petBlock);
         } else if (getEngineEntity(petBlock) != null) {
             getEngineEntity(petBlock).setLocation(getArmorstand(petBlock).getLocation());
-            System.out.println(" WUT NOPE TELEPORT TO MASTER");
         }
         try {
             if (petData.getAge() >= Config.getInstance().pet().getAge_maxticks()) {
@@ -168,14 +163,15 @@ public final class PetBlockHelper {
         if (counter <= 0) {
             final Random random = new Random();
             if (!getEngineEntity(petBlock).isOnGround() || petData.getEngine().getEntityType().equalsIgnoreCase("ZOMBIE")) {
-                petBlock.getEffectPipeline().playSound(petBlock.getLocation(), petBlock.getMeta().getEngine().getAmbientSound());
+              //  petBlock.getEffectPipeline().playSound(petBlock.getLocation(), petBlock.getMeta().getEngine().getAmbientSound());
             }
             counter = 20 * random.nextInt(20) + 1;
         }
         if (getEngineEntity(petBlock).isRemoved()) {
 
             PetBlocksPlugin.logger().log(Level.WARNING, "PetBlockw as removed in tick sounds.");
-            PetBlocksApi.getDefaultPetBlockController().remove(petBlock);
+            petBlock.removeEntity();
+          //  PetBlocksApi.getDefaultPetBlockController().remove(petBlock);
         }
         if (petData.getParticleEffectMeta() != null) {
             petBlock.getEffectPipeline().playParticleEffect(getArmorstand(petBlock).getLocation().add(0, 1, 0), petData.getParticleEffectMeta());
@@ -291,13 +287,9 @@ public final class PetBlockHelper {
 
     public static void respawn(PetBlock petBlock, TickCallBack callBack) {
         final Location location = (Location) petBlock.getLocation();
-        final IPosition position = new SpongeLocationBuilder();
-        position.setWorldName(((World) ((Location) petBlock.getLocation()).getExtent()).getName())
-                .setCoordinates(location.getX(), location.getY(), location.getZ())
-                .setRotation(getEngineEntity(petBlock).getRotation().getX(), getEngineEntity(petBlock).getRotation().getY());
-
+        final IPosition position = new SpongeLocationBuilder(location, ((Living)petBlock.getArmorStand()).getHeadRotation());
+        position.addCoordinates(0, 1.2,0);
         PetBlocksPlugin.logger().log(Level.WARNING, "PetBlockw as removed in respawn.");
-
         petBlock.removeEntity();
         callBack.run(position);
     }
