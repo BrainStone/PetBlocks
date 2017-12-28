@@ -406,10 +406,10 @@ final class CustomGroundArmorstand extends EntityArmorStand implements PetBlock 
     }
 
     /**
-     * Removes the petblock
+     * Removes the petblock.
      */
     @Override
-    public void remove() {
+    public void removeEntity() {
         PetBlockHelper.remove(this);
     }
 

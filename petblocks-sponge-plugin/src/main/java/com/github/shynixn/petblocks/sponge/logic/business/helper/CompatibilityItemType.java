@@ -482,6 +482,11 @@ public enum CompatibilityItemType {
         return this.minecraftId;
     }
 
+    public String getFullMinecraftId()
+    {
+        return "minecraft:" + this.minecraftId;
+    }
+
     public ItemType getItemType() {
         return Sponge.getGame().getRegistry().getType(ItemType.class, this.getMinecraftId()).get();
     }
@@ -501,7 +506,8 @@ public enum CompatibilityItemType {
 
     public static CompatibilityItemType getFromItemType(ItemType itemType) {
         for (final CompatibilityItemType compatibilityItemType : values()) {
-            if (itemType.getId().equalsIgnoreCase(compatibilityItemType.minecraftId)) {
+            System.out.println("COMPAT: " + itemType.getId() + " - " + compatibilityItemType.getFullMinecraftId());
+            if (itemType.getId().equalsIgnoreCase(compatibilityItemType.getFullMinecraftId())) {
                 return compatibilityItemType;
             }
         }

@@ -266,7 +266,7 @@ public final class PetBlockHelper {
                 getArmorstand(petBlock).setHeadPose(new EulerAngle(0, 1, 0));
             Bukkit.getPluginManager().getPlugin("PetBlocks").getServer().getScheduler().runTaskLater(Bukkit.getPluginManager().getPlugin("PetBlocks"), () -> {
                 petBlock.getEffectPipeline().playParticleEffect(petBlock.getLocation(), cloud);
-                petBlock.remove();
+                petBlock.removeEntity();
             }, 20 * 2);
             return true;
         }
@@ -356,7 +356,7 @@ public final class PetBlockHelper {
 
     public static void respawn(PetBlock petBlock, TickCallBack callBack) {
         final Location location = ((Location) petBlock.getLocation()).clone();
-        petBlock.remove();
+        petBlock.removeEntity();
         callBack.run(location);
     }
 

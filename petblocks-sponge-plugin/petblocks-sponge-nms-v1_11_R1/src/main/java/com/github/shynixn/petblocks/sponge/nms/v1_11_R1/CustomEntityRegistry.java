@@ -5,6 +5,9 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.RegistryNamespaced;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.spongepowered.api.Sponge;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -52,6 +55,7 @@ public class CustomEntityRegistry implements CustomEntityType.WrappedRegistry {
         final ResourceLocation minecraftKey = new ResourceLocation("PetBlocks", customEntityType.getSaveGame_11());
         final RegistryNamespaced<ResourceLocation, Class<? extends Entity>> materialRegistry = EntityList.REGISTRY;
         materialRegistry.register(customEntityType.getEntityId(), minecraftKey, (Class<? extends Entity>) customEntityClazz);
+        System.out.println("ADDED");
         this.registeredClasses.add(customEntityClazz);
     }
 
@@ -81,6 +85,7 @@ public class CustomEntityRegistry implements CustomEntityType.WrappedRegistry {
      */
     @Override
     public boolean isRegistered(Class<?> customEntityClazz) {
+        System.out.println("REGISTERD?????");
         return this.registeredClasses.contains(customEntityClazz);
     }
 }

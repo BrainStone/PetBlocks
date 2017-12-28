@@ -2,6 +2,7 @@ package com.github.shynixn.petblocks.sponge.nms.v1_11_R1;
 
 import com.github.shynixn.petblocks.api.business.entity.PetBlock;
 import com.github.shynixn.petblocks.api.business.entity.PetBlockPartEntity;
+import com.github.shynixn.petblocks.api.sponge.entity.SpongePetBlock;
 import com.github.shynixn.petblocks.sponge.PetBlocksPlugin;
 import com.github.shynixn.petblocks.sponge.logic.business.configuration.Config;
 import com.github.shynixn.petblocks.sponge.nms.helper.PetBlockHelper;
@@ -21,18 +22,22 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.world.Location;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.logging.Level;
 
 public final class CustomRabbit extends EntityRabbit implements PetBlockPartEntity {
     private PetBlock petBlock;
     private long playedMovingSound = 100000;
 
+    private Method cache;
+
     public CustomRabbit(World worldIn) {
         super(worldIn);
     }
 
-    public CustomRabbit(Player player, PetBlock petBlock) {
-        super((World) player.getWorld());
+    public CustomRabbit(Player player, SpongePetBlock petBlock) {
+        super((World) petBlock.getLocation().getExtent());
         this.setSilent(true);
         try {
             this.tasks.taskEntries = Sets.newLinkedHashSet();
@@ -92,11 +97,10 @@ public final class CustomRabbit extends EntityRabbit implements PetBlockPartEnti
     }
 
     /**
-     * Removes the entity from the world
+     * Removes the entity from the world.
      */
     @Override
-    public void remove() {
+    public void removeEntity() {
         ((Living) this.getEntity()).remove();
     }
-
 }

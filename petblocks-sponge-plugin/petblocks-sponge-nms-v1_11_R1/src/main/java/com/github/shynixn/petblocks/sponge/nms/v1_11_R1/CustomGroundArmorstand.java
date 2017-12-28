@@ -7,6 +7,7 @@ import com.github.shynixn.petblocks.api.business.enumeration.RideType;
 import com.github.shynixn.petblocks.api.persistence.entity.PetMeta;
 import com.github.shynixn.petblocks.api.sponge.entity.SpongePetBlock;
 import com.github.shynixn.petblocks.api.sponge.event.PetBlockSpawnEvent;
+import com.github.shynixn.petblocks.sponge.PetBlocksPlugin;
 import com.github.shynixn.petblocks.sponge.logic.business.configuration.Config;
 import com.github.shynixn.petblocks.sponge.logic.business.entity.Pipeline;
 import com.github.shynixn.petblocks.sponge.logic.persistence.entity.SpongeLocationBuilder;
@@ -26,9 +27,14 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.living.ArmorStand;
 import org.spongepowered.api.entity.living.Human;
+import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.world.Location;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.logging.Level;
 
 final class CustomGroundArmorstand extends EntityArmorStand implements SpongePetBlock {
     private PetMeta petMeta;
@@ -48,6 +54,8 @@ final class CustomGroundArmorstand extends EntityArmorStand implements SpongePet
 
     private Pipeline pipeline;
 
+    private Method cache;
+
     public CustomGroundArmorstand(World world) {
         super(world);
     }
@@ -57,12 +65,7 @@ final class CustomGroundArmorstand extends EntityArmorStand implements SpongePet
         this.isSpecial = true;
         this.petMeta = meta;
         this.owner = this.petMeta.getPlayerMeta().getPlayer();
-        if (this.petMeta.getEngine().getEntityType().equalsIgnoreCase("RABBIT")) {
-            this.rabbit = new CustomRabbit(this.owner, this);
 
-        } else if (this.petMeta.getEngine().getEntityType().equalsIgnoreCase("ZOMBIE")) {
-            //  this.rabbit = new CustomZombie(this.owner, this);
-        }
 
         this.pipeline = new Pipeline(this);
         this.spawn(location);
@@ -214,6 +217,12 @@ final class CustomGroundArmorstand extends EntityArmorStand implements SpongePet
         final PetBlockSpawnEvent event = new PetBlockSpawnEvent(this);
         Sponge.getEventManager().post(event);
         if (!event.isCancelled()) {
+            if (this.petMeta.getEngine().getEntityType().equalsIgnoreCase("RABBIT")) {
+                this.rabbit = new CustomRabbit(this.owner, this);
+
+            } else if (this.petMeta.getEngine().getEntityType().equalsIgnoreCase("ZOMBIE")) {
+                //  this.rabbit = new CustomZombie(this.owner, this);
+            }
             this.rabbit.spawn(location);
             final World mcWorld = (World) location.getExtent();
             this.setPosition(location.getX(), location.getY(), location.getZ());
@@ -232,7 +241,12 @@ final class CustomGroundArmorstand extends EntityArmorStand implements SpongePet
             this.health = Config.getInstance().pet().getCombat_health();
             if (this.petMeta == null)
                 return;
+
+            System.out.println(" I HAVE COMPLETELY SPAWNED THE PETBLOCK");
+
             PetBlockHelper.setItemConsideringAge(this);
+
+
         }
     }
 
@@ -381,11 +395,16 @@ final class CustomGroundArmorstand extends EntityArmorStand implements SpongePet
     }
 
     /**
-     * Removes the petblock
+     * Removes the petblock.
      */
     @Override
-    public void remove() {
-        PetBlockHelper.remove(this);
+    public void removeEntity() {
+        if (this.getEngineEntity() != null && !((Living) this.getEngineEntity()).isRemoved()) {
+            ((Living) this.getEngineEntity()).remove();
+        }
+        if (!((Living) this.getArmorStand()).isRemoved()) {
+            ((Living) this.getEngineEntity()).remove();
+        }
     }
 
     /**
@@ -445,6 +464,6 @@ final class CustomGroundArmorstand extends EntityArmorStand implements SpongePet
      */
     @Override
     public Location<org.spongepowered.api.world.World> getLocation() {
-        return ((ArmorStand) this.getArmorStand()).getLocation();
+        return new Location<>((org.spongepowered.api.world.World) this.getEntityWorld(), this.posX, this.posY, this.posZ);
     }
 }

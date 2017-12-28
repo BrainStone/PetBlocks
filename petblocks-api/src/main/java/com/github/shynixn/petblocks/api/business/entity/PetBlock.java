@@ -63,7 +63,7 @@ public interface PetBlock<Player, Location> {
     /**
      * Removes the petblock.
      */
-    void remove();
+    void removeEntity();
 
     /**
      * Lets the given player ride on the petblock.

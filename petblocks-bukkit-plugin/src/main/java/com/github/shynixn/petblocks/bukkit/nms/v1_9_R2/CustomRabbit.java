@@ -88,11 +88,12 @@ public final class CustomRabbit extends EntityRabbit implements PetBlockPartEnti
     }
 
     /**
-     * Removes the entity from the world
+     * Removes the entity from the world.
      */
     @Override
-    public void remove() {
+    public void removeEntity() {
         ((LivingEntity) this.getEntity()).remove();
+
     }
 
     /**

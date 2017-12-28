@@ -3,6 +3,7 @@ package com.github.shynixn.petblocks.sponge.logic.persistence.entity;
 import com.flowpowered.math.vector.Vector3d;
 import com.github.shynixn.petblocks.api.persistence.entity.ParticleEffectMeta;
 import com.github.shynixn.petblocks.core.logic.persistence.entity.PersistenceObject;
+import com.github.shynixn.petblocks.sponge.PetBlocksPlugin;
 import com.github.shynixn.petblocks.sponge.logic.business.helper.CompatibilityItemType;
 import com.google.common.reflect.TypeToken;
 import ninja.leaping.configurate.ConfigurationNode;
@@ -14,6 +15,7 @@ import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.effect.particle.ParticleEffect;
 import org.spongepowered.api.effect.particle.ParticleOptions;
 import org.spongepowered.api.effect.particle.ParticleType;
+import org.spongepowered.api.effect.particle.ParticleTypes;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.world.Location;
@@ -24,6 +26,7 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
+import java.util.logging.Level;
 
 /**
  * Copyright 2017 Shynixn
@@ -585,7 +588,9 @@ public class SpongeParticleEffectMeta extends PersistenceObject implements Parti
      */
     public void applyTo(Location location, Player... players) {
         try {
-            final ParticleType type = Sponge.getGame().getRegistry().getType(ParticleType.class, this.getEffectType().getSimpleName()).get();
+            if(this.effect == null)
+                return;
+            final ParticleType type = Sponge.getGame().getRegistry().getType(ParticleType.class,"minecraft:" + this.getEffectType().getSimpleName()).get();
             final ParticleEffect.Builder builder = ParticleEffect.builder()
                     .type(type)
                     .quantity(this.getAmount())
@@ -603,7 +608,7 @@ public class SpongeParticleEffectMeta extends PersistenceObject implements Parti
             }
 
         } catch (final Exception e) {
-            Sponge.getPluginManager().getPlugin("petblocks").get().getLogger().warn("Failed to send packet.", e);
+            PetBlocksPlugin.logger().log(Level.WARNING,"Failed to send packet.", e);
         }
     }
 

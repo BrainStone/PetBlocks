@@ -117,7 +117,13 @@ public final class PetBlockHelper {
 
     public static int doTick(int counter, PetBlock petBlock, TickCallBack callBack) {
         final PetMeta petData = petBlock.getMeta();
-        if (!getArmorstand(petBlock).isRemoved() && getArmorstand(petBlock).getPassengers().isEmpty() && getEngineEntity(petBlock) != null && getArmorstand(petBlock).getVehicle() == null) {
+
+        System.out.println("a-REMOVED: " + (!getArmorstand(petBlock).isRemoved())
+                + "-" + (getArmorstand(petBlock).getPassengers().isEmpty())
+                + "-" +  (getEngineEntity(petBlock) != null )
+                + "-" + (getArmorstand(petBlock).getVehicle() == null));
+
+        if (!getArmorstand(petBlock).isRemoved() && getArmorstand(petBlock).getPassengers().isEmpty() && getEngineEntity(petBlock) != null && !getArmorstand(petBlock).getVehicle().isPresent()) {
             IPosition location = null;
             if (petData.getAge() >= Config.getInstance().pet().getAge_largeticks())
                 location = new SpongeLocationBuilder(getEngineEntity(petBlock).getLocation().getExtent().getName(), getEngineEntity(petBlock).getLocation().getX(), getEngineEntity(petBlock).getLocation().getY() - 1.2, getEngineEntity(petBlock).getLocation().getZ(), getEngineEntity(petBlock).getRotation().getX(), getEngineEntity(petBlock).getRotation().getY());
@@ -125,9 +131,11 @@ public final class PetBlockHelper {
                 location = new SpongeLocationBuilder(getEngineEntity(petBlock).getLocation().getExtent().getName(), getEngineEntity(petBlock).getLocation().getX(), getEngineEntity(petBlock).getLocation().getY() - 0.7, getEngineEntity(petBlock).getLocation().getZ(), getEngineEntity(petBlock).getRotation().getX(), getEngineEntity(petBlock).getRotation().getY());
             if (location != null)
                 callBack.run(location);
+            System.out.println("RABBIT FOUND");
             counter = doTickSounds(counter, petBlock);
         } else if (getEngineEntity(petBlock) != null) {
             getEngineEntity(petBlock).setLocation(getArmorstand(petBlock).getLocation());
+            System.out.println(" WUT NOPE TELEPORT TO MASTER");
         }
         try {
             if (petData.getAge() >= Config.getInstance().pet().getAge_maxticks()) {
@@ -165,6 +173,8 @@ public final class PetBlockHelper {
             counter = 20 * random.nextInt(20) + 1;
         }
         if (getEngineEntity(petBlock).isRemoved()) {
+
+            PetBlocksPlugin.logger().log(Level.WARNING, "PetBlockw as removed in tick sounds.");
             PetBlocksApi.getDefaultPetBlockController().remove(petBlock);
         }
         if (petData.getParticleEffectMeta() != null) {
@@ -204,7 +214,9 @@ public final class PetBlockHelper {
             Task.builder().delayTicks(20 * 2)
                     .execute(() -> {
                         petBlock.getEffectPipeline().playParticleEffect(petBlock.getLocation(), cloud);
-                        petBlock.remove();
+                        PetBlocksPlugin.logger().log(Level.WARNING, "PetBlockw as removed in setdiening.");
+
+                        petBlock.removeEntity();
                     }).submit(Sponge.getPluginManager().getPlugin("petblocks"));
             return true;
         }
@@ -284,17 +296,10 @@ public final class PetBlockHelper {
                 .setCoordinates(location.getX(), location.getY(), location.getZ())
                 .setRotation(getEngineEntity(petBlock).getRotation().getX(), getEngineEntity(petBlock).getRotation().getY());
 
-        petBlock.remove();
-        callBack.run(position);
-    }
+        PetBlocksPlugin.logger().log(Level.WARNING, "PetBlockw as removed in respawn.");
 
-    public static void remove(PetBlock petBlock) {
-        if (petBlock.getEngineEntity() != null && !((Living) petBlock.getEngineEntity()).isRemoved()) {
-            ((Living) petBlock.getEngineEntity()).remove();
-        }
-        if (!((Living) petBlock.getArmorStand()).isRemoved()) {
-            ((Living) petBlock.getArmorStand()).remove();
-        }
+        petBlock.removeEntity();
+        callBack.run(position);
     }
 
     private static ArmorStand getArmorstand(PetBlock petBlock) {

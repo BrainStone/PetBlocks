@@ -87,11 +87,12 @@ public final class CustomZombie extends EntityZombie implements PetBlockPartEnti
     }
 
     /**
-     * Removes the entity from the world
+     * Removes the entity from the world.
      */
     @Override
-    public void remove() {
+    public void removeEntity() {
         ((LivingEntity) this.getEntity()).remove();
+
     }
 
     /**

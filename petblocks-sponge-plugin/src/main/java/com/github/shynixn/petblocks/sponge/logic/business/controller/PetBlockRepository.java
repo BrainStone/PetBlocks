@@ -132,7 +132,7 @@ public final class PetBlockRepository implements PetBlockController {
             final PetBlockDeathEvent event = new PetBlockDeathEvent(this.petblocks.get(player));
             Sponge.getEventManager().post(event);
             if (!event.isCancelled()) {
-                this.petblocks.get(player).remove();
+                this.petblocks.get(player).removeEntity();
                 this.petblocks.remove(player);
             }
         }
@@ -170,7 +170,7 @@ public final class PetBlockRepository implements PetBlockController {
     @Override
     public void close() throws Exception {
         for (final Player player : this.petblocks.keySet()) {
-            this.petblocks.get(player).remove();
+            this.petblocks.get(player).removeEntity();
         }
         this.petblocks.clear();
     }

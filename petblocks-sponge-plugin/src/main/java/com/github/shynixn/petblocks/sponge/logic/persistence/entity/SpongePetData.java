@@ -404,7 +404,7 @@ public class SpongePetData extends PersistenceObject implements PetMeta {
                 gameProfile = GameProfile.of(UUID.randomUUID(), null);
                 gameProfile.addProperty("textures", ProfileProperty.of("textures", Base64Coder.encodeString("{textures:{SKIN:{url:\"" + skinUrl + "\"}}}")));
             } else {
-                gameProfile = GameProfile.of(null, this.getSkin());
+                gameProfile = GameProfile.of(UUID.randomUUID(), this.getSkin());
             }
             final RepresentedPlayerData skinData = Sponge.getGame().getDataManager().getManipulatorBuilder(RepresentedPlayerData.class).get().create();
             skinData.set(Keys.REPRESENTED_PLAYER, gameProfile);
@@ -412,6 +412,7 @@ public class SpongePetData extends PersistenceObject implements PetMeta {
         }
         itemStack.offer(Keys.UNBREAKABLE, this.isItemUnbreakable());
         itemStack.offer(Keys.DISPLAY_NAME, TextSerializers.LEGACY_FORMATTING_CODE.deserialize(getItemName()));
+        System.out.println("GENERATED ITEMSTACK");
         return itemStack;
     }
 
