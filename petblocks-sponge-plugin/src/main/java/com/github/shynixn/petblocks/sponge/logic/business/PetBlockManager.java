@@ -63,7 +63,6 @@ public class PetBlockManager implements AutoCloseable {
 
     public final Set<Player> carryingPet = new HashSet<>();
     public final Map<Player, Integer> timeBlocked = new HashMap<>();
-    public final Set<Player> headDatabasePlayers = new HashSet<>();
     public final Map<Player, Inventory> inventories = new HashMap<>();
     public final Map<Player, GuiPageContainer> pages = new HashMap<>();
     //public GUI gui;

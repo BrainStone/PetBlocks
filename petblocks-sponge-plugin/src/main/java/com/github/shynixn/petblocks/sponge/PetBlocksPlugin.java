@@ -91,7 +91,7 @@ public class PetBlocksPlugin {
 
     @Listener
     public void onEnable(GameInitializationEvent event) throws IOException {
-        System.out.println("Enabled PetBlocks sponge.");
+        System.out.println(t"Enabled PetBlocks sponge.");
 
         TypeSerializers.getDefaultSerializers().registerType(TypeToken.of(SpongeParticleEffectMeta.class), new SpongeParticleEffectMeta.ParticleEffectSerializer());
         TypeSerializers.getDefaultSerializers().registerType(TypeToken.of(SoundBuilder.class), new SoundBuilder.SoundBuilderSerializer());

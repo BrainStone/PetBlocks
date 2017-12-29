@@ -3,6 +3,7 @@ package com.github.shynixn.petblocks.sponge.logic.business.configuration;
 import com.github.shynixn.petblocks.api.persistence.controller.CostumeController;
 import com.github.shynixn.petblocks.api.persistence.controller.EngineController;
 import com.github.shynixn.petblocks.api.persistence.controller.OtherGUIItemsController;
+import com.github.shynixn.petblocks.api.persistence.entity.PetMeta;
 import com.github.shynixn.petblocks.core.logic.persistence.configuration.PetBlocksConfig;
 import com.github.shynixn.petblocks.sponge.nms.NMSRegistry;
 import com.google.inject.Inject;
@@ -180,5 +181,8 @@ public class Config extends PetBlocksConfig<Text> {
 
     private boolean handleRegionSpawn(Location location) {
         return true;
+    }
+
+    public void fixJoinDefaultPet(PetMeta meta) {
     }
 }
