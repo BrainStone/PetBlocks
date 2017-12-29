@@ -2,6 +2,7 @@ package com.github.shynixn.petblocks.sponge;
 
 import com.github.shynixn.petblocks.api.persistence.entity.ParticleEffectMeta;
 import com.github.shynixn.petblocks.api.sponge.entity.SpongePetBlock;
+import com.github.shynixn.petblocks.sponge.logic.business.PetBlockManager;
 import com.github.shynixn.petblocks.sponge.logic.business.commandexecutor.PetBlockReloadCommandExecutor;
 import com.github.shynixn.petblocks.sponge.logic.business.configuration.Config;
 import com.github.shynixn.petblocks.sponge.logic.persistence.entity.*;
@@ -85,6 +86,9 @@ public class PetBlocksPlugin {
     @Inject
     private PetBlockReloadCommandExecutor reloadCommandExecutor;
 
+    @Inject
+    private PetBlockManager petBlockManager;
+
     @Listener
     public void onEnable(GameInitializationEvent event) throws IOException {
         System.out.println("Enabled PetBlocks sponge.");
@@ -99,6 +103,7 @@ public class PetBlocksPlugin {
     @Listener
     public void onReload(GameReloadEvent event) throws IOException {
         System.out.println("Reloadinng...");
+        System.out.println("MEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEP");
     this.config.reload();
 
         System.out.println("SPONGE VERSION : " + VersionSupport.getServerVersion().getSimpleVersionText());
@@ -126,6 +131,9 @@ public class PetBlocksPlugin {
         SpongePetBlock petBlock = NMSRegistry.createPetBlock(location,petMeta);
 
 
+        petBlockManager.getPetMetaController();
+
+        petBlockManager.getPetBlockController();
 
     }
 

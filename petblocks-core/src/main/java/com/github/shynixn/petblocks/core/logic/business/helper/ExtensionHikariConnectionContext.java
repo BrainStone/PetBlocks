@@ -2,12 +2,17 @@ package com.github.shynixn.petblocks.core.logic.business.helper;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import com.zaxxer.hikari.pool.HikariPool;
+import org.slf4j.LoggerFactory;
+import org.slf4j.impl.JDK14LoggerAdapter;
 
 import java.io.IOException;
 import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Filter;
 import java.util.logging.Level;
+import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 /**
@@ -274,6 +279,7 @@ public class ExtensionHikariConnectionContext implements AutoCloseable {
         if (statementName == null)
             throw new IllegalArgumentException("Statement cannot be null!");
         if (!this.cache.containsKey(statementName)) {
+            System.out.println("LOADING: " + statementName);
             this.cache.put(statementName, this.retriever.loadSqlStatement(statementName));
         }
         return this.cache.get(statementName);

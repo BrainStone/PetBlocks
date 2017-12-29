@@ -1,10 +1,10 @@
 package com.github.shynixn.petblocks.sponge.logic.business;
 
-import com.github.shynixn.petblocks.api.business.controller.PetBlockController;
 import com.github.shynixn.petblocks.api.persistence.controller.PetMetaController;
 import com.github.shynixn.petblocks.core.logic.business.entity.GuiPageContainer;
 import com.github.shynixn.petblocks.core.logic.business.helper.ExtensionHikariConnectionContext;
 import com.github.shynixn.petblocks.sponge.PetBlocksPlugin;
+import com.github.shynixn.petblocks.sponge.logic.business.commandexecutor.PetDataCommandExecutor;
 import com.github.shynixn.petblocks.sponge.logic.business.configuration.Config;
 import com.github.shynixn.petblocks.sponge.logic.business.controller.PetBlockRepository;
 import com.github.shynixn.petblocks.sponge.logic.persistence.controller.SpongePetDataRepository;
@@ -12,15 +12,11 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.asset.Asset;
-import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.item.inventory.Inventory;
-import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Connection;
@@ -84,10 +80,14 @@ public class PetBlockManager implements AutoCloseable {
     @Inject
     public SpongeGUI gui;
 
+    @Inject
+    private PetDataCommandExecutor petDataCommandExecutor;
+
     private final ExtensionHikariConnectionContext connectionContext;
 
     @Inject
     public PetBlockManager(PluginContainer plugin, Config config) {
+        config.reload();
         this.connectionContext = initialize(plugin, config, false);
     }
 
@@ -119,6 +119,7 @@ public class PetBlockManager implements AutoCloseable {
     }
 
     public PetBlockRepository getPetBlockController() {
+        initialize(plugin, Config.getInstance(), false);
         return this.petBlockController;
     }
 
@@ -138,7 +139,6 @@ public class PetBlockManager implements AutoCloseable {
                 throw new RuntimeException(e);
             }
         };
-
         if (!((boolean) config.getData("sql.enabled")) || modifier) {
             try {
                 final Path file = config.getPrivateConfigDir().resolve("PetBlocks.db");

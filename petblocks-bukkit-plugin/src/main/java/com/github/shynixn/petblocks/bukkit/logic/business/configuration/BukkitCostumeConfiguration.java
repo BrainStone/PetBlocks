@@ -46,10 +46,11 @@ public class BukkitCostumeConfiguration extends CostumeConfiguration {
      * @param plugin          plugin
      */
     public BukkitCostumeConfiguration(String costumeCategory, Plugin plugin) {
-        super(costumeCategory);
+        super();
         if (plugin == null)
             throw new IllegalArgumentException("Plugin cannot be null!");
         this.plugin = plugin;
+        this.costumeCategory = costumeCategory;
     }
 
     /**

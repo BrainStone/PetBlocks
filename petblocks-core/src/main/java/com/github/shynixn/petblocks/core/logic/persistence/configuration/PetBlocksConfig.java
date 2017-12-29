@@ -4,18 +4,15 @@ import com.github.shynixn.petblocks.api.persistence.controller.CostumeController
 import com.github.shynixn.petblocks.api.persistence.controller.EngineController;
 import com.github.shynixn.petblocks.api.persistence.controller.OtherGUIItemsController;
 import com.github.shynixn.petblocks.api.persistence.controller.ParticleController;
-import com.github.shynixn.petblocks.core.logic.Factory;
 import com.github.shynixn.petblocks.core.logic.persistence.entity.IConfig;
 
 import java.util.List;
 
 public abstract class PetBlocksConfig<T> implements IConfig {
-    protected final EngineController engineController = Factory.createEngineController();
-    private final OtherGUIItemsController guiItemsController = Factory.createGUIItemsController();
-    private final ParticleController particleController = Factory.createParticleConfiguration();
-    private final CostumeController colorCostumesController = Factory.createCostumesController("color");
-    private final CostumeController rareCostumesController = Factory.createCostumesController("rare");
-    private final CostumeController minecraftHeadsCostumesController = Factory.createMinecraftHeadsCostumesController();
+    private final ParticleController particleController = null;
+    private final CostumeController colorCostumesController = null;
+    private final CostumeController rareCostumesController = null;
+    private final CostumeController minecraftHeadsCostumesController = null;
 
     private PetConf petConf = new PetConf();
 
@@ -25,6 +22,7 @@ public abstract class PetBlocksConfig<T> implements IConfig {
     @Override
     public void reload() {
         this.getOrdinaryCostumesController().reload();
+       // this.getGuiItemsController().reload();
         this.getEngineController().reload();
      /*   this.colorCostumesController.reload();
         this.rareCostumesController.reload();
@@ -47,9 +45,7 @@ public abstract class PetBlocksConfig<T> implements IConfig {
         return this.particleController;
     }
 
-    public OtherGUIItemsController getGuiItemsController() {
-        return this.guiItemsController;
-    }
+    public abstract OtherGUIItemsController getGuiItemsController();
 
 
     public abstract EngineController getEngineController();

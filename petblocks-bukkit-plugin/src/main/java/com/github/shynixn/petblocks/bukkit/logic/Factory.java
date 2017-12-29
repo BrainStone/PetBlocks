@@ -8,13 +8,6 @@ import com.github.shynixn.petblocks.bukkit.logic.business.controller.PetBlockRep
 import com.github.shynixn.petblocks.bukkit.logic.persistence.controller.BukkitParticleEffectDataRepository;
 import com.github.shynixn.petblocks.bukkit.logic.persistence.controller.BukkitPetDataRepository;
 import com.github.shynixn.petblocks.bukkit.logic.persistence.controller.BukkitPlayerDataRepository;
-import com.github.shynixn.petblocks.core.logic.persistence.configuration.CostumeConfiguration;
-import com.github.shynixn.petblocks.core.logic.persistence.configuration.EngineConfiguration;
-import com.github.shynixn.petblocks.core.logic.persistence.configuration.FixedItemConfiguration;
-import com.github.shynixn.petblocks.core.logic.persistence.configuration.ParticleConfiguration;
-import com.github.shynixn.petblocks.core.logic.persistence.controller.ParticleEffectDataRepository;
-import com.github.shynixn.petblocks.core.logic.persistence.controller.PetDataRepository;
-import com.github.shynixn.petblocks.core.logic.persistence.controller.PlayerDataRepository;
 import com.github.shynixn.petblocks.core.logic.business.helper.ExtensionHikariConnectionContext;
 import org.apache.commons.io.IOUtils;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -83,7 +76,7 @@ public class Factory {
         if (plugin == null)
             throw new IllegalArgumentException("Plugin cannot be null!");
         final ExtensionHikariConnectionContext.SQlRetriever retriever = fileName -> {
-            try (InputStream stream = plugin.getResource("sql/" + fileName + ".sql")) {
+            try (InputStream stream = plugin.getResource("assets/petblocks/sql/" + fileName + ".sql")) {
                 return IOUtils.toString(stream, "UTF-8");
             } catch (final IOException e) {
                 PetBlocksPlugin.logger().log(Level.WARNING, "Cannot read file.", fileName);

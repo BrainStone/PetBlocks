@@ -85,7 +85,7 @@ public class SpongePetDataRepository extends PetDataRepository {
      * Returns the uuid from the given player.
      *
      * @param player player
-     * @return uudi
+     * @return uuid
      */
     @Override
     protected UUID getUUIDFromPlayer(Object player) {
@@ -102,10 +102,10 @@ public class SpongePetDataRepository extends PetDataRepository {
     public PetMeta create(Object player) {
         if (player == null)
             throw new IllegalArgumentException("Player cannot be null!");
-        final Optional<GUIItemContainer> containerOpt = Config.getInstance().getGuiItemsController().getGUIItemFromName("default-appearance");
+        final Optional<GUIItemContainer> containerOpt = this.config.getGuiItemsController().getGUIItemFromName("default-appearance");
         if (!containerOpt.isPresent())
             throw new IllegalArgumentException("Default appearance could not be loaded from the config.yml!");
-        final SpongePetData petData = new SpongePetData((Player) player, Config.getInstance().getDefaultPetName());
+        final SpongePetData petData = new SpongePetData((Player) player, this.config.getDefaultPetName());
         petData.setSkin(containerOpt.get().getItemId(), containerOpt.get().getItemDamage(), containerOpt.get().getSkin(), containerOpt.get().isItemUnbreakable());
         return petData;
     }

@@ -47,8 +47,11 @@ public class SimpleCommandExecutor implements CommandExecutor {
     private String permissionMessage;
     private String permission;
 
-    @Inject
     protected PluginContainer plugin;
+
+    public SimpleCommandExecutor(PluginContainer plugin) {
+        this.plugin = plugin;
+    }
 
     /**
      * Registers the command to the handler.
@@ -56,6 +59,8 @@ public class SimpleCommandExecutor implements CommandExecutor {
      * @param data data
      */
     public CommandSpec register(Map<String, Object> data, OnCommandBuild onCommandBuild) {
+        System.out.println("PLUGINCONTAINE RENABLED");
+        System.out.println("YEP " + data.containsKey("enabled"));
         if (data.containsKey("enabled") && (boolean) data.get("enabled")) {
             return this.register((String) data.get("command"), (String) data.get("description"), (String) data.get("permission"), (String) data.get("permission-message"), onCommandBuild);
         }

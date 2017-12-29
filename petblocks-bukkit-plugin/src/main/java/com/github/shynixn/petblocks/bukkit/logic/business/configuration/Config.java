@@ -2,6 +2,7 @@ package com.github.shynixn.petblocks.bukkit.logic.business.configuration;
 
 import com.github.shynixn.petblocks.api.persistence.controller.CostumeController;
 import com.github.shynixn.petblocks.api.persistence.controller.EngineController;
+import com.github.shynixn.petblocks.api.persistence.controller.OtherGUIItemsController;
 import com.github.shynixn.petblocks.api.persistence.entity.ParticleEffectMeta;
 import com.github.shynixn.petblocks.api.persistence.entity.PetMeta;
 import com.github.shynixn.petblocks.api.persistence.entity.SoundMeta;
@@ -71,6 +72,11 @@ public class Config extends PetBlocksConfig<String> {
     }
 
     @Override
+    public OtherGUIItemsController getGuiItemsController() {
+        return null;
+    }
+
+    @Override
     public EngineController getEngineController() {
         return null;
     }
@@ -104,7 +110,7 @@ public class Config extends PetBlocksConfig<String> {
 
     public void fixJoinDefaultPet(PetMeta petMeta) {
         petMeta.setSkin(this.getData("join.settings.id"), (short) (int) this.getData("join.settings.damage"), this.getData("join.settings.skin"), this.getData("unbreakable"));
-        petMeta.setEngine(this.engineController.getById(this.getData("join.settings.engine")));
+        petMeta.setEngine(this.getEngineController().getById(this.getData("join.settings.engine")));
         petMeta.setPetDisplayName(this.getData("join.settings.petname"));
         petMeta.setEnabled(this.getData("join.settings.enabled"));
         petMeta.setAge(this.getData("join.settings.age"));

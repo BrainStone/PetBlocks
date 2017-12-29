@@ -1,12 +1,17 @@
 package com.github.shynixn.petblocks.sponge.logic.business.configuration;
 
 import com.github.shynixn.petblocks.api.business.entity.GUIItemContainer;
-import com.github.shynixn.petblocks.core.logic.persistence.configuration.CostumeConfiguration;
+import com.github.shynixn.petblocks.core.logic.business.entity.ItemContainer;
+import com.github.shynixn.petblocks.core.logic.persistence.configuration.FixedItemConfiguration;
+import com.github.shynixn.petblocks.sponge.PetBlocksPlugin;
 import com.github.shynixn.petblocks.sponge.logic.business.entity.SpongeItemContainer;
 import com.google.inject.Inject;
-import org.spongepowered.api.plugin.PluginContainer;
+import org.spongepowered.api.data.key.Keys;
+import org.spongepowered.api.item.inventory.ItemStack;
+import org.spongepowered.api.text.Text;
 
 import java.util.Map;
+import java.util.logging.Level;
 
 /**
  * Created by Shynixn 2017.
@@ -35,13 +40,8 @@ import java.util.Map;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public class SpongeCostumeConfiguration extends CostumeConfiguration {
+public class SpongeFixedItemConfiguration extends FixedItemConfiguration {
 
-    @Inject
-    private PluginContainer plugin;
-
-    @Inject
-    private Config config;
 
     /**
      * Reloads the content from the fileSystem
@@ -49,28 +49,33 @@ public class SpongeCostumeConfiguration extends CostumeConfiguration {
     @Override
     public void reload() {
         this.items.clear();
-        System.out.println("RELOADING: " + this.costumeCategory);
-        final Map<Object, Object> data = this.config.getData("wardrobe." + this.costumeCategory);
-        for (final Object key : data.keySet()) {
+        final Map<String, Object> data = Config.getInstance().getData("gui.items");
+        for (final String key : data.keySet()) {
             try {
-                final GUIItemContainer container = new SpongeItemContainer((Integer) key, (Map<String, Object>) data.get(key));
-                this.items.add(container);
+                final GUIItemContainer container = new SpongeItemContainer(0, (Map<String, Object>) data.get(key));
+                if (key.equals("suggest-heads")) {
+                    ((ItemContainer) container).setDisplayName("Suggest Heads");
+                }
+                this.items.put(key, container);
             } catch (final Exception e) {
-                this.plugin.getLogger().info("Failed to load guiItem " + this.costumeCategory + '.' + key + '.', e);
+                PetBlocksPlugin.logger().log(Level.INFO, "Failed to load gui item " + key + '.', e);
             }
         }
     }
 
     /**
-     * Closes this resource, relinquishing any underlying resources.
-     * This method is invoked automatically on objects managed by the
-     * {@code try}-with-resources statement.
+     * Returns if the given itemStack is a guiItemStack with the given name
      *
-     * @throws Exception if this resource cannot be closed
+     * @param itemStack itemStack
+     * @param name      name
+     * @return itemStack
      */
     @Override
-    public void close() throws Exception {
-        super.close();
-        this.plugin = null;
+    public boolean isGUIItem(Object itemStack, String name) {
+        if (itemStack == null || name == null)
+            return false;
+        final GUIItemContainer container = this.getGUIItemByName(name);
+        final ItemStack mItemStack = (ItemStack) itemStack;
+        return mItemStack.get(Keys.DISPLAY_NAME).isPresent() && mItemStack.get(Keys.DISPLAY_NAME).get().equals(Text.of(container.getDisplayName().get()));
     }
 }

@@ -2,6 +2,7 @@ package com.github.shynixn.petblocks.bukkit.logic.persistence.controller;
 
 import com.github.shynixn.petblocks.api.business.entity.GUIItemContainer;
 import com.github.shynixn.petblocks.api.persistence.entity.PetMeta;
+import com.github.shynixn.petblocks.bukkit.logic.Factory;
 import com.github.shynixn.petblocks.bukkit.logic.business.configuration.Config;
 import com.github.shynixn.petblocks.bukkit.logic.persistence.entity.PetData;
 import com.github.shynixn.petblocks.core.logic.business.helper.ExtensionHikariConnectionContext;
@@ -51,7 +52,7 @@ public class BukkitPetDataRepository extends PetDataRepository {
      * @param connectionContext connectionContext
      */
     public BukkitPetDataRepository(Plugin plugin,ExtensionHikariConnectionContext connectionContext) {
-        super(connectionContext);
+        super(connectionContext, Factory.createPlayerDataController(), Factory.createParticleEffectController());
         this.plugin = plugin;
     }
 

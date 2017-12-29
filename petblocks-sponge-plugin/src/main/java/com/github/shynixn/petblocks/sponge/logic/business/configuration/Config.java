@@ -2,6 +2,7 @@ package com.github.shynixn.petblocks.sponge.logic.business.configuration;
 
 import com.github.shynixn.petblocks.api.persistence.controller.CostumeController;
 import com.github.shynixn.petblocks.api.persistence.controller.EngineController;
+import com.github.shynixn.petblocks.api.persistence.controller.OtherGUIItemsController;
 import com.github.shynixn.petblocks.core.logic.persistence.configuration.PetBlocksConfig;
 import com.github.shynixn.petblocks.sponge.nms.NMSRegistry;
 import com.google.inject.Inject;
@@ -74,6 +75,9 @@ public class Config extends PetBlocksConfig<Text> {
     @Inject
     private SpongeEngineConfiguration engineConfiguration;
 
+     @Inject
+    private SpongeFixedItemConfiguration fixedItemConfiguration;
+
     @Override
     public EngineController getEngineController() {
         return this.engineConfiguration;
@@ -89,7 +93,7 @@ public class Config extends PetBlocksConfig<Text> {
     }
 
     public Path getPrivateConfigDir() {
-        return privateConfigDir;
+        return this.privateConfigDir;
     }
 
     /**
@@ -112,7 +116,14 @@ public class Config extends PetBlocksConfig<Text> {
         } catch (final IOException e) {
             this.logger.log(Level.WARNING, "Failed to reload config.yml.", e);
         }
+        System.out.println("UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUPL");
+        this.fixedItemConfiguration.reload();
         super.reload();
+    }
+
+    @Override
+    public OtherGUIItemsController getGuiItemsController() {
+        return this.fixedItemConfiguration;
     }
 
     /**
@@ -122,6 +133,11 @@ public class Config extends PetBlocksConfig<Text> {
      */
     @Override
     public CostumeController getOrdinaryCostumesController() {
+        System.out.println("LOADING ORDAINRY");
+        if (this.spongeCostumeConfiguration.costumeCategory == null) {
+            this.spongeCostumeConfiguration.costumeCategory = "ordinary";
+            System.out.println("MANAGED ORDINARY");
+        }
         return this.spongeCostumeConfiguration;
     }
 
@@ -164,25 +180,6 @@ public class Config extends PetBlocksConfig<Text> {
     }
 
     private boolean handleRegionSpawn(Location location) {
-        final List<String> includedRegions = this.getIncludedRegions();
-        final List<String> excludedRegions = this.getExcludedRegion();
-        if (includedRegions.contains("all")) {
-            for (final String k : NMSRegistry.getWorldGuardRegionsFromLocation(location)) {
-                if (excludedRegions.contains(k)) {
-                    return false;
-                }
-            }
-            return true;
-        } else if (excludedRegions.contains("all")) {
-            for (final String k : NMSRegistry.getWorldGuardRegionsFromLocation(location)) {
-                if (includedRegions.contains(k)) {
-                    return true;
-                }
-            }
-            return false;
-        } else {
-            this.logger.log(Level.WARNING, "Please add 'all' to excluded or included regions inside of the config.yml");
-        }
         return true;
     }
 }

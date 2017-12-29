@@ -5,6 +5,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.text.Text;
 
 @Singleton
@@ -12,6 +13,11 @@ public final class PetBlockReloadCommandExecutor extends SimpleCommandExecutor {
 
     @Inject
     private Config config;
+
+    @Inject
+    public PetBlockReloadCommandExecutor(PluginContainer plugin) {
+        super(plugin);
+    }
 
     /**
      * Can be overwritten to listen to player executed commands.

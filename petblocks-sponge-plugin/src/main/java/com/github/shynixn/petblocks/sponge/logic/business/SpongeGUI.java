@@ -33,10 +33,9 @@ public class SpongeGUI {
     public void open(Player player) {
         if (!this.manager.inventories.containsKey(player)) {
             if (player.getOpenInventory().isPresent()) {
-                player.closeInventory(Cause.of(NamedCause.owner(plugin)));
+                player.closeInventory(Cause.of(NamedCause.owner(this.plugin)));
             }
             final Inventory inventory = Inventory.builder()
-                    .forCarrier(player)
                     .of(InventoryArchetypes.DOUBLE_CHEST)
                     .property(
                             InventoryTitle.PROPERTY_NAME,
@@ -44,7 +43,7 @@ public class SpongeGUI {
                     )
                     .build(this);
             this.manager.inventories.put(player, inventory);
-            player.openInventory(inventory, Cause.of(NamedCause.owner(plugin)));
+            player.openInventory(inventory, Cause.of(NamedCause.owner(this.plugin)));
         }
     }
 
@@ -84,7 +83,7 @@ public class SpongeGUI {
     public void backPage(Player player, PetMeta petMeta) {
         final GuiPageContainer container = this.manager.pages.get(player);
         if (container.page == GUIPage.MAIN) {
-            player.closeInventory(Cause.of(NamedCause.owner(plugin)));
+            player.closeInventory(Cause.of(NamedCause.owner(this.plugin)));
         } else {
             if (container.previousPage != null && container.previousPage.previousPage != null)
                 this.manager.pages.put(player, container.previousPage.previousPage);

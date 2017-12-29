@@ -34,17 +34,14 @@ import java.util.logging.Level;
  * SOFTWARE.
  */
 public abstract class CostumeConfiguration implements CostumeController {
-    protected final String costumeCategory;
+    public String costumeCategory;
     protected final List<GUIItemContainer> items = new ArrayList<>();
 
     /**
      * Initializes a new engine repository
-     *
-     * @param costumeCategory costume
      */
-    public CostumeConfiguration(String costumeCategory) {
+    public CostumeConfiguration() {
         super();
-        this.costumeCategory = costumeCategory;
     }
 
     /**

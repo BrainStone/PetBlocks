@@ -10,6 +10,7 @@ import com.google.inject.Inject;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.text.Text;
 
@@ -23,14 +24,13 @@ public final class PetDataCommandExecutor extends SimpleCommandExecutor {
     @Inject
     private PetBlockManager manager;
 
-    public void register() {
-        this.register(this.config.getData("petblocks-gui"), builder -> {
-            builder.arguments
-                    (GenericArguments.onlyOne(GenericArguments.string(Text.of("call"))));
-            builder.arguments
-                    (GenericArguments.onlyOne(GenericArguments.string(Text.of("rename"))), GenericArguments.remainingJoinedStrings(Text.of("message")));
-            builder.arguments
-                    (GenericArguments.onlyOne(GenericArguments.string(Text.of("skin"))), GenericArguments.remainingJoinedStrings(Text.of("message")));
+    @Inject
+    public PetDataCommandExecutor(Config config, PluginContainer pluginContainer) {
+        super(pluginContainer);
+        System.out.println("???????");
+        System.out.println("REGISTERED COMMAD AAAAAAAAAAAAAAA");
+        this.register(config.getData("petblocks-gui"), builder -> {
+
         });
     }
 
@@ -77,7 +77,7 @@ public final class PetDataCommandExecutor extends SimpleCommandExecutor {
                 }
                 final PetMeta meta = petMeta;
                 Task.builder().execute(() -> this.manager.gui.setPage(player, GUIPage.MAIN, meta)).submit(this.plugin);
-            });
+            }).submit(this.plugin);
         }
     }
 
