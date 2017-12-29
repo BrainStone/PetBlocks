@@ -3,13 +3,12 @@ package com.github.shynixn.petblocks.sponge.logic.business.commandexecutor;
 import com.github.shynixn.petblocks.api.PetBlocksApi;
 import com.github.shynixn.petblocks.api.business.entity.PetBlock;
 import com.github.shynixn.petblocks.api.business.enumeration.GUIPage;
-import com.github.shynixn.petblocks.api.business.enumeration.Permission;
 import com.github.shynixn.petblocks.api.persistence.entity.PetMeta;
+import com.github.shynixn.petblocks.sponge.logic.business.PetBlockManager;
 import com.github.shynixn.petblocks.sponge.logic.business.configuration.Config;
 import com.google.inject.Inject;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.args.GenericArguments;
-import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.text.Text;
@@ -21,17 +20,17 @@ public final class PetDataCommandExecutor extends SimpleCommandExecutor {
     @Inject
     private Config config;
 
+    @Inject
+    private PetBlockManager manager;
 
-    public void register()
-    {
-        this.register(config.getData("petblocks-gui"), builder -> {
+    public void register() {
+        this.register(this.config.getData("petblocks-gui"), builder -> {
             builder.arguments
                     (GenericArguments.onlyOne(GenericArguments.string(Text.of("call"))));
             builder.arguments
                     (GenericArguments.onlyOne(GenericArguments.string(Text.of("rename"))), GenericArguments.remainingJoinedStrings(Text.of("message")));
             builder.arguments
                     (GenericArguments.onlyOne(GenericArguments.string(Text.of("skin"))), GenericArguments.remainingJoinedStrings(Text.of("message")));
-
         });
     }
 
@@ -68,18 +67,18 @@ public final class PetDataCommandExecutor extends SimpleCommandExecutor {
             this.renameNameCommand(player, args);
         } else if (args.length == 2 && args[0].equalsIgnoreCase("skin") && player.hasPermission(Permission.RENAMESKULL.get())) {
             this.handleNaming(player, args[1], true);
-        } else {
+        }*/ else {
             this.manager.gui.open(player);
-            this.plugin.getServer().getScheduler().runTaskAsynchronously(this.plugin, () -> {
+            Task.builder().async().execute(() -> {
                 PetMeta petMeta;
                 if ((petMeta = this.manager.getPetMetaController().getByPlayer(player)) == null) {
                     petMeta = this.manager.getPetMetaController().create(player);
                     this.manager.getPetMetaController().store(petMeta);
                 }
                 final PetMeta meta = petMeta;
-                this.plugin.getServer().getScheduler().runTask(this.plugin, () -> this.manager.gui.setPage(player, GUIPage.MAIN, meta));
+                Task.builder().execute(() -> this.manager.gui.setPage(player, GUIPage.MAIN, meta)).submit(this.plugin);
             });
-        }*/
+        }
     }
 
  /*   private void handleNaming(Player player, String message, boolean skullNaming) {

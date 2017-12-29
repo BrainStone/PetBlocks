@@ -88,7 +88,9 @@ public class Config extends PetBlocksConfig<Text> {
         instance = this;
     }
 
-
+    public Path getPrivateConfigDir() {
+        return privateConfigDir;
+    }
 
     /**
      * Reloads the config
@@ -113,7 +115,6 @@ public class Config extends PetBlocksConfig<Text> {
         super.reload();
     }
 
-
     /**
      * Returns the ordinary costume controller.
      *
@@ -135,7 +136,7 @@ public class Config extends PetBlocksConfig<Text> {
         if (this.node == null)
             return null;
         final String[] items = path.split(Pattern.quote("."));
-        final ConfigurationNode targetNode = this.node.getNode((Object[])items);
+        final ConfigurationNode targetNode = this.node.getNode((Object[]) items);
         Object data = targetNode.getValue();
         if (data instanceof String) {
             String s = (String) data;

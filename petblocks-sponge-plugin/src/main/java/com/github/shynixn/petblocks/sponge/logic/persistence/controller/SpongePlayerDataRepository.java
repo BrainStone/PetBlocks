@@ -3,6 +3,7 @@ package com.github.shynixn.petblocks.sponge.logic.persistence.controller;
 import com.github.shynixn.petblocks.api.persistence.entity.PlayerMeta;
 import com.github.shynixn.petblocks.core.logic.business.helper.ExtensionHikariConnectionContext;
 import com.github.shynixn.petblocks.core.logic.persistence.controller.PlayerDataRepository;
+import com.github.shynixn.petblocks.sponge.logic.business.PetBlockManager;
 import com.github.shynixn.petblocks.sponge.logic.persistence.entity.SpongePlayerData;
 import com.google.inject.Inject;
 import org.spongepowered.api.entity.living.player.Player;
@@ -44,11 +45,11 @@ public class SpongePlayerDataRepository extends PlayerDataRepository {
     /**
      * Initializes a new playerData repository.
      *
-     * @param connectionContext connectionContext
+     * @param petBlockManager petblockManager
      */
     @Inject
-    public SpongePlayerDataRepository(ExtensionHikariConnectionContext connectionContext) {
-        super(connectionContext);
+    public SpongePlayerDataRepository(PetBlockManager petBlockManager) {
+        super(petBlockManager.getConnectionContext());
     }
 
     /**

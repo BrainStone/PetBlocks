@@ -3,6 +3,7 @@ package com.github.shynixn.petblocks.sponge.logic.persistence.controller;
 import com.github.shynixn.petblocks.api.persistence.entity.ParticleEffectMeta;
 import com.github.shynixn.petblocks.core.logic.business.helper.ExtensionHikariConnectionContext;
 import com.github.shynixn.petblocks.core.logic.persistence.controller.ParticleEffectDataRepository;
+import com.github.shynixn.petblocks.sponge.logic.business.PetBlockManager;
 import com.github.shynixn.petblocks.sponge.logic.persistence.entity.SpongeParticleEffectMeta;
 import com.google.inject.Inject;
 
@@ -43,11 +44,11 @@ public class SpongeParticleEffectDataRepository extends ParticleEffectDataReposi
     /**
      * Initializes a new particleEffect repository.
      *
-     * @param connectionContext connectionContext
+     * @param petBlockManager petblockManager
      */
     @Inject
-    public SpongeParticleEffectDataRepository(ExtensionHikariConnectionContext connectionContext) {
-        super(connectionContext);
+    public SpongeParticleEffectDataRepository(PetBlockManager petBlockManager) {
+        super(petBlockManager.getConnectionContext());
     }
 
     /**

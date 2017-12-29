@@ -2,12 +2,11 @@ package com.github.shynixn.petblocks.sponge.logic.persistence.controller;
 
 import com.github.shynixn.petblocks.api.business.entity.GUIItemContainer;
 import com.github.shynixn.petblocks.api.persistence.entity.PetMeta;
-import com.github.shynixn.petblocks.core.logic.business.helper.ExtensionHikariConnectionContext;
 import com.github.shynixn.petblocks.core.logic.persistence.configuration.PetBlocksConfig;
 import com.github.shynixn.petblocks.core.logic.persistence.controller.PetDataRepository;
+import com.github.shynixn.petblocks.sponge.logic.business.PetBlockManager;
 import com.github.shynixn.petblocks.sponge.logic.business.configuration.Config;
 import com.github.shynixn.petblocks.sponge.logic.persistence.entity.SpongePetData;
-import com.github.shynixn.petblocks.sponge.logic.persistence.entity.SpongePlayerData;
 import com.google.inject.Inject;
 import org.spongepowered.api.entity.living.player.Player;
 
@@ -53,11 +52,13 @@ public class SpongePetDataRepository extends PetDataRepository {
     /**
      * Initializes a new petData repository.
      *
-     * @param connectionContext connectionContext
+     * @param petBlockManager petblockManager
      */
     @Inject
-    public SpongePetDataRepository(ExtensionHikariConnectionContext connectionContext) {
-        super(connectionContext);
+    public SpongePetDataRepository(PetBlockManager petBlockManager
+            , SpongePlayerDataRepository playerDataRepository
+            , SpongeParticleEffectDataRepository particleEffectDataRepository) {
+        super(petBlockManager.getConnectionContext(), playerDataRepository, particleEffectDataRepository);
     }
 
     /**
@@ -116,6 +117,6 @@ public class SpongePetDataRepository extends PetDataRepository {
      */
     @Override
     protected Logger getLogger() {
-        return logger;
+        return this.logger;
     }
 }

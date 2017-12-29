@@ -6,7 +6,6 @@ import com.github.shynixn.petblocks.api.persistence.controller.PetMetaController
 import com.github.shynixn.petblocks.api.persistence.controller.PlayerMetaController;
 import com.github.shynixn.petblocks.api.persistence.entity.PetMeta;
 import com.github.shynixn.petblocks.api.persistence.entity.PlayerMeta;
-import com.github.shynixn.petblocks.core.logic.Factory;
 import com.github.shynixn.petblocks.core.logic.business.helper.ExtensionHikariConnectionContext;
 import com.github.shynixn.petblocks.core.logic.persistence.configuration.PetBlocksConfig;
 import com.github.shynixn.petblocks.core.logic.persistence.entity.PlayerIdentifiable;
@@ -58,10 +57,12 @@ public abstract class PetDataRepository extends DataBaseRepository<PetMeta> impl
      *
      * @param connectionContext connectionContext
      */
-    public PetDataRepository(ExtensionHikariConnectionContext connectionContext) {
+    public PetDataRepository(ExtensionHikariConnectionContext connectionContext
+            , PlayerMetaController metaController
+            , ParticleEffectMetaController particleEffectMetaController) {
         super(connectionContext);
-        this.playerMetaController = Factory.createPlayerDataController();
-        this.particleEffectMetaController = Factory.createParticleEffectController();
+        this.playerMetaController = metaController;
+        this.particleEffectMetaController = particleEffectMetaController;
     }
 
     /**

@@ -45,7 +45,7 @@ jar {
 }
 
 dependencies{
-    compile project(':petblocks-sponge-plugin')
+    compileOnly project(':petblocks-sponge-plugin')
     compileOnly group: 'org.spongepowered', name: 'spongeapi', version: '6.0.0'
 }
 

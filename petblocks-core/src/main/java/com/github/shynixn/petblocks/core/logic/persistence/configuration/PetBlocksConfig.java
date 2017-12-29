@@ -125,7 +125,7 @@ public abstract class PetBlocksConfig<T> implements IConfig {
         return this.getData("messages.no-perms");
     }
 
-    public String getGUITitle() {
+    public T getGUITitle() {
         return this.getData("gui.settings.title");
     }
 
