@@ -346,7 +346,7 @@ public abstract class PetDataRepository extends DataBaseRepository<PetMeta> impl
         try {
             petMeta.setPetDisplayName(resultSet.getString("name"));
         } catch (final Exception ex) {
-            petMeta.setPetDisplayName(this.getConfig().getDefaultPetName().replace(":player", "Player"));
+            petMeta.setPetDisplayName(this.getConfig().getDefaultPetName());
         }
         ((PlayerIdentifiable) petMeta).setEngineId(resultSet.getInt("engine"));
         petMeta.setDisplaySkin(resultSet.getString("material"), resultSet.getInt("data"), resultSet.getString("skull"), resultSet.getBoolean("unbreakable"));

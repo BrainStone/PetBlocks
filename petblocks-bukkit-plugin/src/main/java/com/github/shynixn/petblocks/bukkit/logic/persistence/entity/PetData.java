@@ -420,17 +420,18 @@ public class PetData extends PersistenceObject implements PetMeta {
      * @param name name
      */
     @Override
-    public void setPetDisplayName(String name) {
+    public void setPetDisplayName(Object name) {
         if (name == null)
             return;
+        String custom = (String) name;
         if (Config.getInstance().pet().getPetNameBlackList() != null) {
             for (final String blackName : Config.getInstance().pet().getPetNameBlackList()) {
-                if (name.toUpperCase().contains(blackName.toUpperCase())) {
+                if (custom.toUpperCase().contains(blackName.toUpperCase())) {
                     throw new RuntimeException("Name is not valid!");
                 }
             }
         }
-        this.petDisplayName = ChatColor.translateAlternateColorCodes('&', name);
+        this.petDisplayName = ChatColor.translateAlternateColorCodes('&', custom);
     }
 
     /**

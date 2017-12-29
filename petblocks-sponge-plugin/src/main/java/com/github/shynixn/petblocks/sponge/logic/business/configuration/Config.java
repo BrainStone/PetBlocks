@@ -116,7 +116,6 @@ public class Config extends PetBlocksConfig<Text> {
         } catch (final IOException e) {
             this.logger.log(Level.WARNING, "Failed to reload config.yml.", e);
         }
-        System.out.println("UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUPL");
         this.fixedItemConfiguration.reload();
         super.reload();
     }

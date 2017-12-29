@@ -5,6 +5,7 @@ import com.github.shynixn.petblocks.api.persistence.entity.ParticleEffectMeta;
 import com.github.shynixn.petblocks.api.persistence.entity.PetMeta;
 import com.github.shynixn.petblocks.api.persistence.entity.PlayerMeta;
 import com.github.shynixn.petblocks.core.logic.persistence.entity.PersistenceObject;
+import com.github.shynixn.petblocks.core.logic.persistence.entity.PlayerIdentifiable;
 import com.github.shynixn.petblocks.sponge.PetBlocksPlugin;
 import com.github.shynixn.petblocks.sponge.logic.business.configuration.Config;
 import com.github.shynixn.petblocks.sponge.logic.business.helper.CompatibilityItemType;
@@ -17,6 +18,8 @@ import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.profile.GameProfile;
 import org.spongepowered.api.profile.property.ProfileProperty;
+import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.serializer.TextSerializer;
 import org.spongepowered.api.text.serializer.TextSerializers;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
@@ -54,7 +57,7 @@ import java.util.logging.Level;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public class SpongePetData extends PersistenceObject implements PetMeta {
+public class SpongePetData extends PersistenceObject implements PetMeta, PlayerIdentifiable {
 
     private String petDisplayName;
 
@@ -418,7 +421,7 @@ public class SpongePetData extends PersistenceObject implements PetMeta {
                 }
             }
             final RepresentedPlayerData skinData = Sponge.getGame().getDataManager().getManipulatorBuilder(RepresentedPlayerData.class).get().create();
-            skinData.set(Keys.REPRESENTED_PLAYER,  GameProfile.of(UUID.fromString("4c38ed11-596a-4fd4-ab1d-26f386c1cbac")));
+            skinData.set(Keys.REPRESENTED_PLAYER, GameProfile.of(UUID.fromString("4c38ed11-596a-4fd4-ab1d-26f386c1cbac")));
             if (this.damage == 3) {
                 itemStack.offer(Keys.SKULL_TYPE, SkullTypes.PLAYER);
                 itemStack.offer(Keys.REPRESENTED_PLAYER, GameProfile.of(UUID.fromString("4c38ed11-596a-4fd4-ab1d-26f386c1cbac")));
@@ -436,17 +439,24 @@ public class SpongePetData extends PersistenceObject implements PetMeta {
      * @param name name
      */
     @Override
-    public void setPetDisplayName(String name) {
+    public void setPetDisplayName(Object name) {
         if (name == null)
             return;
+        String custom;
+        if (name instanceof Text) {
+            custom = TextSerializers.LEGACY_FORMATTING_CODE.serialize((Text) name);
+        } else {
+            custom = (String) name;
+        }
+        custom = custom.replace(":player", "Player");
         if (Config.getInstance().pet().getPetNameBlackList() != null) {
             for (final String blackName : Config.getInstance().pet().getPetNameBlackList()) {
-                if (name.toUpperCase().contains(blackName.toUpperCase())) {
+                if (custom.toUpperCase().contains(blackName.toUpperCase())) {
                     throw new RuntimeException("Name is not valid!");
                 }
             }
         }
-        this.petDisplayName = name;
+        this.petDisplayName = custom;
     }
 
     /**

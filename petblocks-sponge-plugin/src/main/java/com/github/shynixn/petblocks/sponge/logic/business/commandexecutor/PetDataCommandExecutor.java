@@ -27,8 +27,6 @@ public final class PetDataCommandExecutor extends SimpleCommandExecutor {
     @Inject
     public PetDataCommandExecutor(Config config, PluginContainer pluginContainer) {
         super(pluginContainer);
-        System.out.println("???????");
-        System.out.println("REGISTERED COMMAD AAAAAAAAAAAAAAA");
         this.register(config.getData("petblocks-gui"), builder -> {
 
         });

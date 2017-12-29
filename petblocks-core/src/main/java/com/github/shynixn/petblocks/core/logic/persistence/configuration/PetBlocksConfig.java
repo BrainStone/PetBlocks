@@ -129,7 +129,7 @@ public abstract class PetBlocksConfig<T> implements IConfig {
         return this.getData("messages.prefix");
     }
 
-    public String getDefaultPetName() {
+    public T getDefaultPetName() {
         return this.getData("messages.default-petname");
     }
 

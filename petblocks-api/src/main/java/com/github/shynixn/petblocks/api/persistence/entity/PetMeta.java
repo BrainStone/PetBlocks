@@ -124,7 +124,7 @@ public interface PetMeta extends Persistenceable {
      *
      * @param name name
      */
-    void setPetDisplayName(String name);
+    void setPetDisplayName(Object name);
 
     /**
      * Returns the stored display name of the pet which appear above it's head on respawn.

@@ -9,6 +9,8 @@ import com.github.shynixn.petblocks.sponge.logic.business.configuration.Config;
 import com.github.shynixn.petblocks.sponge.logic.persistence.entity.SpongePetData;
 import com.google.inject.Inject;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.serializer.TextSerializers;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -105,7 +107,8 @@ public class SpongePetDataRepository extends PetDataRepository {
         final Optional<GUIItemContainer> containerOpt = this.config.getGuiItemsController().getGUIItemFromName("default-appearance");
         if (!containerOpt.isPresent())
             throw new IllegalArgumentException("Default appearance could not be loaded from the config.yml!");
-        final SpongePetData petData = new SpongePetData((Player) player, this.config.getDefaultPetName());
+        final Text defaultPetName = this.config.getDefaultPetName();
+        final SpongePetData petData = new SpongePetData((Player) player,   TextSerializers.LEGACY_FORMATTING_CODE.serialize(defaultPetName));
         petData.setSkin(containerOpt.get().getItemId(), containerOpt.get().getItemDamage(), containerOpt.get().getSkin(), containerOpt.get().isItemUnbreakable());
         return petData;
     }

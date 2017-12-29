@@ -279,7 +279,6 @@ public class ExtensionHikariConnectionContext implements AutoCloseable {
         if (statementName == null)
             throw new IllegalArgumentException("Statement cannot be null!");
         if (!this.cache.containsKey(statementName)) {
-            System.out.println("LOADING: " + statementName);
             this.cache.put(statementName, this.retriever.loadSqlStatement(statementName));
         }
         return this.cache.get(statementName);

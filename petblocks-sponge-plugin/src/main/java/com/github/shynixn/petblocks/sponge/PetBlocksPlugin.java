@@ -103,7 +103,6 @@ public class PetBlocksPlugin {
     @Listener
     public void onReload(GameReloadEvent event) throws IOException {
         System.out.println("Reloadinng...");
-        System.out.println("MEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEP");
     this.config.reload();
 
         System.out.println("SPONGE VERSION : " + VersionSupport.getServerVersion().getSimpleVersionText());

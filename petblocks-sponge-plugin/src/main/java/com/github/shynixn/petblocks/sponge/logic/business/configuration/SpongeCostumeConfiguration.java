@@ -49,7 +49,6 @@ public class SpongeCostumeConfiguration extends CostumeConfiguration {
     @Override
     public void reload() {
         this.items.clear();
-        System.out.println("RELOADING: " + this.costumeCategory);
         final Map<Object, Object> data = this.config.getData("wardrobe." + this.costumeCategory);
         for (final Object key : data.keySet()) {
             try {
