@@ -6,6 +6,8 @@ import com.github.shynixn.petblocks.api.persistence.entity.EngineContainer;
 import com.github.shynixn.petblocks.api.persistence.entity.ParticleEffectMeta;
 import com.github.shynixn.petblocks.api.persistence.entity.PetMeta;
 import com.github.shynixn.petblocks.sponge.logic.business.configuration.Config;
+import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.serializer.TextSerializers;
 
 import java.util.Optional;
 
@@ -38,6 +40,11 @@ import java.util.Optional;
  */
 public class SpongePetBlockModifyHelper {
 
+    public static Text translateStringToText(String text) {
+        String s = text;
+        s = s.replace('&', '§');
+        return TextSerializers.LEGACY_FORMATTING_CODE.deserialize(s);
+    }
 
     /**
      * Sets the engine for the given petMeta and petblock.

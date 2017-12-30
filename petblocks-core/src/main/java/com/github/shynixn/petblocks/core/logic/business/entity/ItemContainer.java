@@ -102,7 +102,7 @@ public abstract class ItemContainer implements GUIItemContainer {
             } else if (data.get("name").equals("none")) {
                 this.name = " ";
             } else {
-                // this.name = ChatColor.translateAlternateColorCodes('&', (String) data.get("name"));
+                this.name = (String) data.get("name");
             }
         }
         if (data.containsKey("unbreakable"))
@@ -117,6 +117,7 @@ public abstract class ItemContainer implements GUIItemContainer {
                     }
                 }
                 this.lore = lore.toArray(new String[lore.size()]);
+
             }
         }
     }

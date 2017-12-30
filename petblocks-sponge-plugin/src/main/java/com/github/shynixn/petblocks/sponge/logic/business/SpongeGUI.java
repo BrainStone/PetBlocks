@@ -7,12 +7,19 @@ import com.github.shynixn.petblocks.api.persistence.entity.PetMeta;
 import com.github.shynixn.petblocks.core.logic.business.entity.GuiPageContainer;
 import com.github.shynixn.petblocks.sponge.logic.business.configuration.Config;
 import com.google.inject.Inject;
+import org.spongepowered.api.data.Property;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.NamedCause;
+import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.inventory.Inventory;
 import org.spongepowered.api.item.inventory.InventoryArchetypes;
+import org.spongepowered.api.item.inventory.ItemStack;
+import org.spongepowered.api.item.inventory.Slot;
 import org.spongepowered.api.item.inventory.property.InventoryTitle;
+import org.spongepowered.api.item.inventory.property.SlotIndex;
+import org.spongepowered.api.item.inventory.property.SlotPos;
+import org.spongepowered.api.item.inventory.type.GridInventory;
 import org.spongepowered.api.plugin.PluginContainer;
 
 import java.util.List;
@@ -24,6 +31,9 @@ public class SpongeGUI {
 
     @Inject
     private PluginContainer plugin;
+
+    @Inject
+    private Config config;
 
     /**
      * Opens the gui for a player
@@ -39,7 +49,7 @@ public class SpongeGUI {
                     .of(InventoryArchetypes.DOUBLE_CHEST)
                     .property(
                             InventoryTitle.PROPERTY_NAME,
-                            InventoryTitle.of(Config.getInstance().getGUITitle())
+                            InventoryTitle.of(this.config.getGUITitle())
                     )
                     .build(this);
             this.manager.inventories.put(player, inventory);
@@ -70,8 +80,8 @@ public class SpongeGUI {
             this.setListAble(player, page, 0);
         }
         final GUIItemContainer backGuiItemContainer = Config.getInstance().getGuiItemsController().getGUIItemByName("back");
-       // inventory.setItem(backGuiItemContainer.getPosition(), (ItemStack) backGuiItemContainer.generate(player));
-        this.fillEmptySlots(inventory);
+        setItem(inventory, backGuiItemContainer.getPosition(), (ItemStack) backGuiItemContainer.generate(player));
+        this.fillEmptySlots(inventory, player);
     }
 
     /**
@@ -137,44 +147,44 @@ public class SpongeGUI {
      * @param page      page
      */
     private void setOtherItems(Player player, Inventory inventory, PetMeta petMeta, GUIPage page) {
-      /*  if (this.manager.getPetBlockController().getByPlayer(player) == null) {
+        if (this.manager.getPetBlockController().getByPlayer(player) == null) {
             petMeta.setEnabled(false);
         }
         for (final GUIItemContainer guiItemContainer : Config.getInstance().getGuiItemsController().getAll()) {
             if (guiItemContainer.getPage() == page) {
-                inventory.setItem(guiItemContainer.getPosition(), (ItemStack) guiItemContainer.generate(player));
+                this.setItem(inventory, guiItemContainer.getPosition(), (ItemStack) guiItemContainer.generate(player));
             }
         }
         if (page == GUIPage.MAIN) {
             final GUIItemContainer myPetContainer = Config.getInstance().getGuiItemsController().getGUIItemByName("my-pet");
-            inventory.setItem(myPetContainer.getPosition(), (ItemStack) petMeta.getHeadItemStack());
+            this.setItem(inventory, myPetContainer.getPosition(), (ItemStack) petMeta.getHeadItemStack());
         }
         if (petMeta.isSoundEnabled()) {
             final GUIItemContainer container = Config.getInstance().getGuiItemsController().getGUIItemByName("sounds-enabled-pet");
             if (page == container.getPage()) {
-                inventory.setItem(container.getPosition(), (ItemStack) container.generate(player));
+                this.setItem(inventory, container.getPosition(), (ItemStack) container.generate(player));
             }
         } else {
             final GUIItemContainer container = Config.getInstance().getGuiItemsController().getGUIItemByName("sounds-disabled-pet");
             if (page == container.getPage()) {
-                inventory.setItem(container.getPosition(), (ItemStack) container.generate(player));
+                this.setItem(inventory, container.getPosition(), (ItemStack) container.generate(player));
             }
         }
         if (!petMeta.isEnabled()) {
             final GUIItemContainer container = Config.getInstance().getGuiItemsController().getGUIItemByName("enable-pet");
             if (page == container.getPage()) {
-                inventory.setItem(container.getPosition(), (ItemStack) container.generate(player));
+                this.setItem(inventory, container.getPosition(), (ItemStack) container.generate(player));
             }
         } else {
             final GUIItemContainer container = Config.getInstance().getGuiItemsController().getGUIItemByName("disable-pet");
             if (page == container.getPage()) {
-                inventory.setItem(container.getPosition(), (ItemStack) container.generate(player));
+                this.setItem(inventory, container.getPosition(), (ItemStack) container.generate(player));
             }
         }
         final GUIItemContainer container = Config.getInstance().getGuiItemsController().getGUIItemByName("minecraft-heads-costume");
         if (page == container.getPage()) {
-            inventory.setItem(container.getPosition(), (ItemStack) container.generate(player, "minecraft-heads"));
-        }*/
+            this.setItem(inventory, container.getPosition(), (ItemStack) container.generate(player, "minecraft-heads"));
+        }
     }
 
     /**
@@ -321,13 +331,20 @@ public class SpongeGUI {
      *
      * @param inventory inventory
      */
-    private void fillEmptySlots(Inventory inventory) {
-       /* for (Inventory i : inventory.slots()) {
+    private void fillEmptySlots(Inventory inventory, Player player) {
+        for (int i = 0; i < 54; i++) {
+            inventory.query(GridInventory.class)
+                    .query(ItemTypes.AIR)
+                    .offer((ItemStack) Config.getInstance().getGuiItemsController().getGUIItemByName("empty-slot").generate(player));
+        }
 
-            if (inventory.getItem(i) == null || inventory.getItem(i).getType() == Material.AIR) {
-                inventory.setItem(i, (ItemStack) Config.getInstance().getGuiItemsController().getGUIItemByName("empty-slot").generate(inventory.getHolder()));
-            }
-        }*/
+    }
+
+    private void setItem(Inventory inventory, int slot, ItemStack itemStack) {
+        inventory.query(GridInventory.class)
+                .query(SlotIndex.of(slot))
+                .offer(itemStack);
+        System.out.println("CORRECT");
     }
 
     /**

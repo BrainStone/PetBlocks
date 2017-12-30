@@ -5,6 +5,7 @@ import com.github.shynixn.petblocks.api.persistence.entity.PetMeta;
 import com.github.shynixn.petblocks.api.sponge.entity.SpongePetBlock;
 import com.github.shynixn.petblocks.core.logic.business.helper.ReflectionUtils;
 import com.github.shynixn.petblocks.sponge.PetBlocksPlugin;
+import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
@@ -69,7 +70,7 @@ public class NMSRegistry {
         try {
             if (!wrappedRegistry.isRegistered(rabbitClazz)) {
                 wrappedRegistry.register(rabbitClazz, CustomEntityType.RABBIT);
-             // wrappedRegistry.register(zombieClazz, CustomEntityType.ZOMBIE);
+                // wrappedRegistry.register(zombieClazz, CustomEntityType.ZOMBIE);
             }
             return (SpongePetBlock) ReflectionUtils.invokeConstructor(findClassFromVersion("com.github.shynixn.petblocks.sponge.nms.VERSION.CustomGroundArmorstand")
                     , new Class[]{location.getClass(), PetMeta.class}, new Object[]{location, meta});
@@ -78,6 +79,33 @@ public class NMSRegistry {
             return null;
         } catch (final Exception e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public static void setItemDamage(ItemStack itemStack, int damage) {
+        try {
+            findClassFromVersion("com.github.shynixn.petblocks.sponge.nms.VERSION.NMSUtil").getDeclaredMethod("setItemDamage", ItemStack.class, int.class)
+                    .invoke(null, itemStack, damage);
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void setSkinOwner(ItemStack itemStack, String owner) {
+        try {
+            findClassFromVersion("com.github.shynixn.petblocks.sponge.nms.VERSION.NMSUtil").getDeclaredMethod("setItemOwner", ItemStack.class, String.class)
+                    .invoke(null, itemStack, owner);
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void setSkinUrl(ItemStack itemStack, String skinURL) {
+        try {
+            findClassFromVersion("com.github.shynixn.petblocks.sponge.nms.VERSION.NMSUtil").getDeclaredMethod("setItemSkin", ItemStack.class, String.class)
+                    .invoke(null, itemStack, skinURL);
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | ClassNotFoundException e) {
+            e.printStackTrace();
         }
     }
 

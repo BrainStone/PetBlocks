@@ -7,6 +7,7 @@ import com.github.shynixn.petblocks.sponge.PetBlocksPlugin;
 import com.github.shynixn.petblocks.sponge.logic.business.commandexecutor.PetDataCommandExecutor;
 import com.github.shynixn.petblocks.sponge.logic.business.configuration.Config;
 import com.github.shynixn.petblocks.sponge.logic.business.controller.PetBlockRepository;
+import com.github.shynixn.petblocks.sponge.logic.business.listener.SpongePetDataListener;
 import com.github.shynixn.petblocks.sponge.logic.persistence.controller.SpongePetDataRepository;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -81,6 +82,9 @@ public class PetBlockManager implements AutoCloseable {
 
     @Inject
     private PetDataCommandExecutor petDataCommandExecutor;
+
+    @Inject
+    private SpongePetDataListener petDataListener;
 
     private final ExtensionHikariConnectionContext connectionContext;
 

@@ -5,6 +5,7 @@ import com.github.shynixn.petblocks.api.sponge.entity.SpongePetBlock;
 import com.github.shynixn.petblocks.sponge.logic.business.PetBlockManager;
 import com.github.shynixn.petblocks.sponge.logic.business.commandexecutor.PetBlockReloadCommandExecutor;
 import com.github.shynixn.petblocks.sponge.logic.business.configuration.Config;
+import com.github.shynixn.petblocks.sponge.logic.business.helper.CompatibilityItemType;
 import com.github.shynixn.petblocks.sponge.logic.persistence.entity.*;
 import com.github.shynixn.petblocks.sponge.nms.NMSRegistry;
 import com.github.shynixn.petblocks.sponge.nms.VersionSupport;
@@ -22,7 +23,9 @@ import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.GameReloadEvent;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
+import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.ItemTypes;
+import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.world.Location;
@@ -91,13 +94,13 @@ public class PetBlocksPlugin {
 
     @Listener
     public void onEnable(GameInitializationEvent event) throws IOException {
-        System.out.println(t"Enabled PetBlocks sponge.");
+        System.out.println("Enabled PetBlocks sponge.");
 
         TypeSerializers.getDefaultSerializers().registerType(TypeToken.of(SpongeParticleEffectMeta.class), new SpongeParticleEffectMeta.ParticleEffectSerializer());
         TypeSerializers.getDefaultSerializers().registerType(TypeToken.of(SoundBuilder.class), new SoundBuilder.SoundBuilderSerializer());
         TypeSerializers.getDefaultSerializers().registerType(TypeToken.of(SpongeLocationBuilder.class), new SpongeLocationBuilder.LocationBuilderSerializer());
 
-
+        System.out.println("VERSION: 1.5");
     }
 
     @Listener
@@ -108,6 +111,19 @@ public class PetBlocksPlugin {
         System.out.println("SPONGE VERSION : " + VersionSupport.getServerVersion().getSimpleVersionText());
 
         Player player = Sponge.getGame().getServer().getPlayer("Shynixn").get();
+
+        ItemStack itemStack = ItemStack.builder().itemType(CompatibilityItemType.SKULL_ITEM.getItemType()).build();
+        NMSRegistry.setItemDamage(itemStack, 3);
+
+        NMSRegistry.setSkinUrl(itemStack, "http://textures.minecraft.net/texture/f44e375545b41babfca94522806d1c9bf2675df8dbb28cb3562a576a68cfe6");
+
+        player.getInventory().offer(itemStack);
+
+
+
+
+
+
 
         SpongePetData petMeta = new SpongePetData();
         System.out.println("F");

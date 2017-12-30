@@ -17,6 +17,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_11_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_11_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_11_R1.inventory.CraftItemStack;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -61,6 +62,9 @@ final class CustomGroundArmorstand extends EntityArmorStand implements PetBlock 
 
         this.pipeline = new Pipeline(this);
         this.spawn(location);
+
+
+
     }
 
     public CustomGroundArmorstand(World world, double d0, double d1, double d2) {

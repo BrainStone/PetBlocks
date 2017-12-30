@@ -9,6 +9,7 @@ import com.github.shynixn.petblocks.core.logic.persistence.entity.PlayerIdentifi
 import com.github.shynixn.petblocks.sponge.PetBlocksPlugin;
 import com.github.shynixn.petblocks.sponge.logic.business.configuration.Config;
 import com.github.shynixn.petblocks.sponge.logic.business.helper.CompatibilityItemType;
+import com.github.shynixn.petblocks.sponge.nms.NMSRegistry;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.manipulator.mutable.RepresentedPlayerData;
@@ -111,6 +112,7 @@ public class SpongePetData extends PersistenceObject implements PetMeta, PlayerI
      *
      * @param engineId id
      */
+    @Override
     public void setEngineId(int engineId) {
         this.engineId = engineId;
     }
@@ -120,6 +122,7 @@ public class SpongePetData extends PersistenceObject implements PetMeta, PlayerI
      *
      * @return id
      */
+    @Override
     public int getEngineId() {
         return this.engineId;
     }
@@ -129,6 +132,7 @@ public class SpongePetData extends PersistenceObject implements PetMeta, PlayerI
      *
      * @return playerId
      */
+    @Override
     public long getPlayerId() {
         return this.playerId;
     }
@@ -138,6 +142,7 @@ public class SpongePetData extends PersistenceObject implements PetMeta, PlayerI
      *
      * @param id id
      */
+    @Override
     public void setPlayerId(long id) {
         this.playerId = id;
     }
@@ -147,6 +152,7 @@ public class SpongePetData extends PersistenceObject implements PetMeta, PlayerI
      *
      * @return particleId
      */
+    @Override
     public long getParticleId() {
         return this.particleId;
     }
@@ -156,6 +162,7 @@ public class SpongePetData extends PersistenceObject implements PetMeta, PlayerI
      *
      * @param id id
      */
+    @Override
     public void setParticleId(long id) {
         this.particleId = id;
     }
@@ -165,6 +172,7 @@ public class SpongePetData extends PersistenceObject implements PetMeta, PlayerI
      *
      * @param meta meta
      */
+    @Override
     public void setPlayerMeta(PlayerMeta meta) {
         this.playerId = meta.getId();
         this.playerInfo = meta;
@@ -175,6 +183,7 @@ public class SpongePetData extends PersistenceObject implements PetMeta, PlayerI
      *
      * @param meta meta
      */
+    @Override
     public void setParticleEffectMeta(ParticleEffectMeta meta) {
         if (meta == null) {
             throw new IllegalArgumentException("ParticleEffectMeta cannot be null!");
@@ -403,33 +412,17 @@ public class SpongePetData extends PersistenceObject implements PetMeta, PlayerI
         final CompatibilityItemType itemType = CompatibilityItemType.getFromId(this.getItemId());
         final ItemStack itemStack = ItemStack.builder().quantity(1)
                 .itemType(itemType.getItemType())
-                .add(Keys.ITEM_DURABILITY, this.getItemDamage())
                 .build();
+        NMSRegistry.setItemDamage(itemStack, this.getItemDamage());
         if (this.getSkin() != null) {
-            final GameProfile gameProfile;
             if (this.getSkin().contains("textures.minecraft.net")) {
-                final String skinUrl = "http://" + this.getSkin();
-                gameProfile = GameProfile.of(UUID.randomUUID(), null);
-                gameProfile.addProperty("textures", ProfileProperty.of("textures", Base64Coder.encodeString("{textures:{SKIN:{url:\"" + skinUrl + "\"}}}")));
+                NMSRegistry.setSkinUrl(itemStack, this.getSkin());
             } else {
-                CompletableFuture<GameProfile> futureGameProfile = Sponge.getServer().getGameProfileManager().get(skin);
-                try {
-                    gameProfile = futureGameProfile.get();
-                } catch (InterruptedException | ExecutionException e) {
-                    PetBlocksPlugin.logger().log(Level.WARNING, "Too many requests.", e);
-                    throw new RuntimeException();
-                }
+                NMSRegistry.setSkinOwner(itemStack, this.getSkin());
             }
-            final RepresentedPlayerData skinData = Sponge.getGame().getDataManager().getManipulatorBuilder(RepresentedPlayerData.class).get().create();
-            skinData.set(Keys.REPRESENTED_PLAYER, GameProfile.of(UUID.fromString("4c38ed11-596a-4fd4-ab1d-26f386c1cbac")));
-            if (this.damage == 3) {
-                itemStack.offer(Keys.SKULL_TYPE, SkullTypes.PLAYER);
-                itemStack.offer(Keys.REPRESENTED_PLAYER, GameProfile.of(UUID.fromString("4c38ed11-596a-4fd4-ab1d-26f386c1cbac")));
-            }
-            itemStack.offer(skinData);
         }
         itemStack.offer(Keys.UNBREAKABLE, this.isItemUnbreakable());
-        itemStack.offer(Keys.DISPLAY_NAME, TextSerializers.LEGACY_FORMATTING_CODE.deserialize(getItemName()));
+        itemStack.offer(Keys.DISPLAY_NAME, TextSerializers.LEGACY_FORMATTING_CODE.deserialize(this.getItemName()));
         return itemStack;
     }
 

@@ -5,9 +5,14 @@ import com.github.shynixn.petblocks.core.logic.business.entity.ItemContainer;
 import com.github.shynixn.petblocks.sponge.PetBlocksPlugin;
 import com.github.shynixn.petblocks.sponge.logic.business.configuration.Config;
 import com.github.shynixn.petblocks.sponge.logic.business.helper.CompatibilityItemType;
+import com.github.shynixn.petblocks.sponge.logic.business.helper.SpongePetBlockModifyHelper;
+import com.github.shynixn.petblocks.sponge.nms.NMSRegistry;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.data.DataRegistration;
 import org.spongepowered.api.data.key.Keys;
+import org.spongepowered.api.data.manipulator.catalog.CatalogItemData;
 import org.spongepowered.api.data.manipulator.mutable.RepresentedPlayerData;
+import org.spongepowered.api.data.type.SkullTypes;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.inventory.ItemStack;
@@ -88,34 +93,28 @@ public class SpongeItemContainer extends ItemContainer {
      */
     @Override
     public Object generate(Object player, String... permissions) {
-        if (this.cache != null) {
+     /*   if (this.cache != null) {
             this.updateLore((Player) player, permissions);
             return ((ItemStack) this.cache).copy();
-        }
+        }*/
         try {
             if (this.isEnabled()) {
                 final CompatibilityItemType itemType = CompatibilityItemType.getFromId(this.getItemId());
                 final ItemStack itemStack = ItemStack.builder().quantity(1)
                         .itemType(itemType.getItemType())
-                        .add(Keys.ITEM_DURABILITY, this.getItemDamage())
                         .build();
-
+                NMSRegistry.setItemDamage(itemStack, this.getItemDamage());
                 if (itemType == CompatibilityItemType.SKULL_ITEM && this.getSkin() != null) {
-                    final GameProfile gameProfile;
                     if (this.getSkin().contains("textures.minecraft.net")) {
-                        final String skinUrl = "http://" + this.getSkin();
-                        gameProfile = GameProfile.of(UUID.randomUUID(), null);
-                        gameProfile.addProperty("textures", ProfileProperty.of("textures", Base64Coder.encodeString("{textures:{SKIN:{url:\"" + skinUrl + "\"}}}")));
+                        NMSRegistry.setSkinUrl(itemStack, this.getSkin());
                     } else {
-                        gameProfile = GameProfile.of(null, this.getSkin());
+                        NMSRegistry.setSkinOwner(itemStack, this.getSkin());
                     }
-                    final RepresentedPlayerData skinData = Sponge.getGame().getDataManager().getManipulatorBuilder(RepresentedPlayerData.class).get().create();
-                    skinData.set(Keys.REPRESENTED_PLAYER, gameProfile);
-                    itemStack.offer(skinData);
                 }
-
                 itemStack.offer(Keys.UNBREAKABLE, this.isItemUnbreakable());
-                itemStack.offer(Keys.DISPLAY_NAME, this.parseString(this.getDisplayName().get()));
+                if (this.getDisplayName().isPresent()) {
+                    itemStack.offer(Keys.DISPLAY_NAME, SpongePetBlockModifyHelper.translateStringToText(this.getDisplayName().get()));
+                }
                 this.cache = itemStack;
                 this.updateLore((Player) player, permissions);
                 return itemStack;
@@ -145,20 +144,16 @@ public class SpongeItemContainer extends ItemContainer {
         }
         final Text[] modifiedLore = new Text[this.getLore().get().length];
         for (int i = 0; i < modifiedLore.length; i++) {
-            modifiedLore[i] = this.parseString(this.getLore().get()[i]);
+            modifiedLore[i] = SpongePetBlockModifyHelper.translateStringToText(this.getLore().get()[i]);
             if (this.getLore().get()[i].contains("<permission>")) {
                 if (permissions != null && (permissions.length == 0 || this.hasPermission(player, permissions))) {
-                    modifiedLore[i] = this.parseString(this.getLore().get()[i].replace("<permission>", Config.getInstance().getPermissionIconYes()));
+                    modifiedLore[i] = SpongePetBlockModifyHelper.translateStringToText(this.getLore().get()[i].replace("<permission>", Config.getInstance().getPermissionIconYes()));
                 } else {
-                    modifiedLore[i] = this.parseString(this.getLore().get()[i].replace("<permission>", Config.getInstance().getPermissionIconNo()));
+                    modifiedLore[i] = SpongePetBlockModifyHelper.translateStringToText(this.getLore().get()[i].replace("<permission>", Config.getInstance().getPermissionIconNo()));
                 }
             }
         }
         return modifiedLore;
-    }
-
-    private Text parseString(String s) {
-        return TextSerializers.LEGACY_FORMATTING_CODE.deserialize(s);
     }
 
     private boolean hasPermission(Player player, String... permissions) {
