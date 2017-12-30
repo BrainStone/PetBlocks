@@ -77,6 +77,13 @@ public class ExtensionHikariConnectionContext implements AutoCloseable {
         else
             config.setMaximumPoolSize(10);
         this.ds = new HikariDataSource(config);
+
+        try {
+            throw new Exception("HEY?");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
         Logger.getLogger(this.getClass().getSimpleName()).log(Level.INFO, "Connected to " + url);
     }
 

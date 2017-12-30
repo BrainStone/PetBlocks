@@ -95,7 +95,7 @@ public class PetBlockManager implements AutoCloseable {
         this.connectionContext = initialize(plugin, config, false);
     }
 
-    /*  @Inject
+    /*   @Inject
     private PetBlock petMetaController;
 
     public PetBlockManager() {
@@ -123,7 +123,6 @@ public class PetBlockManager implements AutoCloseable {
     }
 
     public PetBlockRepository getPetBlockController() {
-        initialize(plugin, Config.getInstance(), false);
         return this.petBlockController;
     }
 

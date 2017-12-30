@@ -3,9 +3,9 @@ package com.github.shynixn.petblocks.sponge.logic.business.configuration;
 import com.github.shynixn.petblocks.api.persistence.controller.CostumeController;
 import com.github.shynixn.petblocks.api.persistence.controller.EngineController;
 import com.github.shynixn.petblocks.api.persistence.controller.OtherGUIItemsController;
+import com.github.shynixn.petblocks.api.persistence.controller.ParticleController;
 import com.github.shynixn.petblocks.api.persistence.entity.PetMeta;
 import com.github.shynixn.petblocks.core.logic.persistence.configuration.PetBlocksConfig;
-import com.github.shynixn.petblocks.sponge.nms.NMSRegistry;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import ninja.leaping.configurate.ConfigurationNode;
@@ -71,13 +71,25 @@ public class Config extends PetBlocksConfig<Text> {
     private ConfigurationNode node;
 
     @Inject
-    private SpongeCostumeConfiguration spongeCostumeConfiguration;
+    private SpongeCostumeConfiguration blockCostumeConfiguration;
+
+    @Inject
+    private SpongeCostumeConfiguration colorCostumeConfiguration;
+
+    @Inject
+    private SpongeCostumeConfiguration playerHeadCostumeConfiguration;
 
     @Inject
     private SpongeEngineConfiguration engineConfiguration;
 
-     @Inject
+    @Inject
+    private SpongeMinecraftHeadsConfiguration minecraftHeadsConfiguration;
+
+    @Inject
     private SpongeFixedItemConfiguration fixedItemConfiguration;
+
+    @Inject
+    private SpongeParticleConfiguration particleConfiguration;
 
     @Override
     public EngineController getEngineController() {
@@ -118,7 +130,21 @@ public class Config extends PetBlocksConfig<Text> {
             this.logger.log(Level.WARNING, "Failed to reload config.yml.", e);
         }
         this.fixedItemConfiguration.reload();
+        this.getColorCostumesController().reload();
+        this.getRareCostumesController().reload();
+        this.minecraftHeadsConfiguration.reload();
+        this.particleConfiguration.reload();
         super.reload();
+    }
+
+    /**
+     * Returns the particle controller.
+     *
+     * @return controller
+     */
+    @Override
+    public ParticleController getParticleController() {
+        return particleConfiguration;
     }
 
     @Override
@@ -133,12 +159,46 @@ public class Config extends PetBlocksConfig<Text> {
      */
     @Override
     public CostumeController getOrdinaryCostumesController() {
-        System.out.println("LOADING ORDAINRY");
-        if (this.spongeCostumeConfiguration.costumeCategory == null) {
-            this.spongeCostumeConfiguration.costumeCategory = "ordinary";
-            System.out.println("MANAGED ORDINARY");
+        if (this.blockCostumeConfiguration.costumeCategory == null) {
+            this.blockCostumeConfiguration.costumeCategory = "ordinary";
         }
-        return this.spongeCostumeConfiguration;
+        return this.blockCostumeConfiguration;
+    }
+
+    /**
+     * Returns the color costume controller.
+     *
+     * @return controller
+     */
+    @Override
+    public CostumeController getColorCostumesController() {
+        if (this.colorCostumeConfiguration.costumeCategory == null) {
+            this.colorCostumeConfiguration.costumeCategory = "color";
+        }
+        return this.colorCostumeConfiguration;
+    }
+
+    /**
+     * Returns the rare costume controller.
+     *
+     * @return controller
+     */
+    @Override
+    public CostumeController getRareCostumesController() {
+        if (this.playerHeadCostumeConfiguration.costumeCategory == null) {
+            this.playerHeadCostumeConfiguration.costumeCategory = "rare";
+        }
+        return this.playerHeadCostumeConfiguration;
+    }
+
+    /**
+     * Returns the minecraft heads controller.
+     *
+     * @return controller
+     */
+    @Override
+    public CostumeController getMinecraftHeadsCostumesController() {
+        return this.minecraftHeadsConfiguration;
     }
 
     /**

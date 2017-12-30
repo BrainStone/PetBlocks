@@ -12,6 +12,7 @@ import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.text.Text;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Level;
 
 /**
@@ -42,7 +43,6 @@ import java.util.logging.Level;
  * SOFTWARE.
  */
 public class SpongeFixedItemConfiguration extends FixedItemConfiguration {
-
 
     /**
      * Reloads the content from the fileSystem
@@ -75,9 +75,10 @@ public class SpongeFixedItemConfiguration extends FixedItemConfiguration {
     public boolean isGUIItem(Object itemStack, String name) {
         if (itemStack == null || name == null)
             return false;
-        final GUIItemContainer container = this.getGUIItemByName(name);
+        final Optional<GUIItemContainer> optContainer = this.getGUIItemFromName(name);
+        if (!optContainer.isPresent())
+            return false;
         final ItemStack mItemStack = (ItemStack) itemStack;
-
-        return mItemStack.get(Keys.DISPLAY_NAME).isPresent() && mItemStack.get(Keys.DISPLAY_NAME).get().equals(SpongePetBlockModifyHelper.translateStringToText(container.getDisplayName().get()));
+        return mItemStack.get(Keys.DISPLAY_NAME).isPresent() && mItemStack.get(Keys.DISPLAY_NAME).get().equals(SpongePetBlockModifyHelper.translateStringToText(optContainer.get().getDisplayName().get()));
     }
 }

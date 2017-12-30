@@ -3,6 +3,7 @@ package com.github.shynixn.petblocks.bukkit.logic.business.configuration;
 import com.github.shynixn.petblocks.api.persistence.controller.CostumeController;
 import com.github.shynixn.petblocks.api.persistence.controller.EngineController;
 import com.github.shynixn.petblocks.api.persistence.controller.OtherGUIItemsController;
+import com.github.shynixn.petblocks.api.persistence.controller.ParticleController;
 import com.github.shynixn.petblocks.api.persistence.entity.ParticleEffectMeta;
 import com.github.shynixn.petblocks.api.persistence.entity.PetMeta;
 import com.github.shynixn.petblocks.api.persistence.entity.SoundMeta;
@@ -71,6 +72,16 @@ public class Config extends PetBlocksConfig<String> {
         super.reload();
     }
 
+    /**
+     * Returns the particle controller.
+     *
+     * @return controller
+     */
+    @Override
+    public ParticleController getParticleController() {
+        return null;
+    }
+
     @Override
     public OtherGUIItemsController getGuiItemsController() {
         return null;
@@ -88,6 +99,36 @@ public class Config extends PetBlocksConfig<String> {
      */
     @Override
     public CostumeController getOrdinaryCostumesController() {
+        return null;
+    }
+
+    /**
+     * Returns the color costume controller.
+     *
+     * @return controller
+     */
+    @Override
+    public CostumeController getColorCostumesController() {
+        return null;
+    }
+
+    /**
+     * Returns the rare costume controller.
+     *
+     * @return controller
+     */
+    @Override
+    public CostumeController getRareCostumesController() {
+        return null;
+    }
+
+    /**
+     * Returns the minecraft heads controller.
+     *
+     * @return controller
+     */
+    @Override
+    public CostumeController getMinecraftHeadsCostumesController() {
         return null;
     }
 

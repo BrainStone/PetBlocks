@@ -9,11 +9,6 @@ import com.github.shynixn.petblocks.core.logic.persistence.entity.IConfig;
 import java.util.List;
 
 public abstract class PetBlocksConfig<T> implements IConfig {
-    private final ParticleController particleController = null;
-    private final CostumeController colorCostumesController = null;
-    private final CostumeController rareCostumesController = null;
-    private final CostumeController minecraftHeadsCostumesController = null;
-
     private PetConf petConf = new PetConf();
 
     /**
@@ -22,14 +17,7 @@ public abstract class PetBlocksConfig<T> implements IConfig {
     @Override
     public void reload() {
         this.getOrdinaryCostumesController().reload();
-       // this.getGuiItemsController().reload();
         this.getEngineController().reload();
-     /*   this.colorCostumesController.reload();
-        this.rareCostumesController.reload();
-        this.minecraftHeadsCostumesController.reload();
-        this.guiItemsController.reload();
-        this.particleController.reload();
-        this.engineController.reload();*/
     }
 
     /**
@@ -41,9 +29,11 @@ public abstract class PetBlocksConfig<T> implements IConfig {
         return petConf;
     }
 
-    public ParticleController getParticleController() {
-        return this.particleController;
-    }
+    /**
+     * Returns the particle controller.
+     * @return controller
+     */
+    public abstract ParticleController getParticleController();
 
     public abstract OtherGUIItemsController getGuiItemsController();
 
@@ -57,17 +47,23 @@ public abstract class PetBlocksConfig<T> implements IConfig {
      */
     public abstract CostumeController getOrdinaryCostumesController();
 
-    public CostumeController getColorCostumesController() {
-        return this.colorCostumesController;
-    }
+    /**
+     * Returns the color costume controller.
+     * @return controller
+     */
+    public abstract CostumeController getColorCostumesController();
 
-    public CostumeController getRareCostumesController() {
-        return this.rareCostumesController;
-    }
+    /**
+     * Returns the rare costume controller.
+     * @return controller
+     */
+    public abstract CostumeController getRareCostumesController();
 
-    public CostumeController getMinecraftHeadsCostumesController() {
-        return this.minecraftHeadsCostumesController;
-    }
+    /**
+     * Returns the minecraft heads controller.
+     * @return controller
+     */
+    public abstract CostumeController getMinecraftHeadsCostumesController();
 
     public int getDefaultEngine() {
         return this.getData("gui.settings.default-engine");
