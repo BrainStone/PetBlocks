@@ -5,6 +5,7 @@ import com.github.shynixn.petblocks.core.logic.business.entity.ItemContainer;
 import com.github.shynixn.petblocks.core.logic.persistence.configuration.FixedItemConfiguration;
 import com.github.shynixn.petblocks.sponge.PetBlocksPlugin;
 import com.github.shynixn.petblocks.sponge.logic.business.entity.SpongeItemContainer;
+import com.github.shynixn.petblocks.sponge.logic.business.helper.SpongePetBlockModifyHelper;
 import com.google.inject.Inject;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.item.inventory.ItemStack;
@@ -76,6 +77,7 @@ public class SpongeFixedItemConfiguration extends FixedItemConfiguration {
             return false;
         final GUIItemContainer container = this.getGUIItemByName(name);
         final ItemStack mItemStack = (ItemStack) itemStack;
-        return mItemStack.get(Keys.DISPLAY_NAME).isPresent() && mItemStack.get(Keys.DISPLAY_NAME).get().equals(Text.of(container.getDisplayName().get()));
+
+        return mItemStack.get(Keys.DISPLAY_NAME).isPresent() && mItemStack.get(Keys.DISPLAY_NAME).get().equals(SpongePetBlockModifyHelper.translateStringToText(container.getDisplayName().get()));
     }
 }

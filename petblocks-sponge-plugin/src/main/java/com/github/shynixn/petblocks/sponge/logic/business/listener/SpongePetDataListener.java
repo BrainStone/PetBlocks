@@ -15,6 +15,7 @@ import com.github.shynixn.petblocks.sponge.logic.business.configuration.Config;
 import com.github.shynixn.petblocks.sponge.logic.business.helper.CompatibilityItemType;
 import com.github.shynixn.petblocks.sponge.logic.business.helper.SpongePetBlockModifyHelper;
 import com.google.inject.Inject;
+import org.spongepowered.api.data.Property;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.cause.Cause;
@@ -23,8 +24,11 @@ import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.event.item.inventory.ClickInventoryEvent;
 import org.spongepowered.api.event.message.MessageChannelEvent;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
+import org.spongepowered.api.item.inventory.Inventory;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.property.InventoryTitle;
+import org.spongepowered.api.item.inventory.property.SlotIndex;
+import org.spongepowered.api.item.inventory.property.SlotPos;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.text.Text;
@@ -97,20 +101,19 @@ public class SpongePetDataListener extends SimpleSpongeListener {
 
     @Listener
     public void playerClickEvent(final ClickInventoryEvent event, @First(typeFilter = Player.class) Player player) {
-        if (event.getTargetInventory().getProperty(InventoryTitle.class, InventoryTitle.PROPERTY_NAME).get().getValue().equals(Config.getInstance().getGUITitle())
-                && this.manager.inventories.containsKey(player)
-                && this.manager.inventories.get(player).equals(event.getTargetInventory())) {
+        if (event.getTargetInventory().getName().get().equals(Config.getInstance().getGUITitle().toPlainSingle())
+                && this.manager.inventories.containsKey(player)) {
             event.setCancelled(true);
             final Optional<PetBlock> optPetblock;
-            final ItemStack itemStack = event.getTransactions().get(0).getSlot().first();
-            final int slot = 5;
 
-            if ((optPetblock = PetBlocksApi.getDefaultPetBlockController().getFromPlayer(player)).isPresent()) {
-                this.handleClick(itemStack, slot, player, optPetblock.get().getMeta(), (SpongePetBlock) optPetblock.get());
+            final ItemStack itemStack = event.getTransactions().get(0).getOriginal().createStack();
+            final int newSlot = event.getTransactions().get(0).getSlot().getProperties(SlotIndex.class).toArray(new SlotIndex[0])[0].getValue();
+            if ((optPetblock = this.manager.getPetBlockController().getFromPlayer(player)).isPresent()) {
+                this.handleClick(itemStack, newSlot, player, optPetblock.get().getMeta(), (SpongePetBlock) optPetblock.get());
             } else {
                 Task.builder().async().execute(() -> {
                     final Optional<PetMeta> optPetMeta = SpongePetDataListener.this.manager.getPetMetaController().getFromPlayer(player);
-                    Task.builder().execute(() -> optPetMeta.ifPresent(petMeta -> SpongePetDataListener.this.handleClick(itemStack, slot, player, petMeta, null))).submit(SpongePetDataListener.this.plugin);
+                    Task.builder().execute(() -> optPetMeta.ifPresent(petMeta -> SpongePetDataListener.this.handleClick(itemStack, newSlot, player, petMeta, null))).submit(SpongePetDataListener.this.plugin);
                 }).submit(this.plugin);
             }
         }
@@ -151,6 +154,7 @@ public class SpongePetDataListener extends SimpleSpongeListener {
 
     @Listener
     public void inventoryCloseEvent(ClickInventoryEvent.Close event, @First(typeFilter = Player.class) Player player) {
+        System.out.println("CLOSE EVENTORY");
         if (this.manager.inventories.containsKey(player)) {
             this.manager.inventories.remove(player);
         }
@@ -184,6 +188,7 @@ public class SpongePetDataListener extends SimpleSpongeListener {
 
     private void handleClick(ItemStack currentItem, int slot, Player player, PetMeta petMeta, SpongePetBlock petBlock) {
         final int itemSlot = slot + this.manager.pages.get(player).currentCount + 1;
+        System.out.println("HANDLE CLICK " + itemSlot + " on " + slot);
         if (this.manager.pages.get(player).page == GUIPage.MAIN && this.getGUIItem("my-pet").getPosition() == slot) {
             this.handleClickOnMyPetItem(player, petMeta);
         } else if (this.isGUIItem(currentItem, "enable-pet")) {
@@ -227,46 +232,59 @@ public class SpongePetDataListener extends SimpleSpongeListener {
             this.manager.gui.setPage(player, GUIPage.ENGINES, petMeta);
         } else if (this.isGUIItem(currentItem, "call-pet") && petBlock != null) {
             petBlock.teleport(player.getLocation());
-            player.closeInventory(Cause.of(NamedCause.owner(this.plugin)));
+            this.closeInventory(player);
         } else if (this.isGUIItem(currentItem, "hat-pet") && this.hasPermission(player, Permission.WEARPET) && petBlock != null) {
             petBlock.wear(player);
         } else if (this.isGUIItem(currentItem, "riding-pet") && this.hasPermission(player, Permission.RIDEPET) && petBlock != null) {
             petBlock.ride(player);
         } else if (this.isGUIItem(currentItem, "naming-pet") && this.hasPermission(player, Permission.RENAMEPET)) {
             this.namingPlayers.add(player);
-            player.closeInventory(Cause.of(NamedCause.owner(this.plugin)));
+            this.closeInventory(player);
             player.sendMessage(Text.of(Config.getInstance().getPrefix() + Config.getInstance().getNamingMessage()));
         } else if (this.isGUIItem(currentItem, "skullnaming-pet") && this.hasPermission(player, Permission.RENAMESKULL)) {
             this.namingSkull.add(player);
-            player.closeInventory(Cause.of(NamedCause.owner(this.plugin)));
+            this.closeInventory(player);
             player.sendMessage(Text.of(Config.getInstance().getPrefix() + Config.getInstance().getSkullNamingMessage()));
         } else if (this.isGUIItem(currentItem, "cannon-pet") && this.hasPermission(player, Permission.CANNON) && petBlock != null) {
             petBlock.setVelocity(this.getDirection(player));
-            player.closeInventory(Cause.of(NamedCause.owner(this.plugin)));
+            this.closeInventory(player);
         } else if (this.isGUIItem(currentItem, "back")) {
             this.manager.gui.backPage(player, petMeta);
         } else if (this.manager.pages.get(player).page == GUIPage.ENGINES && this.hasPermission(player, Permission.ALLPETTYPES.get(), Permission.SINGLEPETTYPE.get() + "" + itemSlot)) {
             final EngineContainer engineContainer = Config.getInstance().getEngineController().getById(itemSlot);
+            if(engineContainer == null)
+                return;
+            System.out.println("SELECTED ENGINE: " + engineContainer);
             SpongePetBlockModifyHelper.setEngine(petMeta, petBlock, engineContainer);
             this.persistAsynchronously(petMeta);
             this.manager.gui.setPage(player, GUIPage.MAIN, petMeta);
         } else if (this.manager.pages.get(player).page == GUIPage.PARTICLES && this.hasPermission(player, Permission.ALLPARTICLES.get(), Permission.SINGLEPARTICLE.get() + "" + itemSlot)) {
             final GUIItemContainer container = Config.getInstance().getParticleController().getContainerByPosition(itemSlot);
+            if(container == null)
+                return;
             SpongePetBlockModifyHelper.setParticleEffect(petMeta, petBlock, container);
             this.persistAsynchronously(petMeta);
             this.manager.gui.setPage(player, GUIPage.MAIN, petMeta);
         } else if (slot < 45 && this.manager.pages.get(player).page == GUIPage.DEFAULT_COSTUMES && this.hasPermission(player, Permission.ALLDEFAULTCOSTUMES.get(), Permission.SINGLEDEFAULTCOSTUME.get() + "" + itemSlot)) {
             final GUIItemContainer container = Config.getInstance().getOrdinaryCostumesController().getContainerByPosition(itemSlot);
+            if(container == null)
+                return;
             this.setCostumeSkin(player, petMeta, petBlock, container);
         } else if (slot < 45 && this.manager.pages.get(player).page == GUIPage.COLOR_COSTUMES && this.hasPermission(player, Permission.ALLCOLORCOSTUMES.get(), Permission.SINGLECOLORCOSTUME.get() + "" + itemSlot)) {
             final GUIItemContainer container = Config.getInstance().getColorCostumesController().getContainerByPosition(itemSlot);
+            if(container == null)
+                return;
             this.setCostumeSkin(player, petMeta, petBlock, container);
         } else if (slot < 45 && this.manager.pages.get(player).page == GUIPage.CUSTOM_COSTUMES && this.hasPermission(player, Permission.ALLCUSTOMCOSTUMES.get(), Permission.SINGLECUSTOMCOSTUME.get() + "" + itemSlot)) {
             final GUIItemContainer container = Config.getInstance().getRareCostumesController().getContainerByPosition(itemSlot);
+            if(container == null)
+                return;
             this.setCostumeSkin(player, petMeta, petBlock, container);
         } else if (slot < 45 && this.manager.pages.get(player).page == GUIPage.MINECRAFTHEADS_COSTUMES && this.hasPermission(player, Permission.ALLHEADATABASECOSTUMES.get(), Permission.SINGLEMINECRAFTHEADSCOSTUME.get() + "" + itemSlot)) {
             final GUIItemContainer container = Config.getInstance().getMinecraftHeadsCostumesController().getContainerByPosition(itemSlot);
-            this.setCostumeSkin(player, petMeta, petBlock, container);
+            if(container == null)
+                return;
+           this.setCostumeSkin(player, petMeta, petBlock, container);
         }
     }
 
@@ -342,6 +360,14 @@ public class SpongePetDataListener extends SimpleSpongeListener {
                 player.sendMessage(Text.of(Config.getInstance().getPrefix() + Config.getInstance().getSkullNamingErrorMessage()));
             }
         }
+    }
+
+    private void closeInventory(Player player) {
+        System.out.println("CLOSING!!!!");
+        if (this.manager.inventories.containsKey(player)) {
+            this.manager.inventories.remove(player);
+        }
+        player.closeInventory(Cause.of(NamedCause.owner(this.plugin)));
     }
 
     /**

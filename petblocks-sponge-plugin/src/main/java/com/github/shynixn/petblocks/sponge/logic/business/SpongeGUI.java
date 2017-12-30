@@ -8,6 +8,7 @@ import com.github.shynixn.petblocks.core.logic.business.entity.GuiPageContainer;
 import com.github.shynixn.petblocks.sponge.logic.business.configuration.Config;
 import com.google.inject.Inject;
 import org.spongepowered.api.data.Property;
+import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.NamedCause;
@@ -21,6 +22,7 @@ import org.spongepowered.api.item.inventory.property.SlotIndex;
 import org.spongepowered.api.item.inventory.property.SlotPos;
 import org.spongepowered.api.item.inventory.type.GridInventory;
 import org.spongepowered.api.plugin.PluginContainer;
+import org.spongepowered.api.scheduler.Task;
 
 import java.util.List;
 
@@ -43,7 +45,7 @@ public class SpongeGUI {
     public void open(Player player) {
         if (!this.manager.inventories.containsKey(player)) {
             if (player.getOpenInventory().isPresent()) {
-                player.closeInventory(Cause.of(NamedCause.owner(this.plugin)));
+                this.closeInventory(player);
             }
             final Inventory inventory = Inventory.builder()
                     .of(InventoryArchetypes.DOUBLE_CHEST)
@@ -80,7 +82,7 @@ public class SpongeGUI {
             this.setListAble(player, page, 0);
         }
         final GUIItemContainer backGuiItemContainer = Config.getInstance().getGuiItemsController().getGUIItemByName("back");
-        setItem(inventory, backGuiItemContainer.getPosition(), (ItemStack) backGuiItemContainer.generate(player));
+        this.setItem(inventory, backGuiItemContainer.getPosition(), (ItemStack) backGuiItemContainer.generate(player));
         this.fillEmptySlots(inventory, player);
     }
 
@@ -93,7 +95,7 @@ public class SpongeGUI {
     public void backPage(Player player, PetMeta petMeta) {
         final GuiPageContainer container = this.manager.pages.get(player);
         if (container.page == GUIPage.MAIN) {
-            player.closeInventory(Cause.of(NamedCause.owner(this.plugin)));
+            this.closeInventory(player);
         } else {
             if (container.previousPage != null && container.previousPage.previousPage != null)
                 this.manager.pages.put(player, container.previousPage.previousPage);
@@ -256,7 +258,7 @@ public class SpongeGUI {
      * @param groupPermission groupPermissions
      */
     private void setCostumes(Player player, List<GUIItemContainer> containers, GUIPage page, int type, String groupPermission) {
-    /*    if (this.manager.inventories.containsKey(player)) {
+        if (this.manager.inventories.containsKey(player)) {
             final GuiPageContainer previousContainer = this.manager.pages.get(player);
             final GuiPageContainer container;
             if (previousContainer.page != page) {
@@ -281,38 +283,33 @@ public class SpongeGUI {
             container.currentCount = container.startCount;
             final Inventory inventory = this.costumePreparation(player);
             int i;
-            int scheduleCounter = 0;
+            int scheduleCounter = 4;
             for (i = 0; i < 45 && (i + container.startCount) < containers.size(); i++) {
-                if (inventory.getItem(i) == null || inventory.getItem(i).getType() == Material.AIR) {
-
-                    final int slot = i;
-                    final int containerSlot = (i + container.startCount);
-                    final int mountBlock = container.currentCount;
-                    final GUIPage currentPage = container.page;
-                    count++;
-                    if (i % 2 == 0) {
-                        scheduleCounter++;
-                    }
-                    Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
-                        if (container.currentCount == mountBlock && currentPage == this.manager.pages.get(player).page) {
-                            inventory.setItem(slot, (ItemStack) containers.get(containerSlot).generate(player, groupPermission));
-                        }
-                    }, scheduleCounter);
+                final int slot = i;
+                final int containerSlot = (i + container.startCount);
+                final int mountBlock = container.currentCount;
+                final GUIPage currentPage = container.page;
+                count++;
+                if (i % 2 == 0) {
+                    scheduleCounter++;
+                }
+                if (container.currentCount == mountBlock && currentPage == this.manager.pages.get(player).page) {
+                    this.setItem(inventory, slot, (ItemStack) containers.get(containerSlot).generate(player, groupPermission));
                 }
             }
             container.startCount = count;
             final GUIItemContainer backGuiItemContainer = Config.getInstance().getGuiItemsController().getGUIItemByName("back");
-            inventory.setItem(backGuiItemContainer.getPosition(), (ItemStack) backGuiItemContainer.generate(player));
+            this.setItem(inventory, backGuiItemContainer.getPosition(), (ItemStack) backGuiItemContainer.generate(player));
             if (!(container.startCount % 45 != 0 || containers.size() == container.startCount)) {
                 final GUIItemContainer nextPage = Config.getInstance().getGuiItemsController().getGUIItemByName("next-page");
-                inventory.setItem(nextPage.getPosition(), (ItemStack) nextPage.generate(player));
+                this.setItem(inventory, nextPage.getPosition(), (ItemStack) nextPage.generate(player));
             }
             if (container.currentCount != 0) {
                 final GUIItemContainer previousPage = Config.getInstance().getGuiItemsController().getGUIItemByName("previous-page");
-                inventory.setItem(previousPage.getPosition(), (ItemStack) previousPage.generate(player));
+                this.setItem(inventory, previousPage.getPosition(), (ItemStack) previousPage.generate(player));
             }
-            this.fillEmptySlots(inventory);
-        }*/
+            this.fillEmptySlots(inventory, player);
+        }
     }
 
     /**
@@ -340,11 +337,21 @@ public class SpongeGUI {
 
     }
 
+    private void closeInventory(Player player) {
+        if (this.manager.inventories.containsKey(player)) {
+            this.manager.inventories.remove(player);
+        }
+        player.closeInventory(Cause.of(NamedCause.owner(this.plugin)));
+    }
+
     private void setItem(Inventory inventory, int slot, ItemStack itemStack) {
-        inventory.query(GridInventory.class)
-                .query(SlotIndex.of(slot))
-                .offer(itemStack);
-        System.out.println("CORRECT");
+        if (slot == 0) {
+            inventory.query(GridInventory.class)
+                    .query(SlotPos.of(0, 0)).set(itemStack);
+        } else {
+            inventory.query(GridInventory.class)
+                    .query(SlotIndex.of(slot)).set(itemStack);
+        }
     }
 
     /**

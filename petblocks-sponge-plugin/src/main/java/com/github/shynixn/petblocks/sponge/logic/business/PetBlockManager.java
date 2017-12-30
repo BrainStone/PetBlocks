@@ -91,6 +91,7 @@ public class PetBlockManager implements AutoCloseable {
     @Inject
     public PetBlockManager(PluginContainer plugin, Config config) {
         config.reload();
+        System.out.println("---------------- NEW PETBLOCK MANAGER");
         this.connectionContext = initialize(plugin, config, false);
     }
 
