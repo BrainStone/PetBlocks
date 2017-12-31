@@ -18,9 +18,11 @@ import org.spongepowered.api.effect.particle.ParticleType;
 import org.spongepowered.api.effect.particle.ParticleTypes;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.item.ItemType;
+import org.spongepowered.api.util.Color;
 import org.spongepowered.api.world.Location;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
@@ -303,9 +305,9 @@ public class SpongeParticleEffectMeta extends PersistenceObject implements Parti
     @Override
     public ParticleEffectMeta setRed(int red) {
         this.offsetX = red / 255.0F;
-        if (red == 0) {
-            this.offsetX = Float.MIN_NORMAL;
-        }
+       // if (red == 0) {
+      //      this.offsetX = Float.MIN_NORMAL;
+      //  }
         return this;
     }
 
@@ -588,15 +590,21 @@ public class SpongeParticleEffectMeta extends PersistenceObject implements Parti
      */
     public void applyTo(Location location, Player... players) {
         try {
-            if(this.effect == null ||this.effect.equalsIgnoreCase("none"))
+            if (this.effect == null || this.effect.equalsIgnoreCase("none"))
                 return;
-            final ParticleType type = Sponge.getGame().getRegistry().getType(ParticleType.class,"minecraft:" + this.getEffectType().getSimpleName()).get();
-            final ParticleEffect.Builder builder = ParticleEffect.builder()
-                    .type(type)
-                    .quantity(this.getAmount())
-                    .offset(new Vector3d(this.getOffsetX(), this.getOffsetY(), this.getOffsetZ()))
-                    .velocity(new Vector3d(this.speed, this.speed, this.speed));
+            final ParticleType type = Sponge.getGame().getRegistry().getType(ParticleType.class, "minecraft:" + this.getEffectType().getMinecraftId()).get();
 
+            final ParticleEffect.Builder builder;
+            if (this.getEffectType() == ParticleEffectType.REDSTONE || this.getEffectType() == ParticleEffectType.NOTE) {
+                builder = ParticleEffect.builder()
+                        .type(type).option(ParticleOptions.COLOR, Color.ofRgb(getRed(), getGreen(), getBlue()));
+            } else {
+                builder = ParticleEffect.builder()
+                        .type(type)
+                        .quantity(this.getAmount())
+                        .offset(new Vector3d(this.getOffsetX(), this.getOffsetY(), this.getOffsetZ()))
+                        .velocity(new Vector3d(this.speed, this.speed, this.speed));
+            }
             if (this.material != null) {
                 builder.option(ParticleOptions.BLOCK_STATE, BlockState.builder().blockType(CompatibilityItemType.getFromId(this.material).getBlockType())
                         .add(Keys.ITEM_DURABILITY, (int) this.data).build());

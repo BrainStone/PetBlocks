@@ -79,10 +79,10 @@ final class CustomGroundArmorstand extends EntityArmorStand implements SpongePet
         return !this.getPassengers().isEmpty() && ((EntityLiving) this.getPassengers().get(0)).isJumping;
     }
 
-    private Human hasHumanPassenger() {
+    private Player hasHumanPassenger() {
         for (final net.minecraft.entity.Entity entity : this.getPassengers()) {
-            if (entity instanceof Human) {
-                return (Human) entity;
+            if (entity instanceof EntityPlayer) {
+                return (Player) entity;
             }
         }
         return null;
@@ -111,8 +111,11 @@ final class CustomGroundArmorstand extends EntityArmorStand implements SpongePet
      */
     @Override
     public void moveEntityWithHeading(float strafe, float forward) {
+        System.out.println("HUMAN?");
         if (this.hasHumanPassenger() != null) {
+            System.out.println("GOT HUMAN");
             if (this.petMeta.getEngine().getRideType() == RideType.RUNNING) {
+                System.out.println("HANDLE ROTATION");
                 EntityLiving entityLiving = (EntityLiving) this.hasHumanPassenger();
                 this.rotationYaw = this.prevRotationYaw = entityLiving.rotationYaw;
                 this.rotationPitch = entityLiving.rotationPitch * 0.5F;
