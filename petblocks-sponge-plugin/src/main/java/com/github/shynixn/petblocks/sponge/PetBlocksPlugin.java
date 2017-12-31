@@ -20,16 +20,15 @@ import org.bstats.sponge.Metrics;
 import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.game.GameReloadEvent;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.scheduler.Task;
-import org.spongepowered.api.text.serializer.TextSerializers;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.logging.Level;
 
 /**
  * Copyright 2017 Shynixn
@@ -83,6 +82,10 @@ public class PetBlocksPlugin {
     @Inject
     private Logger logger;
 
+    public static org.slf4j.Logger logger() {
+        return slogger;
+    }
+
     @Listener
     public void onEnable(GameInitializationEvent event) throws IOException {
         TypeSerializers.getDefaultSerializers().registerType(TypeToken.of(SpongeParticleEffectMeta.class), new SpongeParticleEffectMeta.ParticleEffectSerializer());
@@ -107,9 +110,28 @@ public class PetBlocksPlugin {
             }).submit(this.pluginContainer);
             try {
                 ReflectionUtils.invokeMethodByClass(PetBlocksApi.class, "initialize", new Class[]{PetMetaController.class, PetBlockController.class}, new Object[]{this.petBlockManager.getPetMetaController(), this.petBlockManager.getPetBlockController()});
-                sendServerMessage(PREFIX_CONSOLE + "&aEnabled PetBlocks " + this.pluginContainer.getVersion() + " by Shynixn");
+                sendServerMessage(PREFIX_CONSOLE + "&aEnabled PetBlocks " + this.pluginContainer.getVersion().get() + " by Shynixn");
             } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
                 PetBlocksPlugin.logger().warn("Failed to enable plugin.", e);
+            }
+        }
+    }
+
+    @Listener
+    public void onReload(GameReloadEvent event) {
+        if (!this.disabled) {
+            this.config.reload();
+            sendServerMessage(PREFIX_CONSOLE + "&aReloaded PetBlocks configuration.");
+        }
+    }
+
+    @Listener
+    public void onDisable(GameStoppingServerEvent event) {
+        if (!this.disabled) {
+            try {
+                NMSRegistry.unregisterCustomEntities();
+            } catch (final Exception e) {
+                PetBlocksPlugin.logger().warn("Failed to disable petblocks.", e);
             }
         }
     }
@@ -122,20 +144,5 @@ public class PetBlocksPlugin {
 
     private static void sendServerMessage(String text) {
         Sponge.getServer().getConsole().sendMessage(SpongePetBlockModifyHelper.translateStringToText(text));
-    }
-
-    public static org.slf4j.Logger logger() {
-        return slogger;
-    }
-
-    @Listener
-    public void onDisable(GameStoppingServerEvent event) {
-        if (!this.disabled) {
-            try {
-                NMSRegistry.unregisterCustomEntities();
-            } catch (final Exception e) {
-                PetBlocksPlugin.logger().warn("Failed to disable petblocks.", e);
-            }
-        }
     }
 }

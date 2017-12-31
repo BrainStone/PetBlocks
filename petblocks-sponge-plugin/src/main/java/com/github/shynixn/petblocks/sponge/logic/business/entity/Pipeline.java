@@ -5,6 +5,7 @@ import com.github.shynixn.petblocks.api.business.entity.PetBlock;
 import com.github.shynixn.petblocks.api.persistence.entity.ParticleEffectMeta;
 import com.github.shynixn.petblocks.api.persistence.entity.SoundMeta;
 import com.github.shynixn.petblocks.sponge.nms.helper.PetBlockHelper;
+import org.spongepowered.api.entity.Transform;
 import org.spongepowered.api.world.Location;
 
 public class Pipeline implements EffectPipeline {
@@ -24,7 +25,12 @@ public class Pipeline implements EffectPipeline {
      */
     @Override
     public void playParticleEffect(Object location, ParticleEffectMeta particleEffectMeta) {
-        PetBlockHelper.playParticleEffectForPipeline((Location) location, particleEffectMeta, this.petBlock);
+        if (location instanceof Location) {
+            PetBlockHelper.playParticleEffectForPipeline((Location) location, particleEffectMeta, this.petBlock);
+
+        } else if (location instanceof Transform) {
+            PetBlockHelper.playParticleEffectForPipeline(((Transform) location).getLocation(), particleEffectMeta, this.petBlock);
+        }
     }
 
     /**
@@ -35,6 +41,10 @@ public class Pipeline implements EffectPipeline {
      */
     @Override
     public void playSound(Object location, SoundMeta soundMeta) {
-        PetBlockHelper.playSoundEffectForPipeline((Location) location, soundMeta, this.petBlock);
+        if (location instanceof Location) {
+            PetBlockHelper.playSoundEffectForPipeline((Location) location, soundMeta, this.petBlock);
+        } else if (location instanceof Transform) {
+            PetBlockHelper.playSoundEffectForPipeline(((Transform) location).getLocation(), soundMeta, this.petBlock);
+        }
     }
 }

@@ -1,17 +1,20 @@
 package com.github.shynixn.petblocks.sponge.logic.persistence.entity;
 
 import com.github.shynixn.petblocks.api.persistence.entity.SoundMeta;
+import com.github.shynixn.petblocks.sponge.nms.VersionSupport;
 import com.google.common.reflect.TypeToken;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import ninja.leaping.configurate.objectmapping.serialize.TypeSerializer;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.effect.particle.ParticleType;
 import org.spongepowered.api.effect.sound.SoundType;
 import org.spongepowered.api.effect.sound.SoundTypes;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
+import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -68,6 +71,7 @@ public class SoundBuilder implements SoundMeta {
         this.text = text;
         this.volume = 1.0F;
         this.pitch = 1.0F;
+        this.convertSounds();
     }
 
     /**
@@ -79,6 +83,7 @@ public class SoundBuilder implements SoundMeta {
         this.text = (String) data.get("name");
         this.volume = (float) (double) data.get("volume");
         this.pitch = (float) (double) data.get("pitch");
+        this.convertSounds();
     }
 
     /**
@@ -93,6 +98,7 @@ public class SoundBuilder implements SoundMeta {
         this.text = text;
         this.volume = (float) volume;
         this.pitch = (float) pitch;
+        this.convertSounds();
     }
 
     /**
@@ -268,6 +274,15 @@ public class SoundBuilder implements SoundMeta {
     }
 
     private SoundType getSoundTypeFromName(String name) {
+        for (final Field field : SoundTypes.class.getDeclaredFields()) {
+            if (field.getName().equalsIgnoreCase(name)) {
+                try {
+                    return (SoundType) field.get(null);
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
         return null;
     }
 
@@ -279,6 +294,84 @@ public class SoundBuilder implements SoundMeta {
     @Override
     public long getId() {
         return this.hashCode();
+    }
+
+    /**
+     * Converts the sounds to 1.9 sounds
+     */
+    private void convertSounds() {
+        if (VersionSupport.getServerVersion() != null && VersionSupport.getServerVersion().isVersionSameOrGreaterThan(VersionSupport.VERSION_1_10_R1)) {
+            switch (this.text) {
+                case "ENDERMAN_IDLE": {
+                    this.text = "ENTITY_ENDERMEN_AMBIENT";
+                    break;
+                }
+                case "MAGMACUBE_WALK": {
+                    this.text = "ENTITY_MAGMACUBE_JUMP";
+                    break;
+                }
+                case "SLIME_WALK": {
+                    this.text = "ENTITY_SLIME_JUMP";
+                    break;
+                }
+                case "EXPLODE": {
+                    this.text = "ENTITY_GENERIC_EXPLODE";
+                    break;
+                }
+
+                case "EAT": {
+                    this.text = "ENTITY_GENERIC_EAT";
+                    break;
+                }
+                case "WOLF_GROWL": {
+                    this.text = "ENTITY_WOLF_GROWL";
+                    break;
+                }
+                case "CAT_MEOW": {
+                    this.text = "ENTITY_CAT_PURREOW";
+                    break;
+                }
+                case "HORSE_GALLOP": {
+                    this.text = "ENTITY_GENERIC_EXPLODE";
+                    break;
+                }
+                case "ENTITY_HORSE_GALLOP": {
+                    this.text = "ENTITY_GENERIC_EXPLODE";
+                    break;
+                }
+                case "BAT_LOOP": {
+                    this.text = "ENTITY_BAT_LOOP";
+                    break;
+                }
+                case "GHAST_SCREAM": {
+                    this.text = "ENTITY_GHAST_SCREAM";
+                    break;
+                }
+                case "BLAZE_BREATH": {
+                    this.text = "ENTITY_BLAZE_AMBIENT";
+                    break;
+                }
+                case "ENDERDRAGON_WINGS": {
+                    this.text = "ENTITY_ENDERDRAGON_FLAP";
+                    break;
+                }
+                case "ENDERDRAGON_GROWL": {
+                    this.text = "ENTITY_ENDERDRAGON_GROWL";
+                    break;
+                }
+                case "none": {
+                    this.text = "none";
+                    break;
+                }
+                default: {
+                    if (this.text.contains("WALK")) {
+                        this.text = "ENTITY_" + this.text.toUpperCase().split("_")[0] + "_STEP";
+                    } else if (this.text.contains("IDLE")) {
+                        this.text = "ENTITY_" + this.text.toUpperCase().split("_")[0] + "_AMBIENT";
+                    }
+                }
+            }
+        }
     }
 
     public static class SoundBuilderSerializer implements TypeSerializer<SoundBuilder> {

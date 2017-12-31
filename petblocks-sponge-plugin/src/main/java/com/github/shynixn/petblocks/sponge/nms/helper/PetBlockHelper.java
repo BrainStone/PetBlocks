@@ -13,6 +13,8 @@ import com.github.shynixn.petblocks.api.sponge.event.PetBlockRideEvent;
 import com.github.shynixn.petblocks.api.sponge.event.PetBlockWearEvent;
 import com.github.shynixn.petblocks.sponge.PetBlocksPlugin;
 import com.github.shynixn.petblocks.sponge.logic.business.configuration.Config;
+import com.github.shynixn.petblocks.sponge.logic.business.helper.SpongeConfigurationHelper;
+import com.github.shynixn.petblocks.sponge.logic.business.helper.SpongePetBlockModifyHelper;
 import com.github.shynixn.petblocks.sponge.logic.persistence.entity.SoundBuilder;
 import com.github.shynixn.petblocks.sponge.logic.persistence.entity.SpongeLocationBuilder;
 import com.github.shynixn.petblocks.sponge.logic.persistence.entity.SpongeParticleEffectMeta;
@@ -24,6 +26,8 @@ import org.spongepowered.api.entity.Transform;
 import org.spongepowered.api.entity.living.ArmorStand;
 import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.event.cause.NamedCause;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.text.Text;
@@ -164,15 +168,13 @@ public final class PetBlockHelper {
         if (counter <= 0) {
             final Random random = new Random();
             if (!getEngineEntity(petBlock).isOnGround() || petData.getEngine().getEntityType().equalsIgnoreCase("ZOMBIE")) {
-              //  petBlock.getEffectPipeline().playSound(petBlock.getLocation(), petBlock.getMeta().getEngine().getAmbientSound());
+                 petBlock.getEffectPipeline().playSound(petBlock.getLocation(), petBlock.getMeta().getEngine().getAmbientSound());
             }
             counter = 20 * random.nextInt(20) + 1;
         }
         if (getEngineEntity(petBlock).isRemoved()) {
-
-            PetBlocksPlugin.logger().warn("PetBlockw as removed in tick sounds.");
             petBlock.removeEntity();
-          //  PetBlocksApi.getDefaultPetBlockController().remove(petBlock);
+            PetBlocksApi.getDefaultPetBlockController().remove(petBlock);
         }
         if (petData.getParticleEffectMeta() != null) {
             petBlock.getEffectPipeline().playParticleEffect(getArmorstand(petBlock).getLocation().add(0, 1, 0), petData.getParticleEffectMeta());
@@ -198,7 +200,7 @@ public final class PetBlockHelper {
             if (!event.isCancelled()) {
                 getArmorstand(petBlock).setVelocity(new Vector3d(0, 1, 0));
                 getArmorstand(petBlock).addPassenger(player);
-                player.closeInventory(null);
+                player.closeInventory(Cause.of(NamedCause.owner(player)));
             }
         }
     }
@@ -287,7 +289,7 @@ public final class PetBlockHelper {
     }
 
     public static void respawn(PetBlock petBlock, TickCallBack callBack) {
-        final Location location = (Location) petBlock.getLocation();
+        final Location location = ((Transform)petBlock.getLocation()).getLocation();
         final IPosition position = new SpongeLocationBuilder(location, ((Living)petBlock.getArmorStand()).getHeadRotation());
         position.addCoordinates(0, 1.2,0);
         PetBlocksPlugin.logger().warn("PetBlockw as removed in respawn.");

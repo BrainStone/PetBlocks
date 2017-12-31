@@ -69,7 +69,7 @@ public class UpdateUtils {
             if (plugin.getVersion().get().endsWith("SNAPSHOT")) {
                 sendServerMessage(prefix + "&e================================================");
                 sendServerMessage(prefix + "&eYou are using a snapshot of " + pluginName);
-                sendServerMessage(prefix + "&ePlease check regularly if there is a new version");
+                sendServerMessage(prefix + "&eCheck regularly if there is a new version available");
                 sendServerMessage(prefix + "&e================================================");
             } else {
                 sendServerMessage(prefix + "&e================================================");

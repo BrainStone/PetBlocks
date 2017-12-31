@@ -588,7 +588,7 @@ public class SpongeParticleEffectMeta extends PersistenceObject implements Parti
      */
     public void applyTo(Location location, Player... players) {
         try {
-            if(this.effect == null)
+            if(this.effect == null ||this.effect.equalsIgnoreCase("none"))
                 return;
             final ParticleType type = Sponge.getGame().getRegistry().getType(ParticleType.class,"minecraft:" + this.getEffectType().getSimpleName()).get();
             final ParticleEffect.Builder builder = ParticleEffect.builder()
