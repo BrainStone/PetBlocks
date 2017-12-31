@@ -40,7 +40,7 @@ public final class PetDataCommandExecutor extends SimpleCommandExecutor {
      */
     @Override
     public void onPlayerExecuteCommand(Player player, CommandContext args) {
-        if (!this.config.allowPetSpawning(player.getLocation()))
+        if (!this.config.allowPetSpawning(player.getTransform()))
             return;
         if (args.hasAny("call")) {
             final Optional<PetBlock> petBlock;

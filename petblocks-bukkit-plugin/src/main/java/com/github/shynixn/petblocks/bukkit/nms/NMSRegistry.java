@@ -1,5 +1,6 @@
 package com.github.shynixn.petblocks.bukkit.nms;
 
+import com.github.shynixn.petblocks.api.bukkit.entity.BukkitPetBlock;
 import com.github.shynixn.petblocks.api.business.entity.PetBlock;
 import com.github.shynixn.petblocks.api.persistence.entity.PetMeta;
 import com.github.shynixn.petblocks.bukkit.PetBlocksPlugin;
@@ -50,7 +51,7 @@ public final class NMSRegistry {
      * @param meta     meta
      * @return petblock
      */
-    public static PetBlock createPetBlock(Location location, PetMeta meta) {
+    public static BukkitPetBlock createPetBlock(Location location, PetMeta meta) {
         try {
             if (wrappedRegistry == null) {
                 if (VersionSupport.getServerVersion().isVersionLowerThan(VersionSupport.VERSION_1_11_R1)) {
@@ -63,7 +64,7 @@ public final class NMSRegistry {
                 wrappedRegistry.register(rabbitClazz, CustomEntityType.RABBIT);
                 wrappedRegistry.register(zombieClazz, CustomEntityType.ZOMBIE);
             }
-            return (PetBlock) ReflectionUtils.invokeConstructor(findClassFromVersion("com.github.shynixn.petblocks.bukkit.nms.VERSION.CustomGroundArmorstand")
+            return (BukkitPetBlock) ReflectionUtils.invokeConstructor(findClassFromVersion("com.github.shynixn.petblocks.bukkit.nms.VERSION.CustomGroundArmorstand")
                     , new Class[]{location.getClass(), PetMeta.class}, new Object[]{location, meta});
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | InstantiationException | ClassNotFoundException e) {
             PetBlocksPlugin.logger().log(Level.WARNING, "Cannot create petblock.", e);
@@ -208,6 +209,7 @@ public final class NMSRegistry {
             }
         }
     }
+
 
     public static List<String> getWorldGuardRegionsFromLocation(Location location) {
         if (RegisterHelper.isRegistered("WorldGuard")) {

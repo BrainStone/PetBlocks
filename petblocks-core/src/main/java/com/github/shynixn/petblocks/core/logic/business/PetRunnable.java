@@ -1,4 +1,4 @@
-package com.github.shynixn.petblocks.bukkit.logic.business;
+package com.github.shynixn.petblocks.core.logic.business;
 
 import com.github.shynixn.petblocks.api.business.entity.PetBlock;
 import com.github.shynixn.petblocks.api.persistence.entity.PetMeta;
@@ -33,6 +33,12 @@ import com.github.shynixn.petblocks.api.persistence.entity.PetMeta;
  * SOFTWARE.
  */
 @FunctionalInterface
-public interface PetRunnable {
-    void run(PetMeta petMeta, PetBlock petBlock);
+public interface PetRunnable<T extends PetBlock> {
+    /**
+     * Callback after operation.
+     *
+     * @param petMeta  petMeta
+     * @param petBlock petblock
+     */
+    void run(PetMeta petMeta, T petBlock);
 }

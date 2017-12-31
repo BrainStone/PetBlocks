@@ -49,7 +49,7 @@ public final class CustomRabbit extends EntityRabbit implements PetBlockPartEnti
             this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED)
                     .setBaseValue(0.30000001192092896D * Config.getInstance().pet().getModifier_petwalking());
         } catch (final Exception exc) {
-            PetBlocksPlugin.logger().log(Level.WARNING, "EntityNMS exception.", exc);
+            PetBlocksPlugin.logger().warn("EntityNMS exception.", exc);
         }
         this.petBlock = petBlock;
         this.stepHeight = (float) Config.getInstance().pet().getModifier_petclimbing();

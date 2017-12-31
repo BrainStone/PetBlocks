@@ -49,7 +49,7 @@ allprojects {
             baseName = project.name
             version = project.version
             relocate 'com.zaxxer', 'com.github.shynixn.petblocks.lib.com.zaxxer'
-            relocate 'org.slf4j', 'com.github.shynixn.petblocks.lib.org.slf4j'
+         //   relocate 'org.slf4j', 'com.github.shynixn.petblocks.lib.org.slf4j'
             relocate 'org.bstats', 'com.github.shynixn.petblocks.lib.org.bstats'
         }
     }
@@ -134,7 +134,6 @@ subprojects {
 
     dependencies {
         compile group: 'com.zaxxer', name: 'HikariCP', version: '2.7.4'
-        compile group: 'org.slf4j', name: 'slf4j-jdk14', version: '1.7.25'
         testCompile group: 'org.xerial', name: 'sqlite-jdbc', version: '3.21.0.1'
         testCompile group: 'ch.vorburger.mariaDB4j', name: 'mariaDB4j', version: '2.2.3'
         testCompile group: 'org.mockito', name: 'mockito-core', version: '2.13.0'

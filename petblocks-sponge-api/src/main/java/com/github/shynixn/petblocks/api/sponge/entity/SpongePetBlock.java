@@ -1,8 +1,9 @@
 package com.github.shynixn.petblocks.api.sponge.entity;
 
 import com.github.shynixn.petblocks.api.business.entity.PetBlock;
+import org.spongepowered.api.entity.Transform;
+import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 /**
@@ -32,5 +33,5 @@ import org.spongepowered.api.world.World;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public interface SpongePetBlock extends PetBlock<Player, Location<World>> {
+public interface SpongePetBlock extends PetBlock<Player, Transform<World>, Living> {
 }

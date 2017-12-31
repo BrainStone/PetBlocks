@@ -1,5 +1,6 @@
 package com.github.shynixn.petblocks.bukkit.logic.business;
 
+import com.github.shynixn.petblocks.api.bukkit.entity.BukkitPetBlock;
 import com.github.shynixn.petblocks.api.business.controller.PetBlockController;
 import com.github.shynixn.petblocks.api.persistence.controller.PetMetaController;
 import com.github.shynixn.petblocks.bukkit.PetBlocksPlugin;
@@ -83,7 +84,7 @@ public class PetBlockManager implements AutoCloseable {
         }
     }
 
-    public PetBlockController getPetBlockController() {
+    public PetBlockController<BukkitPetBlock, Player> getPetBlockController() {
         return this.petBlockController;
     }
 

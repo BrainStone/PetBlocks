@@ -1,5 +1,6 @@
 package com.github.shynixn.petblocks.bukkit.logic.business.controller;
 
+import com.github.shynixn.petblocks.api.bukkit.entity.BukkitPetBlock;
 import com.github.shynixn.petblocks.api.bukkit.event.PetBlockDeathEvent;
 import com.github.shynixn.petblocks.api.business.controller.PetBlockController;
 import com.github.shynixn.petblocks.api.business.entity.PetBlock;
@@ -39,8 +40,8 @@ import java.util.*;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public final class PetBlockRepository implements PetBlockController {
-    private final Map<Player, PetBlock> petblocks = new HashMap<>();
+public final class PetBlockRepository implements PetBlockController<BukkitPetBlock, Player> {
+    private final Map<Player, BukkitPetBlock> petblocks = new HashMap<>();
 
     /**
      * Creates a new petblock for the given player and meta.
@@ -50,13 +51,12 @@ public final class PetBlockRepository implements PetBlockController {
      * @return petblock
      */
     @Override
-    public PetBlock create(Object player, PetMeta petMeta) {
-        if(player == null)
+    public BukkitPetBlock create(Player player, PetMeta petMeta) {
+        if (player == null)
             throw new IllegalArgumentException("Player cannot be null!");
-        if(petMeta == null)
+        if (petMeta == null)
             throw new IllegalArgumentException("PetMeta cannot be null!");
-        final Player mPlayer = (Player) player;
-        return NMSRegistry.createPetBlock(mPlayer.getLocation(), petMeta);
+        return NMSRegistry.createPetBlock(player.getLocation(), petMeta);
     }
 
     /**
@@ -81,10 +81,10 @@ public final class PetBlockRepository implements PetBlockController {
      * @return petblock
      */
     @Override
-    public Optional<PetBlock> getFromPlayer(Object player) {
-        if(player == null)
+    public Optional<BukkitPetBlock> getFromPlayer(Player player) {
+        if (player == null)
             throw new IllegalArgumentException("Player cannot be null!");
-        final Player mPlayer = (Player) player;
+        final Player mPlayer = player;
         if (this.petblocks.containsKey(mPlayer)) {
             return Optional.of(this.petblocks.get(mPlayer));
         }
@@ -97,10 +97,11 @@ public final class PetBlockRepository implements PetBlockController {
      * @param player player
      */
     @Override
-    public void removeByPlayer(Object player) {
-        if(player == null)
+    public void removeByPlayer(Player player) {
+        if (player == null)
             throw new IllegalArgumentException("Player cannot be null!");
-        this.remove(this.getByPlayer(player));
+        final Optional<BukkitPetBlock> bukkitPetBlock = this.getFromPlayer(player);
+        bukkitPetBlock.ifPresent(this::remove);
     }
 
     /**
@@ -109,10 +110,10 @@ public final class PetBlockRepository implements PetBlockController {
      * @param item item
      */
     @Override
-    public void store(PetBlock item) {
-        if(item == null)
+    public void store(BukkitPetBlock item) {
+        if (item == null)
             throw new IllegalArgumentException("Item cannot be null!");
-        final Player mPlayer = (Player) item.getPlayer();
+        final Player mPlayer = item.getPlayer();
         if (!this.petblocks.containsKey(mPlayer)) {
             this.petblocks.put(mPlayer, item);
         }
@@ -124,10 +125,10 @@ public final class PetBlockRepository implements PetBlockController {
      * @param item item
      */
     @Override
-    public void remove(PetBlock item) {
+    public void remove(BukkitPetBlock item) {
         if (item == null)
             return;
-        final Player player = (Player) item.getPlayer();
+        final Player player = item.getPlayer();
         if (this.petblocks.containsKey(player)) {
             final PetBlockDeathEvent event = new PetBlockDeathEvent(this.petblocks.get(player));
             Bukkit.getPluginManager().callEvent(event);
@@ -154,7 +155,7 @@ public final class PetBlockRepository implements PetBlockController {
      * @return items
      */
     @Override
-    public List<PetBlock> getAll() {
+    public List<BukkitPetBlock> getAll() {
         return new ArrayList<>(this.petblocks.values());
     }
 

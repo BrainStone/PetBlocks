@@ -4,14 +4,20 @@ import com.github.shynixn.petblocks.api.persistence.controller.CostumeController
 import com.github.shynixn.petblocks.api.persistence.controller.EngineController;
 import com.github.shynixn.petblocks.api.persistence.controller.OtherGUIItemsController;
 import com.github.shynixn.petblocks.api.persistence.controller.ParticleController;
+import com.github.shynixn.petblocks.api.persistence.entity.ParticleEffectMeta;
 import com.github.shynixn.petblocks.api.persistence.entity.PetMeta;
+import com.github.shynixn.petblocks.api.persistence.entity.SoundMeta;
 import com.github.shynixn.petblocks.core.logic.persistence.configuration.PetBlocksConfig;
+import com.github.shynixn.petblocks.sponge.PetBlocksPlugin;
+import com.github.shynixn.petblocks.sponge.logic.persistence.entity.SoundBuilder;
+import com.github.shynixn.petblocks.sponge.logic.persistence.entity.SpongeParticleEffectMeta;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
 import org.spongepowered.api.config.ConfigDir;
+import org.spongepowered.api.entity.Transform;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.serializer.TextSerializers;
@@ -22,6 +28,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -69,6 +76,10 @@ public class Config extends PetBlocksConfig<Text> {
     private Logger logger;
 
     private ConfigurationNode node;
+
+    private SoundMeta feedingClickSoundCache;
+
+    private ParticleEffectMeta feedingClickParticleCache;
 
     @Inject
     private SpongeCostumeConfiguration blockCostumeConfiguration;
@@ -222,24 +233,56 @@ public class Config extends PetBlocksConfig<Text> {
         return (T) data;
     }
 
+    /**
+     * Returns the feeding click sound.
+     *
+     * @return sound
+     */
+    public SoundMeta getFeedingClickSound() {
+        if (this.feedingClickSoundCache == null) {
+            try {
+                this.feedingClickSoundCache = new SoundBuilder((Map<String, Object>) this.getData("pet.feeding.click-sound"));
+            } catch (final Exception e) {
+                PetBlocksPlugin.logger().warn("Failed to load feeding click-sound.", e);
+            }
+        }
+        return this.feedingClickSoundCache;
+    }
+
+    /**
+     * Returns the feeding particleEffect.
+     *
+     * @return particleEffect
+     */
+    public ParticleEffectMeta getFeedingClickParticleEffect() {
+        if (this.feedingClickParticleCache == null) {
+            try {
+                this.feedingClickParticleCache = new SpongeParticleEffectMeta(this.getData("pet.feeding.click-particle"));
+            } catch (final Exception e) {
+                PetBlocksPlugin.logger().warn("Failed to load feeding click-sound.", e);
+            }
+        }
+        return this.feedingClickParticleCache;
+    }
+
     public boolean allowRidingOnRegionChanging() {
         return true;
     }
 
-    public boolean allowPetSpawning(Location location) {
+    public boolean allowPetSpawning(Transform<World> location) {
         final List<String> includedWorlds = this.getIncludedWorlds();
         final List<String> excludedWorlds = this.getExcludedWorlds();
         if (includedWorlds.contains("all")) {
-            return !excludedWorlds.contains(((World) location.getExtent()).getName()) && this.handleRegionSpawn(location);
+            return !excludedWorlds.contains(location.getExtent().getName()) && this.handleRegionSpawn(location);
         } else if (excludedWorlds.contains("all")) {
-            return includedWorlds.contains(((World) location.getExtent()).getName()) && this.handleRegionSpawn(location);
+            return includedWorlds.contains(location.getExtent().getName()) && this.handleRegionSpawn(location);
         } else {
             this.logger.log(Level.WARNING, "Please add 'all' to excluded or included worlds inside of the config.yml");
         }
         return true;
     }
 
-    private boolean handleRegionSpawn(Location location) {
+    private boolean handleRegionSpawn(Transform<World> location) {
         return true;
     }
 

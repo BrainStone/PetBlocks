@@ -75,7 +75,7 @@ public class NMSRegistry {
             return (SpongePetBlock) ReflectionUtils.invokeConstructor(findClassFromVersion("com.github.shynixn.petblocks.sponge.nms.VERSION.CustomGroundArmorstand")
                     , new Class[]{location.getClass(), PetMeta.class}, new Object[]{location, meta});
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | InstantiationException | ClassNotFoundException e) {
-            PetBlocksPlugin.logger().log(Level.WARNING, "Cannot create petblock.", e);
+            PetBlocksPlugin.logger().warn("Cannot create petblock.", e);
             return null;
         } catch (final Exception e) {
             throw new RuntimeException(e);
@@ -106,6 +106,19 @@ public class NMSRegistry {
                     .invoke(null, itemStack, skinURL);
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | ClassNotFoundException e) {
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * Unregisters all custom entities.
+     *
+     * @throws Exception exception
+     */
+    public static void unregisterCustomEntities() throws Exception {
+        if (wrappedRegistry != null) {
+            wrappedRegistry.unregister(rabbitClazz, CustomEntityType.RABBIT);
+            wrappedRegistry.unregister(zombieClazz, CustomEntityType.ZOMBIE);
+            wrappedRegistry = null;
         }
     }
 

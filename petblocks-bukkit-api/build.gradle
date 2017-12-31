@@ -12,6 +12,7 @@ uploadArchives {
 
 dependencies {
   compile project(':petblocks-api')
+  //compile group: 'org.slf4j', name: 'slf4j-jdk14', version: '1.7.25'
 
   compileOnly files('../lib/spigot-1.8.jar')
   compileOnly files('../lib/spigot-1.8.3.jar')

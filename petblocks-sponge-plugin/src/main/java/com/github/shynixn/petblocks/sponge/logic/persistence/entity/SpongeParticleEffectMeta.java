@@ -608,7 +608,7 @@ public class SpongeParticleEffectMeta extends PersistenceObject implements Parti
             }
 
         } catch (final Exception e) {
-            PetBlocksPlugin.logger().log(Level.WARNING,"Failed to send packet.", e);
+            PetBlocksPlugin.logger().warn("Failed to send packet.", e);
         }
     }
 

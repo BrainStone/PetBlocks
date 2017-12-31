@@ -17,15 +17,12 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="petblocks-api" scope="PROVIDED" />
     <orderEntry type="library" scope="PROVIDED" name="Gradle: com.zaxxer:HikariCP:2.7.4" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Gradle: org.slf4j:slf4j-jdk14:1.7.25" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Gradle: org.slf4j:slf4j-api:1.7.25" level="project" />
     <orderEntry type="module" module-name="petblocks-api" scope="RUNTIME" />
     <orderEntry type="library" scope="RUNTIME" name="Gradle: com.zaxxer:HikariCP:2.7.4" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Gradle: org.slf4j:slf4j-jdk14:1.7.25" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Gradle: org.slf4j:slf4j-api:1.7.25" level="project" />
     <orderEntry type="module" module-name="petblocks-api" scope="TEST" />
     <orderEntry type="library" scope="TEST" name="Gradle: com.zaxxer:HikariCP:2.7.4" level="project" />
-    <orderEntry type="library" scope="TEST" name="Gradle: org.slf4j:slf4j-jdk14:1.7.25" level="project" />
     <orderEntry type="library" scope="TEST" name="Gradle: org.xerial:sqlite-jdbc:3.21.0.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Gradle: ch.vorburger.mariaDB4j:mariaDB4j:2.2.3" level="project" />
     <orderEntry type="library" scope="TEST" name="Gradle: org.mockito:mockito-core:2.13.0" level="project" />

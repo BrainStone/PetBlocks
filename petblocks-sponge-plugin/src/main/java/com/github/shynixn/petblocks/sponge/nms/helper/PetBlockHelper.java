@@ -20,6 +20,7 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.property.block.MatterProperty;
 import org.spongepowered.api.entity.Entity;
+import org.spongepowered.api.entity.Transform;
 import org.spongepowered.api.entity.living.ArmorStand;
 import org.spongepowered.api.entity.living.Living;
 import org.spongepowered.api.entity.living.player.Player;
@@ -73,11 +74,11 @@ public final class PetBlockHelper {
                 ((SoundBuilder) soundMeta).apply(location, (Player) petBlock.getPlayer());
             }
         } catch (final IllegalArgumentException e) {
-            PetBlocksPlugin.logger().log(Level.WARNING, "Cannot play sound " + soundMeta.getName() + " of " + petBlock.getMeta().getEngine().getGUIItem().getDisplayName().get() + '.');
-            PetBlocksPlugin.logger().log(Level.WARNING, "Is this entity or sound supported by your server version? Disable it in the config.yml");
+            PetBlocksPlugin.logger().warn("Cannot play sound " + soundMeta.getName() + " of " + petBlock.getMeta().getEngine().getGUIItem().getDisplayName().get() + '.');
+            PetBlocksPlugin.logger().warn("Is this entity or sound supported by your server version? Disable it in the config.yml");
         } catch (final Exception e1) {
             PetBlocksPlugin.logger()
-                    .log(Level.WARNING, "Failed playing w sound.", e1);
+                    .warn("Failed playing w sound.", e1);
         }
     }
 
@@ -148,7 +149,7 @@ public final class PetBlockHelper {
                 }
             }
         } catch (final Exception ex) {
-            PetBlocksPlugin.logger().log(Level.WARNING, "Catcher prevented server crash, please report the following error to author Shynixn!", ex);
+            PetBlocksPlugin.logger().warn("Catcher prevented server crash, please report the following error to author Shynixn!", ex);
         }
         getArmorstand(petBlock).offer(Keys.FIRE_TICKS, 0);
         if (getEngineEntity(petBlock) != null) {
@@ -169,7 +170,7 @@ public final class PetBlockHelper {
         }
         if (getEngineEntity(petBlock).isRemoved()) {
 
-            PetBlocksPlugin.logger().log(Level.WARNING, "PetBlockw as removed in tick sounds.");
+            PetBlocksPlugin.logger().warn("PetBlockw as removed in tick sounds.");
             petBlock.removeEntity();
           //  PetBlocksApi.getDefaultPetBlockController().remove(petBlock);
         }
@@ -210,7 +211,7 @@ public final class PetBlockHelper {
             Task.builder().delayTicks(20 * 2)
                     .execute(() -> {
                         petBlock.getEffectPipeline().playParticleEffect(petBlock.getLocation(), cloud);
-                        PetBlocksPlugin.logger().log(Level.WARNING, "PetBlockw as removed in setdiening.");
+                        PetBlocksPlugin.logger().warn("PetBlockw as removed in setdiening.");
 
                         petBlock.removeEntity();
                     }).submit(Sponge.getPluginManager().getPlugin("petblocks"));
@@ -258,9 +259,9 @@ public final class PetBlockHelper {
         getEngineEntity(petBlock).setVelocity(new Vector3d(0, 0.5, 0));
     }
 
-    public static void teleport(PetBlock petBlock, Location location) {
-        getEngineEntity(petBlock).setLocation(location);
-        getArmorstand(petBlock).setLocation(location);
+    public static void teleport(PetBlock petBlock, Transform<World> location) {
+        getEngineEntity(petBlock).setTransform(location);
+        getArmorstand(petBlock).setTransform(location);
     }
 
     public static boolean isDead(PetBlock petBlock) {
@@ -289,7 +290,7 @@ public final class PetBlockHelper {
         final Location location = (Location) petBlock.getLocation();
         final IPosition position = new SpongeLocationBuilder(location, ((Living)petBlock.getArmorStand()).getHeadRotation());
         position.addCoordinates(0, 1.2,0);
-        PetBlocksPlugin.logger().log(Level.WARNING, "PetBlockw as removed in respawn.");
+        PetBlocksPlugin.logger().warn("PetBlockw as removed in respawn.");
         petBlock.removeEntity();
         callBack.run(position);
     }

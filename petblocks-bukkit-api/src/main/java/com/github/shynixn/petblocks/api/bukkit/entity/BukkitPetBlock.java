@@ -1,11 +1,9 @@
-package com.github.shynixn.petblocks.sponge.logic.business.helper;
+package com.github.shynixn.petblocks.api.bukkit.entity;
 
-import org.spongepowered.api.event.cause.Cause;
-import org.spongepowered.api.event.cause.NamedCause;
-import org.spongepowered.api.plugin.PluginContainer;
-
-import java.util.HashMap;
-import java.util.Map;
+import com.github.shynixn.petblocks.api.business.entity.PetBlock;
+import org.bukkit.Location;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 
 /**
  * Created by Shynixn 2017.
@@ -34,25 +32,5 @@ import java.util.Map;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public class SpongeConfigurationHelper {
-
-    public static Map<String, Object> remapSubFields(Map<String, Object> data) {
-        Map<String, Object> result = new HashMap<>();
-        remap(result, "", data);
-        return result;
-    }
-
-    public static Cause createCause(PluginContainer pluginContainer) {
-        return Cause.of(NamedCause.owner(pluginContainer));
-    }
-
-    private static void remap(Map<String, Object> result, String prefix, Map<String, Object> map) {
-        for (String key : map.keySet()) {
-            Object value = map.get(key);
-            if (value instanceof Map) {
-                remap(result, key + ".", (Map<String, Object>) value);
-            }
-            result.put(prefix + key, value);
-        }
-    }
+public interface BukkitPetBlock extends PetBlock<Player, Location, LivingEntity> {
 }

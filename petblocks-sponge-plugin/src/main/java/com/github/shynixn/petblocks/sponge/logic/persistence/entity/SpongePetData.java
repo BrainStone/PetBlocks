@@ -9,6 +9,7 @@ import com.github.shynixn.petblocks.core.logic.persistence.entity.PlayerIdentifi
 import com.github.shynixn.petblocks.sponge.PetBlocksPlugin;
 import com.github.shynixn.petblocks.sponge.logic.business.configuration.Config;
 import com.github.shynixn.petblocks.sponge.logic.business.helper.CompatibilityItemType;
+import com.github.shynixn.petblocks.sponge.logic.business.helper.SpongePetBlockModifyHelper;
 import com.github.shynixn.petblocks.sponge.nms.NMSRegistry;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.key.Keys;
@@ -422,7 +423,9 @@ public class SpongePetData extends PersistenceObject implements PetMeta, PlayerI
             }
         }
         itemStack.offer(Keys.UNBREAKABLE, this.isItemUnbreakable());
-        itemStack.offer(Keys.DISPLAY_NAME, TextSerializers.LEGACY_FORMATTING_CODE.deserialize(this.getItemName()));
+        if (this.getItemName() != null) {
+            itemStack.offer(Keys.DISPLAY_NAME, SpongePetBlockModifyHelper.translateStringToText(this.getItemName()));
+        }
         return itemStack;
     }
 

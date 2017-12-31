@@ -4,9 +4,11 @@ import com.github.shynixn.petblocks.api.persistence.controller.PetMetaController
 import com.github.shynixn.petblocks.core.logic.business.entity.GuiPageContainer;
 import com.github.shynixn.petblocks.core.logic.business.helper.ExtensionHikariConnectionContext;
 import com.github.shynixn.petblocks.sponge.PetBlocksPlugin;
+import com.github.shynixn.petblocks.sponge.logic.business.commandexecutor.PetBlockReloadCommandExecutor;
 import com.github.shynixn.petblocks.sponge.logic.business.commandexecutor.PetDataCommandExecutor;
 import com.github.shynixn.petblocks.sponge.logic.business.configuration.Config;
 import com.github.shynixn.petblocks.sponge.logic.business.controller.PetBlockRepository;
+import com.github.shynixn.petblocks.sponge.logic.business.listener.SpongePetBlockListener;
 import com.github.shynixn.petblocks.sponge.logic.business.listener.SpongePetDataListener;
 import com.github.shynixn.petblocks.sponge.logic.persistence.controller.SpongePetDataRepository;
 import com.google.inject.Inject;
@@ -60,13 +62,11 @@ import java.util.regex.Pattern;
  * SOFTWARE.
  */
 @Singleton
-public class PetBlockManager implements AutoCloseable {
-
+public class PetBlockManager {
     public final Set<Player> carryingPet = new HashSet<>();
     public final Map<Player, Integer> timeBlocked = new HashMap<>();
     public final Map<Player, Inventory> inventories = new HashMap<>();
     public final Map<Player, GuiPageContainer> pages = new HashMap<>();
-    //public GUI gui;
 
     @Inject
     private PluginContainer plugin;
@@ -84,6 +84,12 @@ public class PetBlockManager implements AutoCloseable {
     private PetDataCommandExecutor petDataCommandExecutor;
 
     @Inject
+    private PetBlockReloadCommandExecutor reloadCommandExecutor;
+
+    @Inject
+    private SpongePetBlockListener petBlockListener;
+
+    @Inject
     private SpongePetDataListener petDataListener;
 
     private final ExtensionHikariConnectionContext connectionContext;
@@ -91,32 +97,8 @@ public class PetBlockManager implements AutoCloseable {
     @Inject
     public PetBlockManager(PluginContainer plugin, Config config) {
         config.reload();
-        System.out.println("---------------- NEW PETBLOCK MANAGER");
         this.connectionContext = initialize(plugin, config, false);
     }
-
-    /*   @Inject
-    private PetBlock petMetaController;
-
-    public PetBlockManager() {
-        super();
-        this.petBlockController = Factory.createPetBlockController();
-        this.petMetaController = Factory.createPetDataController();
-        try {
-            new PetDataCommandExecutor(this);
-            new PetBlockCommandExecutor(this);
-            new PetBlockReloadCommandExecutor(plugin);
-            new PetDataListener(this, plugin);
-            new PetBlockListener(this, plugin);
-            this.filter = PetBlockFilter.create();
-            this.gui = new GUI(this);
-        } catch (final Exception e) {
-            PetBlocksPlugin.logger().log(Level.WARNING, "Failed to initialize petblockmanager.", e);
-        }
-    }
-    public PetBlockController getPetBlockController() {
-        return this.petBlockController;
-    }*/
 
     public PetMetaController getPetMetaController() {
         return this.petDataRepository;
@@ -138,7 +120,7 @@ public class PetBlockManager implements AutoCloseable {
                 final Asset asset = Sponge.getAssetManager().getAsset(plugin, "sql/" + fileName + ".sql").get();
                 return asset.readString();
             } catch (final IOException e) {
-                PetBlocksPlugin.logger().log(Level.WARNING, "Cannot read file.", fileName);
+                PetBlocksPlugin.logger().warn("Cannot read file.", fileName);
                 throw new RuntimeException(e);
             }
         };
@@ -153,16 +135,16 @@ public class PetBlockManager implements AutoCloseable {
                     connectionContext.execute("PRAGMA foreign_keys=ON", connection);
                 }
             } catch (final SQLException e) {
-                PetBlocksPlugin.logger().log(Level.WARNING, "Cannot execute statement.", e);
+                PetBlocksPlugin.logger().warn("Cannot execute statement.", e);
             } catch (final IOException e) {
-                PetBlocksPlugin.logger().log(Level.WARNING, "Cannot read file.", e);
+                PetBlocksPlugin.logger().warn("Cannot read file.", e);
             }
             try (Connection connection = connectionContext.getConnection()) {
                 for (final String data : connectionContext.getStringFromFile("create-sqlite").split(Pattern.quote(";"))) {
                     connectionContext.executeUpdate(data, connection);
                 }
             } catch (final Exception e) {
-                PetBlocksPlugin.logger().log(Level.WARNING, "Cannot execute creation.", e);
+                PetBlocksPlugin.logger().warn("Cannot execute creation.", e);
             }
         } else {
             try {
@@ -174,8 +156,8 @@ public class PetBlockManager implements AutoCloseable {
                         , config.getData("sql.password")
                         , retriever);
             } catch (final IOException e) {
-                PetBlocksPlugin.logger().log(Level.WARNING, "Cannot connect to MySQL database!", e);
-                PetBlocksPlugin.logger().log(Level.WARNING, "Trying to connect to SQLite database....", e);
+                PetBlocksPlugin.logger().warn("Cannot connect to MySQL database!", e);
+                PetBlocksPlugin.logger().warn("Trying to connect to SQLite database....", e);
                 return initialize(plugin, config, true);
             }
 
@@ -199,14 +181,14 @@ public class PetBlockManager implements AutoCloseable {
 
             }
             if (oldData) {
-                PetBlocksPlugin.logger().log(Level.WARNING, "Found old table data. Deleting previous entries...");
+                PetBlocksPlugin.logger().warn("Found old table data. Deleting previous entries...");
                 try (Connection connection = connectionContext.getConnection()) {
                     connectionContext.executeUpdate("DROP TABLE shy_petblock", connection);
                     connectionContext.executeUpdate("DROP TABLE shy_particle_effect", connection);
                     connectionContext.executeUpdate("DROP TABLE shy_player", connection);
-                    PetBlocksPlugin.logger().log(Level.WARNING, "Finished deleting data.");
+                    PetBlocksPlugin.logger().warn("Finished deleting data.");
                 } catch (final SQLException e) {
-                    PetBlocksPlugin.logger().log(Level.WARNING, "Failed removing old data.", e);
+                    PetBlocksPlugin.logger().warn( "Failed removing old data.", e);
                 }
             }
             try (Connection connection = connectionContext.getConnection()) {
@@ -214,35 +196,11 @@ public class PetBlockManager implements AutoCloseable {
                     connectionContext.executeUpdate(data, connection);
                 }
             } catch (final Exception e) {
-                PetBlocksPlugin.logger().log(Level.WARNING, "Cannot execute creation.", e);
-                PetBlocksPlugin.logger().log(Level.WARNING, "Trying to connect to SQLite database....", e);
+                PetBlocksPlugin.logger().warn("Cannot execute creation.", e);
+                PetBlocksPlugin.logger().warn("Trying to connect to SQLite database....", e);
                 return initialize(plugin, config, false);
             }
         }
         return connectionContext;
-    }
-
-    /**
-     * Closes this resource, relinquishing any underlying resources.
-     * This method is invoked automatically on objects managed by the
-     * {@code try}-with-resources statement.
-     * However, implementers of this interface are strongly encouraged
-     * to make their {@code close} methods idempotent.
-     *
-     * @throws Exception if this resource cannot be closed
-     */
-    @Override
-    public void close() throws Exception {
-      /*  for (final Player player : this.carryingPet) {
-            NMSRegistry.setItemInHand19(player, null, true);
-        }
-        this.timeBlocked.clear();
-        this.headDatabasePlayers.clear();
-        this.inventories.clear();
-        this.pages.clear();
-        this.petBlockController.close();
-        this.petMetaController.close();
-        this.filter.close();
-        this.carryingPet.clear();*/
     }
 }

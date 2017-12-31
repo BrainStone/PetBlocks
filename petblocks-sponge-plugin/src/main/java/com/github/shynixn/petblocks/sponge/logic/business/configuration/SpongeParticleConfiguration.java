@@ -52,7 +52,7 @@ public class SpongeParticleConfiguration extends ParticleConfiguration {
                 final ParticleEffectMeta meta = new SpongeParticleEffectMeta((Map<String, Object>) ((Map<String, Object>) data.get(key)).get("effect"));
                 this.particleCache.put(container, meta);
             } catch (final Exception e) {
-                PetBlocksPlugin.logger().log(Level.WARNING, "Failed to load particle " + key + '.', e);
+                PetBlocksPlugin.logger().warn("Failed to load particle " + key + '.', e);
             }
         }
     }

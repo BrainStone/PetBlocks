@@ -25,6 +25,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.key.Keys;
+import org.spongepowered.api.entity.Transform;
 import org.spongepowered.api.entity.living.ArmorStand;
 import org.spongepowered.api.entity.living.Human;
 import org.spongepowered.api.entity.living.Living;
@@ -66,7 +67,6 @@ final class CustomGroundArmorstand extends EntityArmorStand implements SpongePet
         this.petMeta = meta;
         this.owner = this.petMeta.getPlayerMeta().getPlayer();
 
-
         this.pipeline = new Pipeline(this);
         this.spawn(location);
     }
@@ -91,9 +91,9 @@ final class CustomGroundArmorstand extends EntityArmorStand implements SpongePet
     @Override
     protected void updateEntityActionState() {
         if (this.isSpecial) {
-            ((Living) this.getArmorStand()).getHealthData().health().set( ((Living) this.getArmorStand()).getHealthData().maxHealth().getMaxValue());
+            ((Living) this.getArmorStand()).getHealthData().health().set(((Living) this.getArmorStand()).getHealthData().maxHealth().getMaxValue());
             this.counter = PetBlockHelper.doTick(this.counter, this, location -> {
-                this.setLocationAndAngles(location.getX(), location.getY()+0.2, location.getZ(), (float) location.getYaw(), (float) location.getPitch());
+                this.setLocationAndAngles(location.getX(), location.getY() + 0.2, location.getZ(), (float) location.getYaw(), (float) location.getPitch());
                 final SPacketEntityTeleport animation = new SPacketEntityTeleport(this);
                 for (final Player player : ((ArmorStand) this.getArmorStand()).getWorld().getPlayers()) {
                     ((EntityPlayerMP) player).connection.sendPacket(animation);
@@ -215,9 +215,6 @@ final class CustomGroundArmorstand extends EntityArmorStand implements SpongePet
     }
 
     public void spawn(Location location) {
-
-        PetBlocksPlugin.logger().log(Level.WARNING, "RESPAWNING PETBLOCK!");
-
         final PetBlockSpawnEvent event = new PetBlockSpawnEvent(this);
         Sponge.getEventManager().post(event);
         if (!event.isCancelled()) {
@@ -275,13 +272,16 @@ final class CustomGroundArmorstand extends EntityArmorStand implements SpongePet
     }
 
     @Override
-    public void teleportWithOwner(Location<org.spongepowered.api.world.World> worldLocation) {
+    public void teleportWithOwner(Transform<org.spongepowered.api.world.World> transform) {
         final EntityPlayer player = (EntityPlayer) this.owner;
-      /*  player.setPositionAndRotation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
-        final PacketPlayOutEntityTeleport teleport = new PacketPlayOutEntityTeleport(player);
-        for (final Player player1 : this.owner.getWorld().getPlayers()) {
-            ((CraftPlayer) player1).getHandle().playerConnection.sendPacket(teleport);
-        }*/
+        final Location location = transform.getLocation();
+        final Vector3d rotation = transform.getRotation();
+
+        this.setLocationAndAngles(location.getX(), location.getY(), location.getZ(), (float) rotation.getY(), (float) rotation.getX());
+        final SPacketEntityTeleport animation = new SPacketEntityTeleport(player);
+        for (final Player player1 : ((ArmorStand) this.getArmorStand()).getWorld().getPlayers()) {
+            ((EntityPlayerMP) player1).connection.sendPacket(animation);
+        }
     }
 
     @Override
@@ -374,7 +374,7 @@ final class CustomGroundArmorstand extends EntityArmorStand implements SpongePet
      * @param worldLocation location
      */
     @Override
-    public void teleport(Location<org.spongepowered.api.world.World> worldLocation) {
+    public void teleport(Transform<org.spongepowered.api.world.World> worldLocation) {
         PetBlockHelper.teleport(this, worldLocation);
     }
 
@@ -455,10 +455,10 @@ final class CustomGroundArmorstand extends EntityArmorStand implements SpongePet
      * @return entity
      */
     @Override
-    public Object getEngineEntity() {
+    public Living getEngineEntity() {
         if (this.rabbit == null)
             return null;
-        return this.rabbit.getEntity();
+        return (Living) this.rabbit.getEntity();
     }
 
     /**
@@ -467,7 +467,9 @@ final class CustomGroundArmorstand extends EntityArmorStand implements SpongePet
      * @return position
      */
     @Override
-    public Location<org.spongepowered.api.world.World> getLocation() {
-        return new Location<>((org.spongepowered.api.world.World) this.getEntityWorld(), this.posX, this.posY, this.posZ);
+    public Transform<org.spongepowered.api.world.World> getLocation() {
+        final Vector3d position = new Vector3d(this.posX, this.posY, this.posZ);
+        final Vector3d rotation = new Vector3d(this.rotationPitch, this.rotationYaw, 0);
+        return new Transform<>((org.spongepowered.api.world.World) getEntityWorld(), position, rotation);
     }
 }

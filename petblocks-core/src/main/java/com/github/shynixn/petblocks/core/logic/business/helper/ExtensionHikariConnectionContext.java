@@ -2,17 +2,12 @@ package com.github.shynixn.petblocks.core.logic.business.helper;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import com.zaxxer.hikari.pool.HikariPool;
-import org.slf4j.LoggerFactory;
-import org.slf4j.impl.JDK14LoggerAdapter;
 
 import java.io.IOException;
 import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Filter;
 import java.util.logging.Level;
-import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 /**

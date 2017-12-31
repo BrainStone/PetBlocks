@@ -57,7 +57,7 @@ public class SpongeEngineConfiguration extends EngineConfiguration {
                 final EngineContainer container = new SpongeEngineData((Integer) key, (Map<String, Object>) data.get(key));
                 this.engineContainers.add(container);
             } catch (final Exception e) {
-                PetBlocksPlugin.logger().log(Level.INFO,"Failed to load engine " + key + '.', e);
+                PetBlocksPlugin.logger().warn("Failed to load engine " + key + '.', e);
             }
         }
     }

@@ -59,7 +59,7 @@ public class SpongeFixedItemConfiguration extends FixedItemConfiguration {
                 }
                 this.items.put(key, container);
             } catch (final Exception e) {
-                PetBlocksPlugin.logger().log(Level.INFO, "Failed to load gui item " + key + '.', e);
+                PetBlocksPlugin.logger().warn("Failed to load gui item " + key + '.', e);
             }
         }
     }

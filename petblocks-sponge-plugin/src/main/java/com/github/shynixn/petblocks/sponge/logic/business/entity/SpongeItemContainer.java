@@ -120,8 +120,8 @@ public class SpongeItemContainer extends ItemContainer {
                 return itemStack;
             }
         } catch (final Exception ex) {
-            PetBlocksPlugin.logger().log(Level.WARNING, "Invalid config file. Fix the following error or recreate it!");
-            PetBlocksPlugin.logger().log(Level.WARNING, "Failed to generate itemStack.", ex);
+            PetBlocksPlugin.logger().warn("Invalid config file. Fix the following error or recreate it!");
+            PetBlocksPlugin.logger().warn("Failed to generate itemStack.", ex);
         }
         return ItemStack.builder().itemType(ItemTypes.AIR).build();
     }

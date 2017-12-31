@@ -3,6 +3,7 @@ package com.github.shynixn.petblocks.sponge.logic.business.controller;
 import com.github.shynixn.petblocks.api.business.controller.PetBlockController;
 import com.github.shynixn.petblocks.api.business.entity.PetBlock;
 import com.github.shynixn.petblocks.api.persistence.entity.PetMeta;
+import com.github.shynixn.petblocks.api.sponge.entity.SpongePetBlock;
 import com.github.shynixn.petblocks.api.sponge.event.PetBlockDeathEvent;
 import com.github.shynixn.petblocks.sponge.nms.NMSRegistry;
 import org.spongepowered.api.Sponge;
@@ -39,8 +40,8 @@ import java.util.*;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public final class PetBlockRepository implements PetBlockController {
-    private final Map<Player, PetBlock> petblocks = new HashMap<>();
+public final class PetBlockRepository implements PetBlockController<SpongePetBlock, Player> {
+    private final Map<Player, SpongePetBlock> petblocks = new HashMap<>();
 
     /**
      * Creates a new petblock for the given player and meta.
@@ -50,12 +51,12 @@ public final class PetBlockRepository implements PetBlockController {
      * @return petblock
      */
     @Override
-    public PetBlock create(Object player, PetMeta petMeta) {
+    public SpongePetBlock create(Player player, PetMeta petMeta) {
         if (player == null)
             throw new IllegalArgumentException("Player cannot be null!");
         if (petMeta == null)
             throw new IllegalArgumentException("PetMeta cannot be null!");
-        final Player mPlayer = (Player) player;
+        final Player mPlayer = player;
         return NMSRegistry.createPetBlock(mPlayer.getLocation(), petMeta);
     }
 
@@ -66,6 +67,7 @@ public final class PetBlockRepository implements PetBlockController {
      * @return petblock
      */
     @Override
+    @Deprecated
     public PetBlock getByPlayer(Object player) {
         final Player mPlayer = (Player) player;
         if (this.petblocks.containsKey(mPlayer)) {
@@ -81,7 +83,7 @@ public final class PetBlockRepository implements PetBlockController {
      * @return petblock
      */
     @Override
-    public Optional<PetBlock> getFromPlayer(Object player) {
+    public Optional<SpongePetBlock> getFromPlayer(Player player) {
         if (player == null)
             throw new IllegalArgumentException("Player cannot be null!");
         final Player mPlayer = (Player) player;
@@ -97,10 +99,10 @@ public final class PetBlockRepository implements PetBlockController {
      * @param player player
      */
     @Override
-    public void removeByPlayer(Object player) {
+    public void removeByPlayer(Player player) {
         if (player == null)
             throw new IllegalArgumentException("Player cannot be null!");
-        this.remove(this.getByPlayer(player));
+        this.remove((SpongePetBlock) this.getByPlayer(player));
     }
 
     /**
@@ -109,10 +111,10 @@ public final class PetBlockRepository implements PetBlockController {
      * @param item item
      */
     @Override
-    public void store(PetBlock item) {
+    public void store(SpongePetBlock item) {
         if (item == null)
             throw new IllegalArgumentException("Item cannot be null!");
-        final Player mPlayer = (Player) item.getPlayer();
+        final Player mPlayer = item.getPlayer();
         if (!this.petblocks.containsKey(mPlayer)) {
             this.petblocks.put(mPlayer, item);
         }
@@ -124,7 +126,7 @@ public final class PetBlockRepository implements PetBlockController {
      * @param item item
      */
     @Override
-    public void remove(PetBlock item) {
+    public void remove(SpongePetBlock item) {
         if (item == null)
             return;
         final Player player = (Player) item.getPlayer();
@@ -154,7 +156,7 @@ public final class PetBlockRepository implements PetBlockController {
      * @return items
      */
     @Override
-    public List<PetBlock> getAll() {
+    public List<SpongePetBlock> getAll() {
         return new ArrayList<>(this.petblocks.values());
     }
 

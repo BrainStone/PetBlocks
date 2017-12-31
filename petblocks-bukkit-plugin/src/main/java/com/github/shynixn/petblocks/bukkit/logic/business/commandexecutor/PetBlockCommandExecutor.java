@@ -1,5 +1,6 @@
 package com.github.shynixn.petblocks.bukkit.logic.business.commandexecutor;
 
+import com.github.shynixn.petblocks.api.bukkit.entity.BukkitPetBlock;
 import com.github.shynixn.petblocks.api.business.entity.GUIItemContainer;
 import com.github.shynixn.petblocks.api.business.entity.PetBlock;
 import com.github.shynixn.petblocks.api.persistence.entity.EngineContainer;
@@ -7,7 +8,7 @@ import com.github.shynixn.petblocks.api.persistence.entity.PetMeta;
 import com.github.shynixn.petblocks.bukkit.PetBlocksPlugin;
 import com.github.shynixn.petblocks.bukkit.logic.business.helper.ChatBuilder;
 import com.github.shynixn.petblocks.bukkit.logic.business.PetBlockManager;
-import com.github.shynixn.petblocks.bukkit.logic.business.PetRunnable;
+import com.github.shynixn.petblocks.core.logic.business.PetRunnable;
 import com.github.shynixn.petblocks.bukkit.logic.business.configuration.Config;
 import com.github.shynixn.petblocks.bukkit.logic.business.helper.PetBlockModifyHelper;
 import org.bukkit.Bukkit;
@@ -24,6 +25,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public final class PetBlockCommandExecutor extends SimpleCommandExecutor.UnRegistered {
     private final PetBlockManager manager;
@@ -440,15 +442,15 @@ public final class PetBlockCommandExecutor extends SimpleCommandExecutor.UnRegis
     private void setPetCommand(Player player) {
         this.removePetCommand(player);
         this.providePet(player, (meta, petBlock) -> {
-            final PetBlock petBlock1 = this.manager.getPetBlockController().create(player, meta);
+            final BukkitPetBlock petBlock1 = this.manager.getPetBlockController().create(player, meta);
             this.manager.getPetBlockController().store(petBlock1);
         });
     }
 
     private void removePetCommand(Player player) {
-        final PetBlock petBlock;
-        if ((petBlock = this.manager.getPetBlockController().getByPlayer(player)) != null) {
-            this.manager.getPetBlockController().remove(petBlock);
+        final Optional<BukkitPetBlock> optPetBlock;
+        if ((optPetBlock = this.manager.getPetBlockController().getFromPlayer(player)).isPresent()) {
+            this.manager.getPetBlockController().remove(optPetBlock.get());
         }
     }
 

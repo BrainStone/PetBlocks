@@ -29,7 +29,7 @@ import com.github.shynixn.petblocks.api.persistence.entity.PetMeta;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public interface PetBlock<Player, Location> {
+public interface PetBlock<Player, Location, Living> {
     @Deprecated
     void setDieing();
 
@@ -132,7 +132,7 @@ public interface PetBlock<Player, Location> {
      *
      * @return entity
      */
-    Object getEngineEntity();
+    Living getEngineEntity();
 
     /**
      * Returns the location of the entity.
