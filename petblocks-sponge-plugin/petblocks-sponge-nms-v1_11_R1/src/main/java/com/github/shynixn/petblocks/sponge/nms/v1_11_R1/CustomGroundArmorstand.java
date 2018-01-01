@@ -13,6 +13,7 @@ import com.github.shynixn.petblocks.sponge.logic.business.entity.Pipeline;
 import com.github.shynixn.petblocks.sponge.logic.persistence.entity.SpongeLocationBuilder;
 import com.github.shynixn.petblocks.sponge.nms.helper.PetBlockHelper;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.entity.player.EntityPlayer;
@@ -76,7 +77,7 @@ final class CustomGroundArmorstand extends EntityArmorStand implements SpongePet
     }
 
     private boolean isJumping() {
-        return !this.getPassengers().isEmpty() && ((EntityLiving) this.getPassengers().get(0)).isJumping;
+        return !this.getPassengers().isEmpty() && ((EntityLivingBase) this.getPassengers().get(0)).isJumping;
     }
 
     private Player hasHumanPassenger() {
@@ -116,7 +117,7 @@ final class CustomGroundArmorstand extends EntityArmorStand implements SpongePet
             System.out.println("GOT HUMAN");
             if (this.petMeta.getEngine().getRideType() == RideType.RUNNING) {
                 System.out.println("HANDLE ROTATION");
-                EntityLiving entityLiving = (EntityLiving) this.hasHumanPassenger();
+                EntityLivingBase entityLiving = (EntityLivingBase) this.hasHumanPassenger();
                 this.rotationYaw = this.prevRotationYaw = entityLiving.rotationYaw;
                 this.rotationPitch = entityLiving.rotationPitch * 0.5F;
                 this.setRotation(this.rotationYaw, this.rotationPitch);
@@ -152,7 +153,7 @@ final class CustomGroundArmorstand extends EntityArmorStand implements SpongePet
                 this.limbSwingAmount += (f2 - this.limbSwingAmount) * 0.4F;
                 this.limbSwing += this.limbSwingAmount;
             } else {
-                EntityLiving entityLiving = (EntityLiving) this.hasHumanPassenger();
+                EntityLivingBase entityLiving = (EntityLivingBase) this.hasHumanPassenger();
                 final float side = entityLiving.moveStrafing * 0.5F;
                 final float forw = entityLiving.moveForward;
                 Vector3d v = new Vector3d();

@@ -292,7 +292,7 @@ public class SpongeParticleEffectMeta extends PersistenceObject implements Parti
      */
     @Override
     public ParticleEffectMeta setBlue(int blue) {
-        this.offsetZ = blue / 255.0F;
+        this.offsetZ = blue;
         return this;
     }
 
@@ -304,10 +304,7 @@ public class SpongeParticleEffectMeta extends PersistenceObject implements Parti
      */
     @Override
     public ParticleEffectMeta setRed(int red) {
-        this.offsetX = red / 255.0F;
-       // if (red == 0) {
-      //      this.offsetX = Float.MIN_NORMAL;
-      //  }
+        this.offsetX = red;
         return this;
     }
 
@@ -319,7 +316,7 @@ public class SpongeParticleEffectMeta extends PersistenceObject implements Parti
      */
     @Override
     public ParticleEffectMeta setGreen(int green) {
-        this.offsetY = green / 255.0F;
+        this.offsetY = green;
         return this;
     }
 
@@ -442,7 +439,7 @@ public class SpongeParticleEffectMeta extends PersistenceObject implements Parti
      */
     @Override
     public int getBlue() {
-        return (int) this.offsetZ * 255;
+        return (int) this.offsetZ;
     }
 
     /**
@@ -452,7 +449,7 @@ public class SpongeParticleEffectMeta extends PersistenceObject implements Parti
      */
     @Override
     public int getRed() {
-        return (int) this.offsetX * 255;
+        return (int) this.offsetX;
     }
 
     /**
@@ -462,7 +459,7 @@ public class SpongeParticleEffectMeta extends PersistenceObject implements Parti
      */
     @Override
     public int getGreen() {
-        return (int) this.offsetY * 255;
+        return (int) this.offsetY;
     }
 
     /**
@@ -597,7 +594,7 @@ public class SpongeParticleEffectMeta extends PersistenceObject implements Parti
             final ParticleEffect.Builder builder;
             if (this.getEffectType() == ParticleEffectType.REDSTONE || this.getEffectType() == ParticleEffectType.NOTE) {
                 builder = ParticleEffect.builder()
-                        .type(type).option(ParticleOptions.COLOR, Color.ofRgb(getRed(), getGreen(), getBlue()));
+                        .type(type).option(ParticleOptions.COLOR, Color.ofRgb(this.getRed(), this.getGreen(), this.getBlue()));
             } else {
                 builder = ParticleEffect.builder()
                         .type(type)
@@ -678,45 +675,6 @@ public class SpongeParticleEffectMeta extends PersistenceObject implements Parti
                 return particleEffect;
         }
         return null;
-    }
-
-    /**
-     * Invokes a constructor by the given parameters
-     *
-     * @param clazz      clazz
-     * @param paramTypes paramTypes
-     * @param params     params
-     * @return instance
-     * @throws NoSuchMethodException     exception
-     * @throws IllegalAccessException    exception
-     * @throws InvocationTargetException exception
-     * @throws InstantiationException    exception
-     */
-    private static Object invokeConstructor(Class<?> clazz, Class[] paramTypes, Object[] params) throws
-            NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
-        final Constructor constructor = clazz.getDeclaredConstructor(paramTypes);
-        constructor.setAccessible(true);
-        return constructor.newInstance(params);
-    }
-
-    /**
-     * Invokes a method by the given parameters
-     *
-     * @param instance   instance
-     * @param clazz      clazz
-     * @param name       name
-     * @param paramTypes paramTypes
-     * @param params     params
-     * @return returnedObject
-     * @throws InvocationTargetException exception
-     * @throws IllegalAccessException    exception
-     * @throws NoSuchMethodException     exception
-     */
-    private static Object invokeMethod(Object instance, Class<?> clazz, String name, Class[] paramTypes, Object[]
-            params) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
-        final Method method = clazz.getDeclaredMethod(name, paramTypes);
-        method.setAccessible(true);
-        return method.invoke(instance, params);
     }
 
     public static class ParticleEffectSerializer implements TypeSerializer<SpongeParticleEffectMeta> {
