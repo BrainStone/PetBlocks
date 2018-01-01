@@ -14,6 +14,7 @@ import com.github.shynixn.petblocks.sponge.logic.business.PetBlockManager;
 import com.github.shynixn.petblocks.sponge.logic.business.configuration.Config;
 import com.github.shynixn.petblocks.sponge.logic.business.helper.CompatibilityItemType;
 import com.github.shynixn.petblocks.sponge.logic.business.helper.SpongePetBlockModifyHelper;
+import com.github.shynixn.petblocks.sponge.nms.NMSRegistry;
 import com.google.inject.Inject;
 import org.spongepowered.api.data.Property;
 import org.spongepowered.api.entity.living.player.Player;
@@ -104,8 +105,8 @@ public class SpongePetDataListener extends SimpleSpongeListener {
         if (event.getTargetInventory().getName().get().equals(Config.getInstance().getGUITitle().toPlainSingle())
                 && this.manager.inventories.containsKey(player)) {
             event.setCancelled(true);
+            NMSRegistry.updateInventory(player);
             final Optional<SpongePetBlock> optPetblock;
-
             final ItemStack itemStack = event.getTransactions().get(0).getOriginal().createStack();
             final int newSlot = event.getTransactions().get(0).getSlot().getProperties(SlotIndex.class).toArray(new SlotIndex[0])[0].getValue();
             if ((optPetblock = this.manager.getPetBlockController().getFromPlayer(player)).isPresent()) {
@@ -154,7 +155,6 @@ public class SpongePetDataListener extends SimpleSpongeListener {
 
     @Listener
     public void inventoryCloseEvent(ClickInventoryEvent.Close event, @First(typeFilter = Player.class) Player player) {
-        System.out.println("CLOSE EVENTORY");
         if (this.manager.inventories.containsKey(player)) {
             this.manager.inventories.remove(player);
         }
@@ -188,7 +188,6 @@ public class SpongePetDataListener extends SimpleSpongeListener {
 
     private void handleClick(ItemStack currentItem, int slot, Player player, PetMeta petMeta, SpongePetBlock petBlock) {
         final int itemSlot = slot + this.manager.pages.get(player).currentCount + 1;
-        System.out.println("HANDLE CLICK " + itemSlot + " on " + slot);
         if (this.manager.pages.get(player).page == GUIPage.MAIN && this.getGUIItem("my-pet").getPosition() == slot) {
             this.handleClickOnMyPetItem(player, petMeta);
         } else if (this.isGUIItem(currentItem, "enable-pet")) {
@@ -254,7 +253,6 @@ public class SpongePetDataListener extends SimpleSpongeListener {
             final EngineContainer engineContainer = Config.getInstance().getEngineController().getById(itemSlot);
             if(engineContainer == null)
                 return;
-            System.out.println("SELECTED ENGINE: " + engineContainer);
             SpongePetBlockModifyHelper.setEngine(petMeta, petBlock, engineContainer);
             this.persistAsynchronously(petMeta);
             this.manager.gui.setPage(player, GUIPage.MAIN, petMeta);
@@ -363,7 +361,6 @@ public class SpongePetDataListener extends SimpleSpongeListener {
     }
 
     private void closeInventory(Player player) {
-        System.out.println("CLOSING!!!!");
         if (this.manager.inventories.containsKey(player)) {
             this.manager.inventories.remove(player);
         }

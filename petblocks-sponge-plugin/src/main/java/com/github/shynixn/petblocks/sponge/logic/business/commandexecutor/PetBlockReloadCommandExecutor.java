@@ -17,6 +17,9 @@ public final class PetBlockReloadCommandExecutor extends SimpleCommandExecutor {
     @Inject
     public PetBlockReloadCommandExecutor(PluginContainer plugin) {
         super(plugin);
+        this.register("petblockreload", "Reloads the petblock configuration.", "petblocks.reload", "You don't have permission.", builder -> {
+
+        });
     }
 
     /**

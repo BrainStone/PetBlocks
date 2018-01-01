@@ -6,6 +6,7 @@ import com.github.shynixn.petblocks.api.business.enumeration.Permission;
 import com.github.shynixn.petblocks.api.persistence.entity.PetMeta;
 import com.github.shynixn.petblocks.core.logic.business.entity.GuiPageContainer;
 import com.github.shynixn.petblocks.sponge.logic.business.configuration.Config;
+import com.github.shynixn.petblocks.sponge.nms.NMSRegistry;
 import com.google.inject.Inject;
 import org.spongepowered.api.data.Property;
 import org.spongepowered.api.data.key.Keys;
@@ -84,6 +85,7 @@ public class SpongeGUI {
         final GUIItemContainer backGuiItemContainer = Config.getInstance().getGuiItemsController().getGUIItemByName("back");
         this.setItem(inventory, backGuiItemContainer.getPosition(), (ItemStack) backGuiItemContainer.generate(player));
         this.fillEmptySlots(inventory, player);
+        NMSRegistry.updateInventory(player);
     }
 
     /**
@@ -149,10 +151,8 @@ public class SpongeGUI {
      * @param page      page
      */
     private void setOtherItems(Player player, Inventory inventory, PetMeta petMeta, GUIPage page) {
-        System.out.println("IS PET ENABLED? " + petMeta.isEnabled());
         if (this.manager.getPetBlockController().getByPlayer(player) == null) {
             petMeta.setEnabled(false);
-            System.out.println("NEIN IST ER NICHT!");
         }
         for (final GUIItemContainer guiItemContainer : Config.getInstance().getGuiItemsController().getAll()) {
             if (guiItemContainer.getPage() == page) {
@@ -175,13 +175,11 @@ public class SpongeGUI {
             }
         }
         if (!petMeta.isEnabled()) {
-            System.out.println("SET ENABLE ICON");
             final GUIItemContainer container = Config.getInstance().getGuiItemsController().getGUIItemByName("enable-pet");
             if (page == container.getPage()) {
                 this.setItem(inventory, container.getPosition(), (ItemStack) container.generate(player));
             }
         } else {
-            System.out.println("SET DISABLED ICON");
             final GUIItemContainer container = Config.getInstance().getGuiItemsController().getGUIItemByName("disable-pet");
             if (page == container.getPage()) {
                 this.setItem(inventory, container.getPosition(), (ItemStack) container.generate(player));

@@ -5,6 +5,7 @@ import com.github.shynixn.petblocks.api.persistence.entity.PetMeta;
 import com.github.shynixn.petblocks.api.sponge.entity.SpongePetBlock;
 import com.github.shynixn.petblocks.core.logic.business.helper.ReflectionUtils;
 import com.github.shynixn.petblocks.sponge.PetBlocksPlugin;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
@@ -104,6 +105,15 @@ public class NMSRegistry {
         try {
             findClassFromVersion("com.github.shynixn.petblocks.sponge.nms.VERSION.NMSUtil").getDeclaredMethod("setItemSkin", ItemStack.class, String.class)
                     .invoke(null, itemStack, skinURL);
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void updateInventory(Player player) {
+        try {
+            findClassFromVersion("com.github.shynixn.petblocks.sponge.nms.VERSION.NMSUtil").getDeclaredMethod("updateInventoryFor", Player.class)
+                    .invoke(null, player);
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | ClassNotFoundException e) {
             e.printStackTrace();
         }

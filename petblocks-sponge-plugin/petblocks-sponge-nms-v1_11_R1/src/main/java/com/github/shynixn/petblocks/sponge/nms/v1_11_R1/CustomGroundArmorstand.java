@@ -112,11 +112,8 @@ final class CustomGroundArmorstand extends EntityArmorStand implements SpongePet
      */
     @Override
     public void moveEntityWithHeading(float strafe, float forward) {
-        System.out.println("HUMAN?");
         if (this.hasHumanPassenger() != null) {
-            System.out.println("GOT HUMAN");
             if (this.petMeta.getEngine().getRideType() == RideType.RUNNING) {
-                System.out.println("HANDLE ROTATION");
                 EntityLivingBase entityLiving = (EntityLivingBase) this.hasHumanPassenger();
                 this.rotationYaw = this.prevRotationYaw = entityLiving.rotationYaw;
                 this.rotationPitch = entityLiving.rotationPitch * 0.5F;
@@ -134,11 +131,10 @@ final class CustomGroundArmorstand extends EntityArmorStand implements SpongePet
                 }
 
                 this.stepHeight = (float) Config.getInstance().pet().getModifier_petclimbing();
-
                 this.jumpMovementFactor = this.getAIMoveSpeed() * 0.1F;
-                if (this.canPassengerSteer()) {
+                if (!this.world.isRemote) {
                     this.setAIMoveSpeed((float) this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getAttributeValue());
-                    super.moveEntityWithHeading(strafe * (float) Config.getInstance().pet().getModifier_petriding(), forward * (float) Config.getInstance().pet().getModifier_petriding());
+                    super.moveEntityWithHeading(strafe * (float) Config.getInstance().pet().getModifier_petriding() * 0.75F, forward * (float) Config.getInstance().pet().getModifier_petriding() * 0.75F);
                 }
 
                 this.prevLimbSwingAmount = this.limbSwingAmount;
@@ -154,6 +150,11 @@ final class CustomGroundArmorstand extends EntityArmorStand implements SpongePet
                 this.limbSwing += this.limbSwingAmount;
             } else {
                 EntityLivingBase entityLiving = (EntityLivingBase) this.hasHumanPassenger();
+                this.rotationYaw = this.prevRotationYaw = entityLiving.rotationYaw;
+                this.rotationPitch = entityLiving.rotationPitch * 0.5F;
+                this.setRotation(this.rotationYaw, this.rotationPitch);
+                this.rotationYawHead = this.renderYawOffset = this.rotationYaw;
+
                 final float side = entityLiving.moveStrafing * 0.5F;
                 final float forw = entityLiving.moveForward;
                 Vector3d v = new Vector3d();
@@ -162,38 +163,32 @@ final class CustomGroundArmorstand extends EntityArmorStand implements SpongePet
 
                 if (side < 0.0F) {
                     l.setYaw(entityLiving.rotationYaw - 90);
-                    v.add(l.getDirection().normalize().mul(-0.5));
+                    v = v.add(l.getDirection().normalize().mul(-0.5));
                 } else if (side > 0.0F) {
                     l.setYaw(entityLiving.rotationYaw + 90);
-                    v.add(l.getDirection().normalize().mul(-0.5));
+                    v = v.add(l.getDirection().normalize().mul(-0.5));
                 }
 
                 if (forw < 0.0F) {
                     l.setYaw(entityLiving.rotationYaw);
-                    v.add(l.getDirection().normalize().mul(0.5));
+                    v = v.add(l.getDirection().normalize().mul(0.5));
                 } else if (forw > 0.0F) {
                     l.setYaw(entityLiving.rotationYaw);
-                    v.add(l.getDirection().normalize().mul(0.5));
+                    v = v.add(l.getDirection().normalize().mul(0.5));
                 }
-
-                this.rotationYaw = this.prevRotationYaw = entityLiving.rotationYaw - 180;
-                this.rotationPitch = entityLiving.rotationPitch * 0.5F;
-                this.setRotation(this.rotationYaw, this.rotationPitch);
                 if (this.firstRide) {
                     this.firstRide = false;
-                    v = new Vector3d(v.getX(), 1, v.getY());
+                    v = new Vector3d(v.getX(), 1, v.getZ());
                 }
-
                 if (this.isJumping()) {
-                    v = new Vector3d(v.getX(), 0.5F, v.getY());
+                    v = new Vector3d(v.getX(), 0.5F, v.getZ());
                     this.isGround = true;
                     this.hitflor = false;
                 } else if (this.isGround) {
-                    v = new Vector3d(v.getX(), -0.2F, v.getY());
+                    v = new Vector3d(v.getX(), -0.2F, v.getZ());
                 }
-
                 if (this.hitflor) {
-                    v = new Vector3d(v.getX(), 0, v.getY());
+                    v = new Vector3d(v.getX(), 0, v.getZ());
                     v = v.mul(2.25).mul(Config.getInstance().pet().getModifier_petriding());
                     l.addCoordinates(v.getX(), v.getY(), v.getZ());
                     this.setPosition(l.getX(), l.getY(), l.getZ());
@@ -202,7 +197,6 @@ final class CustomGroundArmorstand extends EntityArmorStand implements SpongePet
                     l.addCoordinates(v.getX(), v.getY(), v.getZ());
                     this.setPosition(l.getX(), l.getY(), l.getZ());
                 }
-
                 final Vec3d vec3d = new Vec3d(this.posX, this.posY, this.posZ);
                 final Vec3d vec3d1 = new Vec3d(this.posX + this.motionX, this.posY + this.motionY, this.posZ + this.motionZ);
                 final RayTraceResult movingobjectposition = this.world.rayTraceBlocks(vec3d, vec3d1);

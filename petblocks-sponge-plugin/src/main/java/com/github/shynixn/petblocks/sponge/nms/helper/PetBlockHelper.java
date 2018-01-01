@@ -77,7 +77,7 @@ public final class PetBlockHelper {
             } else {
                 ((SoundBuilder) soundMeta).apply(location, (Player) petBlock.getPlayer());
             }
-        } catch (final IllegalArgumentException e) {
+        } catch (final IllegalArgumentException | NullPointerException e) {
             PetBlocksPlugin.logger().warn("Cannot play sound " + soundMeta.getName() + " of " + petBlock.getMeta().getEngine().getGUIItem().getDisplayName().get() + '.');
             PetBlocksPlugin.logger().warn("Is this entity or sound supported by your server version? Disable it in the config.yml");
         } catch (final Exception e1) {
@@ -250,7 +250,7 @@ public final class PetBlockHelper {
             Sponge.getEventManager().post(event);
             if (!event.isCancelled()) {
                 player.addPassenger(getArmorstand(petBlock));
-                player.closeInventory(null);
+                player.closeInventory(Cause.of(NamedCause.owner(player)));
                 if (callBack != null)
                     callBack.run(null);
             }

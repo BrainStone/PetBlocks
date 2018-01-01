@@ -2,8 +2,10 @@ package com.github.shynixn.petblocks.sponge.nms.v1_11_R1;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
@@ -42,6 +44,10 @@ public class NMSUtil {
     public static void setItemDamage(ItemStack itemStack, int damage) {
         final net.minecraft.item.ItemStack itemStack1 = (net.minecraft.item.ItemStack) (Object) itemStack;
         itemStack1.setItemDamage(damage);
+    }
+
+    public static void updateInventoryFor(Player player) {
+        ((EntityPlayerMP) player).sendContainerToPlayer(((EntityPlayerMP) player).openContainer);
     }
 
     public static void setItemOwner(ItemStack itemStack, String owner) {
