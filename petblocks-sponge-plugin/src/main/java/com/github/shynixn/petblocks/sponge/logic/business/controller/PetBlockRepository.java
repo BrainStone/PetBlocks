@@ -56,8 +56,7 @@ public final class PetBlockRepository implements PetBlockController<SpongePetBlo
             throw new IllegalArgumentException("Player cannot be null!");
         if (petMeta == null)
             throw new IllegalArgumentException("PetMeta cannot be null!");
-        final Player mPlayer = player;
-        return NMSRegistry.createPetBlock(mPlayer.getLocation(), petMeta);
+        return NMSRegistry.createPetBlock(player.getLocation(), petMeta);
     }
 
     /**
@@ -129,7 +128,7 @@ public final class PetBlockRepository implements PetBlockController<SpongePetBlo
     public void remove(SpongePetBlock item) {
         if (item == null)
             return;
-        final Player player = (Player) item.getPlayer();
+        final Player player = item.getPlayer();
         if (this.petblocks.containsKey(player)) {
             final PetBlockDeathEvent event = new PetBlockDeathEvent(this.petblocks.get(player));
             Sponge.getEventManager().post(event);

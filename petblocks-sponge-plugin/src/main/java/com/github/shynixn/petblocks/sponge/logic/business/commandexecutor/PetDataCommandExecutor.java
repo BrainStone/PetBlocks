@@ -1,18 +1,18 @@
 package com.github.shynixn.petblocks.sponge.logic.business.commandexecutor;
 
-import com.github.shynixn.petblocks.api.PetBlocksApi;
 import com.github.shynixn.petblocks.api.business.entity.PetBlock;
 import com.github.shynixn.petblocks.api.business.enumeration.GUIPage;
 import com.github.shynixn.petblocks.api.persistence.entity.PetMeta;
+import com.github.shynixn.petblocks.api.sponge.entity.SpongePetBlock;
+import com.github.shynixn.petblocks.core.logic.business.PetRunnable;
 import com.github.shynixn.petblocks.sponge.logic.business.PetBlockManager;
 import com.github.shynixn.petblocks.sponge.logic.business.configuration.Config;
+import com.github.shynixn.petblocks.sponge.logic.business.helper.CompatibilityItemType;
 import com.google.inject.Inject;
 import org.spongepowered.api.command.args.CommandContext;
-import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.scheduler.Task;
-import org.spongepowered.api.text.Text;
 
 import java.util.Optional;
 
@@ -43,22 +43,21 @@ public final class PetDataCommandExecutor extends SimpleCommandExecutor {
         if (!this.config.allowPetSpawning(player.getTransform()))
             return;
         if (args.hasAny("call")) {
-            final Optional<PetBlock> petBlock;
-            if ((petBlock = PetBlocksApi.getDefaultPetBlockController().getFromPlayer(player)).isPresent()) {
-                petBlock.get().teleport(player.getLocation());
+            final Optional<SpongePetBlock> petBlock;
+            if ((petBlock = this.manager.getPetBlockController().getFromPlayer(player)).isPresent()) {
+                petBlock.get().teleport(player.getTransform());
             }
         } else if (args.hasAny("toggle")) {
-            if (PetBlocksApi.getDefaultPetBlockController().getByPlayer(player) != null) {
-                PetBlocksApi.getDefaultPetBlockController().remove(PetBlocksApi.getDefaultPetBlockController().getByPlayer(player));
+            final Optional<SpongePetBlock> optPetBlock;
+            if ((optPetBlock = this.manager.getPetBlockController().getFromPlayer(player)).isPresent()) {
+                this.manager.getPetBlockController().remove(optPetBlock.get());
             } else {
                 Task.builder().async().execute(() -> {
-                    final PetMeta petMeta = PetBlocksApi.getDefaultPetMetaController().getByPlayer(player);
-                    if (petMeta != null) {
-                        Task.builder().execute(() -> {
-                            final PetBlock petBlock = PetBlocksApi.getDefaultPetBlockController().create(player, petMeta);
-                            PetBlocksApi.getDefaultPetBlockController().store(petBlock);
-                        }).submit(this.plugin);
-                    }
+                    final Optional<PetMeta> optPetMeta = this.manager.getPetMetaController().getFromPlayer(player);
+                    optPetMeta.ifPresent(petMeta -> Task.builder().execute(() -> {
+                        final SpongePetBlock petBlock = this.manager.getPetBlockController().create(player, petMeta);
+                        this.manager.getPetBlockController().store(petBlock);
+                    }).submit(this.plugin));
                 }).submit(this.plugin);
             }
         }/* else if (args.length >= 2 && args[0].equalsIgnoreCase("rename") && player.hasPermission(Permission.RENAMEPET.get())) {
@@ -79,81 +78,57 @@ public final class PetDataCommandExecutor extends SimpleCommandExecutor {
         }
     }
 
- /*   private void handleNaming(Player player, String message, boolean skullNaming) {
-        final PetBlock petBlock;
-        if ((petBlock = PetBlocksApi.getDefaultPetBlockController().getByPlayer(player)) != null) {
-            if (skullNaming) {
-                this.renameSkull(player, message, petBlock.getMeta(), petBlock);
-            }
-        } else {
-            this.plugin.getServer().getScheduler().runTaskAsynchronously(this.plugin, () -> {
-                final PetMeta petMeta = this.manager.getPetMetaController().getByPlayer(player);
-                if (skullNaming) {
-                    this.plugin.getServer().getScheduler().runTask(this.plugin, () -> this.renameSkull(player, message, petMeta, null));
-                }
-            });
-        }
-    }
-
-    private void renameNameCommand(Player player, String[] args) {
+    private void renameNameCommand(Player player, String name) {
         try {
-            final String message = this.mergeArgs(args, 1);
+            final String message = name;
             if (message.length() > Config.getInstance().pet().getDesign_maxPetNameLength()) {
-                player.sendMessage(Config.getInstance().getPrefix() + Config.getInstance().getNamingErrorMessage());
+                player.sendMessage(Config.getInstance().getPrefix().concat(Config.getInstance().getNamingErrorMessage()));
             } else {
                 this.providePetblock(player, (meta, petBlock) -> {
-                    PetBlockModifyHelper.rename(meta, petBlock, message);
-                    player.sendMessage(Config.getInstance().getPrefix() + Config.getInstance().getNamingSuccessMessage());
+                    //PetBlockModifyHelper.rename(meta, petBlock, message);
+                    player.sendMessage(Config.getInstance().getPrefix().concat(Config.getInstance().getNamingSuccessMessage()));
                     this.persistAsynchronously(meta);
                 });
             }
         } catch (final Exception e) {
-            player.sendMessage(Config.getInstance().getPrefix() + Config.getInstance().getNamingErrorMessage());
+            player.sendMessage(Config.getInstance().getPrefix().concat(Config.getInstance().getNamingErrorMessage()));
         }
     }
 
-    private void renameSkull(Player player, String message, PetMeta petMeta, PetBlock petBlock) {
+    private void renameSkull(Player player, String message) {
         if (message.length() > 20) {
-            player.sendMessage(Config.getInstance().getPrefix() + Config.getInstance().getSkullNamingErrorMessage());
+            player.sendMessage(Config.getInstance().getPrefix().concat(Config.getInstance().getSkullNamingErrorMessage()));
         } else {
             try {
-                petMeta.setSkin(Material.SKULL_ITEM.getId(), 3, message, false);
-                this.persistAsynchronously(petMeta);
-                if (petBlock != null)
-                    petBlock.respawn();
-                player.sendMessage(Config.getInstance().getPrefix() + Config.getInstance().getSkullNamingSuccessMessage());
+                this.providePetblock(player, (meta, petBlock) -> {
+                    meta.setDisplaySkin(CompatibilityItemType.SKULL_ITEM, 3, message, false);
+                    this.persistAsynchronously(meta);
+                    if (petBlock != null) {
+                        petBlock.respawn();
+                    }
+                    player.sendMessage(Config.getInstance().getPrefix().concat(Config.getInstance().getSkullNamingSuccessMessage()));
+                });
             } catch (final Exception e) {
-                player.sendMessage(Config.getInstance().getPrefix() + Config.getInstance().getSkullNamingErrorMessage());
+                player.sendMessage(Config.getInstance().getPrefix().concat(Config.getInstance().getSkullNamingErrorMessage()));
             }
         }
     }
 
-    private void providePetblock(Player player, PetRunnable runnable) {
-        final PetBlock petBlock;
-        if ((petBlock = this.manager.getPetBlockController().getByPlayer(player)) != null) {
-            runnable.run(petBlock.getMeta(), petBlock);
+    private void providePetblock(Player player, PetRunnable<SpongePetBlock> runnable) {
+        final Optional<SpongePetBlock> petBlock;
+        if ((petBlock = this.manager.getPetBlockController().getFromPlayer(player)).isPresent()) {
+            runnable.run(petBlock.get().getMeta(), petBlock.get());
         } else {
-            this.plugin.getServer().getScheduler().runTaskAsynchronously(this.plugin, () -> {
-                if (!this.manager.getPetMetaController().hasEntry(player))
+            Task.builder().async().execute(() -> {
+                if (!PetDataCommandExecutor.this.manager.getPetMetaController().hasEntry(player))
                     return;
-                final PetMeta petMeta = this.manager.getPetMetaController().getByPlayer(player);
-                this.plugin.getServer().getScheduler().runTask(this.plugin, () -> runnable.run(petMeta, null));
-            });
+                final PetMeta petMeta = PetDataCommandExecutor.this.manager.getPetMetaController().getByPlayer(player);
+                Task.builder().execute(() -> runnable.run(petMeta, null)).submit(PetDataCommandExecutor.this.plugin);
+            }).submit(this.plugin);
         }
-    }
-
-    private String mergeArgs(String[] args, int up) {
-        final StringBuilder builder = new StringBuilder();
-        for (int i = up; i < args.length; i++) {
-            if (builder.length() != 0) {
-                builder.append(' ');
-            }
-            builder.append(args[i]);
-        }
-        return builder.toString();
     }
 
     private void persistAsynchronously(PetMeta petMeta) {
-        this.plugin.getServer().getScheduler().runTaskAsynchronously(this.plugin, () -> this.manager.getPetMetaController().store(petMeta));
-    }*/
+        Task.builder().async().execute(() -> this.manager.getPetMetaController().store(petMeta));
+    }
 }
