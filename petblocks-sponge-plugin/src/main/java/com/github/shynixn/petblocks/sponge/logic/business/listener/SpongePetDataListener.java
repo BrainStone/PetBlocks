@@ -161,28 +161,30 @@ public class SpongePetDataListener extends SimpleSpongeListener {
     }
 
     @Listener
-    public void playerChatEvent(MessageChannelEvent.Chat event, @First(typeFilter = Player.class) Player player) {
-        if (!Config.getInstance().isChat_async() && Config.getInstance().isChatHighestPriority()) {
-            if (this.namingPlayers.contains(player) || this.namingSkull.contains(player)) {
-                event.setCancelled(true);
+    public void playerChatEvent(MessageChannelEvent.Chat event) {
+        final Optional<Player> playerOptional = event.getCause().first(Player.class);
+        if(!playerOptional.isPresent())
+            return;
+        Player player = playerOptional.get();
+        if (this.namingPlayers.contains(player) || this.namingSkull.contains(player)) {
+            event.setCancelled(true);
+        }
+        final PetBlock petBlock;
+        if ((petBlock = this.getPetBlock(player)) != null) {
+            if (this.namingSkull.contains(player)) {
+                this.renameSkull(player, event.getOriginalMessage(), petBlock.getMeta(), petBlock);
+            } else if (this.namingPlayers.contains(player)) {
+                this.renameName(player, event.getOriginalMessage(), petBlock.getMeta(), petBlock);
             }
-            final PetBlock petBlock;
-            if ((petBlock = this.getPetBlock(player)) != null) {
+        } else {
+            Task.builder().async().execute(() -> {
+                final PetMeta petMeta = this.manager.getPetMetaController().getByPlayer(player);
                 if (this.namingSkull.contains(player)) {
-                    this.renameSkull(player, event.getMessage(), petBlock.getMeta(), petBlock);
+                    Task.builder().execute(() -> this.renameSkull(player, event.getOriginalMessage(), petMeta, null)).submit(this.plugin);
                 } else if (this.namingPlayers.contains(player)) {
-                    this.renameName(player, event.getMessage(), petBlock.getMeta(), petBlock);
+                    Task.builder().execute(() -> this.renameName(player, event.getOriginalMessage(), petMeta, null)).submit(this.plugin);
                 }
-            } else {
-                Task.builder().async().execute(() -> {
-                    final PetMeta petMeta = this.manager.getPetMetaController().getByPlayer(player);
-                    if (this.namingSkull.contains(player)) {
-                        Task.builder().execute(() -> this.renameSkull(player, event.getMessage(), petMeta, null)).submit(this.plugin);
-                    } else if (this.namingPlayers.contains(player)) {
-                        Task.builder().execute(() -> this.renameName(player, event.getMessage(), petMeta, null)).submit(this.plugin);
-                    }
-                }).submit(this.plugin);
-            }
+            }).submit(this.plugin);
         }
     }
 
@@ -239,11 +241,11 @@ public class SpongePetDataListener extends SimpleSpongeListener {
         } else if (this.isGUIItem(currentItem, "naming-pet") && this.hasPermission(player, Permission.RENAMEPET)) {
             this.namingPlayers.add(player);
             this.closeInventory(player);
-            player.sendMessage(Text.of(Config.getInstance().getPrefix() + Config.getInstance().getNamingMessage()));
+            player.sendMessage(Config.getInstance().getPrefix().concat(Config.getInstance().getNamingMessage()));
         } else if (this.isGUIItem(currentItem, "skullnaming-pet") && this.hasPermission(player, Permission.RENAMESKULL)) {
             this.namingSkull.add(player);
             this.closeInventory(player);
-            player.sendMessage(Text.of(Config.getInstance().getPrefix() + Config.getInstance().getSkullNamingMessage()));
+            player.sendMessage(Config.getInstance().getPrefix().concat(Config.getInstance().getSkullNamingMessage()));
         } else if (this.isGUIItem(currentItem, "cannon-pet") && this.hasPermission(player, Permission.CANNON) && petBlock != null) {
             petBlock.setVelocity(this.getDirection(player));
             this.closeInventory(player);
@@ -251,38 +253,38 @@ public class SpongePetDataListener extends SimpleSpongeListener {
             this.manager.gui.backPage(player, petMeta);
         } else if (this.manager.pages.get(player).page == GUIPage.ENGINES && this.hasPermission(player, Permission.ALLPETTYPES.get(), Permission.SINGLEPETTYPE.get() + "" + itemSlot)) {
             final EngineContainer engineContainer = Config.getInstance().getEngineController().getById(itemSlot);
-            if(engineContainer == null)
+            if (engineContainer == null)
                 return;
             SpongePetBlockModifyHelper.setEngine(petMeta, petBlock, engineContainer);
             this.persistAsynchronously(petMeta);
             this.manager.gui.setPage(player, GUIPage.MAIN, petMeta);
         } else if (this.manager.pages.get(player).page == GUIPage.PARTICLES && this.hasPermission(player, Permission.ALLPARTICLES.get(), Permission.SINGLEPARTICLE.get() + "" + itemSlot)) {
             final GUIItemContainer container = Config.getInstance().getParticleController().getContainerByPosition(itemSlot);
-            if(container == null)
+            if (container == null)
                 return;
             SpongePetBlockModifyHelper.setParticleEffect(petMeta, petBlock, container);
             this.persistAsynchronously(petMeta);
             this.manager.gui.setPage(player, GUIPage.MAIN, petMeta);
         } else if (slot < 45 && this.manager.pages.get(player).page == GUIPage.DEFAULT_COSTUMES && this.hasPermission(player, Permission.ALLDEFAULTCOSTUMES.get(), Permission.SINGLEDEFAULTCOSTUME.get() + "" + itemSlot)) {
             final GUIItemContainer container = Config.getInstance().getOrdinaryCostumesController().getContainerByPosition(itemSlot);
-            if(container == null)
+            if (container == null)
                 return;
             this.setCostumeSkin(player, petMeta, petBlock, container);
         } else if (slot < 45 && this.manager.pages.get(player).page == GUIPage.COLOR_COSTUMES && this.hasPermission(player, Permission.ALLCOLORCOSTUMES.get(), Permission.SINGLECOLORCOSTUME.get() + "" + itemSlot)) {
             final GUIItemContainer container = Config.getInstance().getColorCostumesController().getContainerByPosition(itemSlot);
-            if(container == null)
+            if (container == null)
                 return;
             this.setCostumeSkin(player, petMeta, petBlock, container);
         } else if (slot < 45 && this.manager.pages.get(player).page == GUIPage.CUSTOM_COSTUMES && this.hasPermission(player, Permission.ALLCUSTOMCOSTUMES.get(), Permission.SINGLECUSTOMCOSTUME.get() + "" + itemSlot)) {
             final GUIItemContainer container = Config.getInstance().getRareCostumesController().getContainerByPosition(itemSlot);
-            if(container == null)
+            if (container == null)
                 return;
             this.setCostumeSkin(player, petMeta, petBlock, container);
         } else if (slot < 45 && this.manager.pages.get(player).page == GUIPage.MINECRAFTHEADS_COSTUMES && this.hasPermission(player, Permission.ALLHEADATABASECOSTUMES.get(), Permission.SINGLEMINECRAFTHEADSCOSTUME.get() + "" + itemSlot)) {
             final GUIItemContainer container = Config.getInstance().getMinecraftHeadsCostumesController().getContainerByPosition(itemSlot);
-            if(container == null)
+            if (container == null)
                 return;
-           this.setCostumeSkin(player, petMeta, petBlock, container);
+            this.setCostumeSkin(player, petMeta, petBlock, container);
         }
     }
 
@@ -328,7 +330,7 @@ public class SpongePetDataListener extends SimpleSpongeListener {
 
     private void renameName(Player player, Text message, PetMeta petMeta, PetBlock petBlock) {
         if (message.toPlain().length() > Config.getInstance().pet().getDesign_maxPetNameLength()) {
-            player.sendMessage(Text.of(Config.getInstance().getPrefix() + Config.getInstance().getNamingErrorMessage()));
+            player.sendMessage(Config.getInstance().getPrefix().concat(Config.getInstance().getNamingErrorMessage()));
         } else {
             try {
                 this.namingPlayers.remove(player);
@@ -336,16 +338,16 @@ public class SpongePetDataListener extends SimpleSpongeListener {
                 this.persistAsynchronously(petMeta);
                 if (petBlock != null)
                     petBlock.respawn();
-                player.sendMessage(Text.of(Config.getInstance().getPrefix() + Config.getInstance().getNamingSuccessMessage()));
+                player.sendMessage(Config.getInstance().getPrefix().concat(Config.getInstance().getNamingSuccessMessage()));
             } catch (final Exception e) {
-                player.sendMessage(Text.of(Config.getInstance().getPrefix() + Config.getInstance().getNamingErrorMessage()));
+                player.sendMessage(Config.getInstance().getPrefix().concat(Config.getInstance().getNamingErrorMessage()));
             }
         }
     }
 
     private void renameSkull(Player player, Text message, PetMeta petMeta, PetBlock petBlock) {
         if (message.toPlain().length() > 20) {
-            player.sendMessage(Text.of((Config.getInstance().getPrefix() + Config.getInstance().getSkullNamingErrorMessage())));
+            player.sendMessage((Config.getInstance().getPrefix().concat(Config.getInstance().getSkullNamingErrorMessage())));
         } else {
             try {
                 this.namingSkull.remove(player);
@@ -353,9 +355,9 @@ public class SpongePetDataListener extends SimpleSpongeListener {
                 this.persistAsynchronously(petMeta);
                 if (petBlock != null)
                     petBlock.respawn();
-                player.sendMessage(Text.of(Config.getInstance().getPrefix() + Config.getInstance().getSkullNamingSuccessMessage()));
+                player.sendMessage(Config.getInstance().getPrefix().concat(Config.getInstance().getSkullNamingSuccessMessage()));
             } catch (final Exception e) {
-                player.sendMessage(Text.of(Config.getInstance().getPrefix() + Config.getInstance().getSkullNamingErrorMessage()));
+                player.sendMessage(Config.getInstance().getPrefix().concat(Config.getInstance().getSkullNamingErrorMessage()));
             }
         }
     }
@@ -411,8 +413,8 @@ public class SpongePetDataListener extends SimpleSpongeListener {
      */
     private void setPetBlock(Player player, PetMeta petMeta) {
         petMeta.setEnabled(true);
-        final PetBlock petBlock = PetBlocksApi.getDefaultPetBlockController().create(player, petMeta);
-        PetBlocksApi.getDefaultPetBlockController().store(petBlock);
+        final SpongePetBlock petBlock = this.manager.getPetBlockController().create(player, petMeta);
+        this.manager.getPetBlockController().store(petBlock);
         this.persistAsynchronously(petMeta);
     }
 
@@ -424,13 +426,13 @@ public class SpongePetDataListener extends SimpleSpongeListener {
      */
     private void removePetBlock(Player player, PetMeta petMeta) {
         petMeta.setEnabled(false);
-        PetBlocksApi.getDefaultPetBlockController().removeByPlayer(player);
+        this.manager.getPetBlockController().removeByPlayer(player);
         this.persistAsynchronously(petMeta);
     }
 
     private boolean hasPermission(Player player, Permission permission) {
         if (!player.hasPermission(permission.get())) {
-            player.sendMessage(Text.of(Config.getInstance().getPrefix() + Config.getInstance().getNoPermission()));
+            player.sendMessage(Config.getInstance().getPrefix().concat(Config.getInstance().getNoPermission()));
             return false;
         }
         return true;
@@ -442,7 +444,7 @@ public class SpongePetDataListener extends SimpleSpongeListener {
                 return true;
             }
         }
-        player.sendMessage(Text.of(Config.getInstance().getPrefix() + Config.getInstance().getNoPermission()));
+        player.sendMessage(Config.getInstance().getPrefix().concat(Config.getInstance().getNoPermission()));
         return false;
     }
 

@@ -132,10 +132,6 @@ public class NMSRegistry {
         }
     }
 
-    public static String[] getWorldGuardRegionsFromLocation(Location location) {
-        return null;
-    }
-
     /**
      * Returns the class managed by version
      *

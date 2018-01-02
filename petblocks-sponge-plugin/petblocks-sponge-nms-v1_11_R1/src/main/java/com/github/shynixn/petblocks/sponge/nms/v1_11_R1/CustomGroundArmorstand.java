@@ -10,6 +10,7 @@ import com.github.shynixn.petblocks.api.sponge.event.PetBlockSpawnEvent;
 import com.github.shynixn.petblocks.sponge.PetBlocksPlugin;
 import com.github.shynixn.petblocks.sponge.logic.business.configuration.Config;
 import com.github.shynixn.petblocks.sponge.logic.business.entity.Pipeline;
+import com.github.shynixn.petblocks.sponge.logic.business.helper.SpongePetBlockModifyHelper;
 import com.github.shynixn.petblocks.sponge.logic.persistence.entity.SpongeLocationBuilder;
 import com.github.shynixn.petblocks.sponge.nms.helper.PetBlockHelper;
 import net.minecraft.entity.EntityLiving;
@@ -241,7 +242,7 @@ final class CustomGroundArmorstand extends EntityArmorStand implements SpongePet
             ((ArmorStand) this.getArmorStand()).getBodyPartRotationalData().bodyRotation().set(new Vector3d(0, 0, 2878));
             ((ArmorStand) this.getArmorStand()).getBodyPartRotationalData().leftArmDirection().set(new Vector3d(2878, 0, 0));
             ((ArmorStand) this.getArmorStand()).offer(Keys.CUSTOM_NAME_VISIBLE, true);
-            ((ArmorStand) this.getArmorStand()).offer(Keys.DISPLAY_NAME, Text.of(this.petMeta.getPetDisplayName()));
+            ((ArmorStand) this.getArmorStand()).offer(Keys.DISPLAY_NAME, SpongePetBlockModifyHelper.translateStringToText(this.petMeta.getPetDisplayName()));
             this.health = Config.getInstance().pet().getCombat_health();
             if (this.petMeta == null)
                 return;

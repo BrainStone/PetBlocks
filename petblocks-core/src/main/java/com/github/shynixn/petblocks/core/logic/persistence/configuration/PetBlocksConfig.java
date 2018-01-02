@@ -105,15 +105,15 @@ public abstract class PetBlocksConfig<T> implements IConfig {
         return this.getData("gui.settings.use-only-disable-pet-item");
     }
 
-    public String getPermissionIconYes() {
+    public T getPermissionIconYes() {
         return this.getData("messages.perms-ico-yes");
     }
 
-    public String getPermissionIconNo() {
+    public T getPermissionIconNo() {
         return this.getData("messages.perms-ico-no");
     }
 
-    public String getNoPermission() {
+    public T getNoPermission() {
         return this.getData("messages.no-perms");
     }
 
@@ -129,27 +129,27 @@ public abstract class PetBlocksConfig<T> implements IConfig {
         return this.getData("messages.default-petname");
     }
 
-    public String getNamingMessage() {
+    public T getNamingMessage() {
         return this.getData("messages.naming-message");
     }
 
-    public String getNamingSuccessMessage() {
+    public T getNamingSuccessMessage() {
         return this.getData("messages.naming-success");
     }
 
-    public String getNamingErrorMessage() {
+    public T getNamingErrorMessage() {
         return this.getData("messages.naming-error");
     }
 
-    public String getSkullNamingMessage() {
+    public T getSkullNamingMessage() {
         return this.getData("messages.skullnaming-message");
     }
 
-    public String getSkullNamingSuccessMessage() {
+    public T getSkullNamingSuccessMessage() {
         return this.getData("messages.skullnaming-success");
     }
 
-    public String getSkullNamingErrorMessage() {
+    public T getSkullNamingErrorMessage() {
         return this.getData("messages.skullnaming-error");
     }
 

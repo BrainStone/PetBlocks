@@ -147,9 +147,9 @@ public class SpongeItemContainer extends ItemContainer {
             modifiedLore[i] = SpongePetBlockModifyHelper.translateStringToText(this.getLore().get()[i]);
             if (this.getLore().get()[i].contains("<permission>")) {
                 if (permissions != null && (permissions.length == 0 || this.hasPermission(player, permissions))) {
-                    modifiedLore[i] = SpongePetBlockModifyHelper.translateStringToText(this.getLore().get()[i].replace("<permission>", Config.getInstance().getPermissionIconYes()));
+                    modifiedLore[i] = SpongePetBlockModifyHelper.translateStringToText(this.getLore().get()[i].replace("<permission>", SpongePetBlockModifyHelper.translateTextToString(Config.getInstance().getPermissionIconYes())));
                 } else {
-                    modifiedLore[i] = SpongePetBlockModifyHelper.translateStringToText(this.getLore().get()[i].replace("<permission>", Config.getInstance().getPermissionIconNo()));
+                    modifiedLore[i] = SpongePetBlockModifyHelper.translateStringToText(this.getLore().get()[i].replace("<permission>", SpongePetBlockModifyHelper.translateTextToString(Config.getInstance().getPermissionIconNo())));
                 }
             }
         }

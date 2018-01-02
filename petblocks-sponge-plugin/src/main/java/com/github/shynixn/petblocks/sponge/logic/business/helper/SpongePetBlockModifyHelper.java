@@ -46,6 +46,10 @@ public class SpongePetBlockModifyHelper {
         return TextSerializers.LEGACY_FORMATTING_CODE.deserialize(s);
     }
 
+    public static String translateTextToString(Text text) {
+        return TextSerializers.LEGACY_FORMATTING_CODE.serialize(text);
+    }
+
     /**
      * Sets the engine for the given petMeta and petblock.
      *
