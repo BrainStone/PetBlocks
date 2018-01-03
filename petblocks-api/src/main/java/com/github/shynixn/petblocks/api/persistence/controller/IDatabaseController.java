@@ -1,6 +1,9 @@
 package com.github.shynixn.petblocks.api.persistence.controller;
 
+import com.github.shynixn.petblocks.api.persistence.entity.PetMeta;
+
 import java.util.Optional;
+import java.util.concurrent.Future;
 
 /**
  * Database Controller interface.
@@ -46,4 +49,11 @@ public interface IDatabaseController<T> extends IController<T> {
      * @return item
      */
     Optional<T> getFromId(long id);
+
+    /**
+     * Stores the data asynchronly into the database.
+     *
+     * @param petMeta petMeta
+     */
+    void storeAsynchronly(PetMeta petMeta);
 }

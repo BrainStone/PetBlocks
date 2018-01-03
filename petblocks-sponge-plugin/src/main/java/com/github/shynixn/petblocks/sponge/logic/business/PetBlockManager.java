@@ -1,6 +1,9 @@
 package com.github.shynixn.petblocks.sponge.logic.business;
 
 import com.github.shynixn.petblocks.api.persistence.controller.PetMetaController;
+import com.github.shynixn.petblocks.api.persistence.entity.PetMeta;
+import com.github.shynixn.petblocks.api.sponge.entity.SpongePetBlock;
+import com.github.shynixn.petblocks.core.logic.business.PetRunnable;
 import com.github.shynixn.petblocks.core.logic.business.entity.GuiPageContainer;
 import com.github.shynixn.petblocks.core.logic.business.helper.ExtensionHikariConnectionContext;
 import com.github.shynixn.petblocks.sponge.PetBlocksPlugin;
@@ -18,6 +21,7 @@ import org.spongepowered.api.asset.Asset;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.item.inventory.Inventory;
 import org.spongepowered.api.plugin.PluginContainer;
+import org.spongepowered.api.scheduler.Task;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -25,10 +29,7 @@ import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
 
@@ -111,6 +112,20 @@ public class PetBlockManager {
     @Deprecated
     public ExtensionHikariConnectionContext getConnectionContext() {
         return this.connectionContext;
+    }
+
+    public void providePetblockData(Player player, PetRunnable<SpongePetBlock> runnable) {
+        final Optional<SpongePetBlock> petBlock;
+        if ((petBlock = this.getPetBlockController().getFromPlayer(player)).isPresent()) {
+            runnable.run(petBlock.get().getMeta(), petBlock.get());
+        } else {
+            Task.builder().async().execute(() -> {
+                if (!this.getPetMetaController().hasEntry(player))
+                    return;
+                final PetMeta petMeta = this.getPetMetaController().getByPlayer(player);
+                Task.builder().execute(() -> runnable.run(petMeta, null)).submit(this.plugin);
+            }).submit(this.plugin);
+        }
     }
 
     private static synchronized ExtensionHikariConnectionContext initialize(PluginContainer plugin, Config config, boolean modifier) {

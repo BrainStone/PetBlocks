@@ -75,7 +75,6 @@ public class PetBlocksPlugin {
     private Config config;
     @Inject
     private PetBlockManager petBlockManager;
-
     @Inject
     private Metrics metrics;
 

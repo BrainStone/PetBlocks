@@ -9,6 +9,7 @@ import com.github.shynixn.petblocks.sponge.logic.business.configuration.Config;
 import com.github.shynixn.petblocks.sponge.logic.persistence.entity.SpongePetData;
 import com.google.inject.Inject;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.serializer.TextSerializers;
 
@@ -108,9 +109,19 @@ public class SpongePetDataRepository extends PetDataRepository {
         if (!containerOpt.isPresent())
             throw new IllegalArgumentException("Default appearance could not be loaded from the config.yml!");
         final Text defaultPetName = this.config.getDefaultPetName();
-        final SpongePetData petData = new SpongePetData((Player) player,   TextSerializers.LEGACY_FORMATTING_CODE.serialize(defaultPetName));
+        final SpongePetData petData = new SpongePetData((Player) player, TextSerializers.LEGACY_FORMATTING_CODE.serialize(defaultPetName));
         petData.setSkin(containerOpt.get().getItemId(), containerOpt.get().getItemDamage(), containerOpt.get().getSkin(), containerOpt.get().isItemUnbreakable());
         return petData;
+    }
+
+    /**
+     * Stores the data asynchronly into the database.
+     *
+     * @param petMeta petMeta
+     */
+    @Override
+    public void storeAsynchronly(PetMeta petMeta) {
+        Task.builder().async().execute(() -> this.store(petMeta));
     }
 
     /**
