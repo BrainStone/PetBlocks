@@ -217,7 +217,7 @@ public abstract class ItemContainer implements GUIItemContainer {
     }
 
     /**
-     * Returns the lore of the itemStack if present
+     * Returns the lore of the itemStack if present.
      *
      * @return lore
      */

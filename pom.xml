@@ -12,12 +12,9 @@
         <module>petblocks-api</module>
         <module>petblocks-bukkit-api</module>
         <module>petblocks-bukkit-plugin</module>
-        <module>petblocks-sponge-plugin</module>
-        <module>petblocks-core</module>
-        <module>petblocks-sponge-api</module>
-        <module>petblocks-universal-plugin</module>
+        <module>petblocks-bukkit-lib</module>
     </modules>
-    <version>6.4.2-SNAPSHOT</version>
+    <version>6.4.3</version>
     <packaging>pom</packaging>
 
     <developers>
@@ -38,25 +35,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
-    shadowJar {
-    baseName = 'PetBlocks'
-    classifier = null
-    version = 1.0
-    relocate 'com.zaxxer', 'com.github.shynixn.petblocks.lib.com.zaxxer'
-    relocate 'org.slf4j', 'com.github.shynixn.petblocks.lib.org.slf4j'
-    relocate 'org.bstats', 'com.github.shynixn.petblocks.lib.org.bstats'
-
-    task copyJarToBin {
-    copy {
-    from 'build/libs/PetBlocks-1.0.jar'
-    into "D:/Temp/plugins"
-    }
-    copy{
-    from 'build/libs/PetBlocks-1.0.jar'
-    into "D:/Temp/SpongePowered/mods"
-    }
-    }
-    }
 
     <profiles>
         <profile>
@@ -114,7 +92,7 @@
                     </dependency>
                 </dependencies>
             </plugin>
-          <!--  <plugin>
+            <plugin>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <version>2.19.1</version>
                 <dependencies>
@@ -145,7 +123,7 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>-->
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
