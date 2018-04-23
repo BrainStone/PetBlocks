@@ -2,6 +2,7 @@ package com.github.shynixn.petblocks.core.logic.persistence.configuration
 
 import com.github.shynixn.petblocks.api.business.entity.GUIItemContainer
 import com.github.shynixn.petblocks.api.persistence.controller.CostumeController
+import com.github.shynixn.petblocks.api.persistence.controller.GUIItemController
 import java.util.*
 
 /**
@@ -33,59 +34,85 @@ import java.util.*
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-class GUIItemCollection : CostumeController<GUIItemContainer<*>>{
-
+class GUIItemCollection : CostumeController<GUIItemContainer<*>>, GUIItemController {
     private val items = HashMap<Int, GUIItemContainer<*>>()
 
     /**
-     * Removes an item from the repository.
-     *
-     * @param item item
+     * Returns the [GUIItemContainer] at the given [position].
      */
-    override fun remove(item: GUIItemContainer<*>?) {
+    override fun getGUIItem(position: Int): Optional<GUIItemContainer<*>> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
+
+
+    /**
+     * Reloads the content from the fileSystem.
+     */
+    override fun reload() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    /**
+     * Returns all items from the repository as unmodifiableList.
+     *
+     * @return items
+     */
+    override fun getAll(): List<GUIItemContainer<*>> {
+        return items.values.toList()
+    }
+
+    //region Deprecated
 
     /**
      * Returns the amount of items in the repository.
      * @return size
      */
     override fun size(): Int {
+        return this.items.size
+    }
+
+    /**
+     * Stores a new a item in the repository.
+     *
+     * @param item item
+     */
+    @Deprecated("Items should not be added during runtime.")
+    override fun store(item: GUIItemContainer<*>?) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     /**
-     * Closes this resource, relinquishing any underlying resources.
-     * This method is invoked automatically on objects managed by the
-     * `try`-with-resources statement.
+     * Returns the container by the given order id.
      *
+     * @param id id
+     * @return container
+     */
+    @Deprecated("Please use getGUIItem(id) instead")
+    override fun getContainerFromPosition(id: Int): Optional<GUIItemContainer<*>> {
+        return getGUIItem(id)
+    }
+
+    /**
+     * Removes an item from the repository.
      *
-     * While this interface method is declared to throw `Exception`, implementers are *strongly* encouraged to
-     * declare concrete implementations of the `close` method to
-     * throw more specific exceptions, or to throw no exception at all
-     * if the close operation cannot fail.
-     *
-     *
-     *  Cases where the close operation may fail require careful
-     * attention by implementers. It is strongly advised to relinquish
-     * the underlying resources and to internally *mark* the
-     * resource as closed, prior to throwing the exception. The `close` method is unlikely to be invoked more than once and so
-     * this ensures that the resources are released in a timely manner.
-     * Furthermore it reduces problems that could arise when the resource
-     * wraps, or is wrapped, by another resource.
-     *
-     *
-     * *Implementers of this interface are also strongly advised
-     * to not have the `close` method throw [ ].*
-     *
-     * This exception interacts with a thread's interrupted status,
-     * and runtime misbehavior is likely to occur if an `InterruptedException` is [ suppressed][Throwable.addSuppressed].
-     *
-     * More generally, if it would cause problems for an
-     * exception to be suppressed, the `AutoCloseable.close`
-     * method should not throw it.
-     *
-     *
+     * @param item item
+     */
+    @Deprecated("Items should not be removed during runtime.")
+    override fun remove(item: GUIItemContainer<*>?) {
+        if (item != null) {
+            if (this.getContainerFromPosition(item.position).isPresent) {
+                throw IllegalArgumentException("Item at this position already exists!")
+            }
+
+            items.toMap().forEach { key, it ->
+                if (item == it) {
+                    items.remove(key)
+                }
+            }
+        }
+    }
+
+    /**
      * Note that unlike the [close][java.io.Closeable.close]
      * method of [java.io.Closeable], this `close` method
      * is *not* required to be idempotent.  In other words,
@@ -98,42 +125,11 @@ class GUIItemCollection : CostumeController<GUIItemContainer<*>>{
      *
      * @throws Exception if this resource cannot be closed
      */
+    @Deprecated("This resource is no longer necessary to be closed.")
     override fun close() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        items.clear()
     }
 
-    /**
-     * Reloads the content from the fileSystem.
-     */
-    override fun reload() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
 
-    /**
-     * Stores a new a item in the repository.
-     *
-     * @param item item
-     */
-    override fun store(item: GUIItemContainer<*>?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    /**
-     * Returns the container by the given order id.
-     *
-     * @param id id
-     * @return container
-     */
-    override fun getContainerFromPosition(id: Int): Optional<GUIItemContainer<*>> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    /**
-     * Returns all items from the repository as unmodifiableList.
-     *
-     * @return items
-     */
-    override fun getAll(): MutableList<GUIItemContainer<*>> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    //endregion
 }

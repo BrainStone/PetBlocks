@@ -29,6 +29,7 @@ import java.util.Optional;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+@Deprecated
 public interface ContainerController<T> extends IFileController<T> {
     /**
      * Returns the container by the given order id.
@@ -36,5 +37,6 @@ public interface ContainerController<T> extends IFileController<T> {
      * @param id id
      * @return container
      */
+    @Deprecated
     Optional<T> getContainerFromPosition(int id);
 }

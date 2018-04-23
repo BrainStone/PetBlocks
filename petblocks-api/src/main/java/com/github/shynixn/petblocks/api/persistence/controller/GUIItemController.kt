@@ -1,13 +1,18 @@
-package com.github.shynixn.petblocks.api.persistence.controller;
+package com.github.shynixn.petblocks.api.persistence.controller
+
+import com.github.shynixn.petblocks.api.persistence.entity.GUIItem
+import java.util.*
 
 /**
- * Controller for different kind of costume categories.
+ * Copyright 2017 Shynixn
  * <p>
- * Version 1.1
+ * Do not remove this header!
+ * <p>
+ * Version 1.0
  * <p>
  * MIT License
  * <p>
- * Copyright (c) 2017 by Shynixn
+ * Copyright (c) 2017
  * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,5 +32,12 @@ package com.github.shynixn.petblocks.api.persistence.controller;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-@Deprecated
-public interface CostumeController<T> extends ContainerController<T> {}
+interface GUIItemController<T> where T : GUIItem {
+    /**
+     * Returns the [GUIItem] at the given [position].
+     */
+    fun getGUIItem(position: Int): Optional<T>
+
+    /** Returns all gui items of [GUIItem] in this collection. */
+    fun getAll(): List<T>
+}

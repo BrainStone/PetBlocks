@@ -1,17 +1,17 @@
-package com.github.shynixn.petblocks.api.business.entity;
+package com.github.shynixn.petblocks.api.persistence.entity
 
-import com.github.shynixn.petblocks.api.business.enumeration.GUIPage;
-
-import java.util.Optional;
+import java.util.*
 
 /**
- * Holds general info about the UI items.
+ * Copyright 2017 Shynixn
  * <p>
- * Version 1.1
+ * Do not remove this header!
+ * <p>
+ * Version 1.0
  * <p>
  * MIT License
  * <p>
- * Copyright (c) 2017 by Shynixn
+ * Copyright (c) 2017
  * <p>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,31 +31,26 @@ import java.util.Optional;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-@Deprecated
-public interface GUIItemContainer<Player> {
+interface GUIItem {
+
+    /** Is the GUI Item enable so it should be rendered in the GUI? */
+    val enabled :Boolean
+
+    /** Returns the displayName of the ItemStack. */
+    val displayName : Optional<String>;
 
     /**
-     * Returns if the itemContainer is enabled.
-     *
-     * @return enabled
-     */
-    boolean isEnabled();
+    val lore : Array<String>
+
 
     /**
-     * Sets the itemContainer enabled.
-     *
-     * @param enabled enabled
+     * Converts the GUIItem to a new ItemStack depending on the framework.
      */
-    void setEnabled(boolean enabled);
+    fun <T> toItemStack() : T
 
-    /**
-     * Generates a new itemStack for the player and his permissions.
-     *
-     * @param player      player
-     * @param permissions permission
-     * @return itemStack
-     */
-    Object generate(Player player, String... permissions);
+
+
+
 
     /**
      * Returns the displayName of the itemStack if present.

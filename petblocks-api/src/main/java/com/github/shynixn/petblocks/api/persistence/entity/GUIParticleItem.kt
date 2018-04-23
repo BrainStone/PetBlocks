@@ -1,6 +1,4 @@
-package com.github.shynixn.petblocks.api.persistence.controller
-
-import com.github.shynixn.petblocks.api.business.entity.GUIItemContainer
+package com.github.shynixn.petblocks.api.persistence.entity
 
 /**
  * Copyright 2017 Shynixn
@@ -31,11 +29,7 @@ import com.github.shynixn.petblocks.api.business.entity.GUIItemContainer
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-interface GuiItemCollection : Iterable<GUIItemContainer<*>>{
+interface GUIParticleItem : GUIItem{
 
 
-    fun getGUIItem(position: Int)
-
-    /** Returns all gui items of [GUIItemContainer] in this collection. */
-    fun getAll() : List<GUIItemContainer<*>>;
 }
