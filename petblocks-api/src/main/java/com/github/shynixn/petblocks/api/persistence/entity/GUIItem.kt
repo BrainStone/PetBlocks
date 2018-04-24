@@ -1,6 +1,6 @@
 package com.github.shynixn.petblocks.api.persistence.entity
 
-import java.util.*
+import com.github.shynixn.petblocks.api.business.entity.GUIItemContainer
 
 /**
  * Copyright 2017 Shynixn
@@ -34,73 +34,11 @@ import java.util.*
 interface GUIItem {
 
     /** Is the GUI Item enable so it should be rendered in the GUI? */
-    val enabled :Boolean
+    val enabled: Boolean
 
-    /** Returns the displayName of the ItemStack. */
-    val displayName : Optional<String>;
+    /** Returns the displayName of the item **/
+    val displayName: String
 
-    /**
-    val lore : Array<String>
-
-
-    /**
-     * Converts the GUIItem to a new ItemStack depending on the framework.
-     */
-    fun <T> toItemStack() : T
-
-
-
-
-
-    /**
-     * Returns the displayName of the itemStack if present.
-     *
-     * @return displayName
-     */
-    Optional<String> getDisplayName();
-
-    /**
-     * Returns the lore of the itemStack if present.
-     *
-     * @return lore
-     */
-    Optional<String[]> getLore();
-
-    /**
-     * Returns the position of the itemStack in the ui.
-     *
-     * @return position
-     */
-    int getPosition();
-
-    /**
-     * Returns the guiPage of this container.
-     *
-     * @return guiPage
-     */
-    GUIPage getPage();
-
-    /**
-     * Returns the skin of the itemStack.
-     * @return skin
-     */
-    String getSkin();
-
-    /**
-     * Returns the id of the item.
-     * @return itemId
-     */
-    int getItemId();
-
-    /**
-     * Returns the damage of the item.
-     * @return itemDamage
-     */
-    int getItemDamage();
-
-    /**
-     * Returns if the item is unbreakable.
-     * @return unbreakable
-     */
-    boolean isItemUnbreakable();
+    /** Returns the lore of the item */
+    val lore: List<String>
 }
